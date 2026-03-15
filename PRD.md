@@ -350,14 +350,14 @@ All four phases are in scope for this PRD. Phases must be implemented in order, 
 **Description:** As a developer, I want user accounts with JWT-based authentication so that all actions are tied to an identified user.
 
 **Acceptance Criteria:**
-- [ ] Table `users` created with columns: `id` (UUID PK), `email` (string, unique, not null), `name` (string), `role` (enum: `admin`, `planner`, `asset_manager`, `operations_manager`, `department_user`, `contractor`, `public`, default `public`), `responsible_body_id` (FK → responsible_bodies, nullable — the body this user belongs to), `is_active` (boolean, default true), `last_login_at`, `created_at`, `updated_at`
-- [ ] `POST /api/auth/register` creates a user (admin only)
-- [ ] `POST /api/auth/login` accepts email + password; returns signed JWT
-- [ ] `POST /api/auth/refresh` refreshes JWT
-- [ ] `GET /api/auth/me` returns current user profile
-- [ ] JWT middleware validates token on all protected routes
-- [ ] Password hashed with bcrypt (min 12 rounds)
-- [ ] Typecheck passes
+- [x] Table `users` created with columns: `id` (UUID PK), `email` (string, unique, not null), `name` (string), `role` (enum: `admin`, `planner`, `asset_manager`, `operations_manager`, `department_user`, `contractor`, `public`, default `public`), `responsible_body_id` (FK → responsible_bodies, nullable — the body this user belongs to), `is_active` (boolean, default true), `last_login_at`, `created_at`, `updated_at`
+- [x] `POST /api/auth/register` creates a user (admin only)
+- [x] `POST /api/auth/login` accepts email + password; returns signed JWT
+- [x] `POST /api/auth/refresh` refreshes JWT
+- [x] `GET /api/auth/me` returns current user profile
+- [x] JWT middleware validates token on all protected routes
+- [x] Password hashed with bcrypt (min 12 rounds)
+- [x] Typecheck passes
 
 ---
 

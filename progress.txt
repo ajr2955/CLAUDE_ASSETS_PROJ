@@ -122,6 +122,16 @@
   - Patterns: `is_required` and `is_verified` query params: compare to the string `"true"` since searchParams always returns strings.
 ---
 
+## Iteration 14 — US-018: User authentication schema and API
+- What was done: Added `UserRole` enum and `User` model to `prisma/schema.prisma` with all required columns (id, email, name, password_hash, role, responsible_body_id FK, is_active, last_login_at, created_at, updated_at). Added `users` reverse relation to `ResponsibleBody`. Created migration SQL at `prisma/migrations/0018_users/migration.sql` with CREATE TYPE user_role, CREATE TABLE users, and ALTER TABLE FK constraint resolutions for previously-stubbed FKs in events (recorded_by_user_id) and documents (uploaded_by_user_id, verified_by_user_id). Installed `bcryptjs` and `jsonwebtoken` plus their @types packages. Created `src/lib/jwt.ts` with signAccessToken (15m TTL), signRefreshToken (7d TTL), verifyToken helpers. Created `src/lib/auth.ts` with getUserFromRequest helper that extracts and validates Bearer token from Authorization header. Created 4 auth route handlers: `POST /api/auth/register` (admin-only, creates user with bcrypt 12-round hash), `POST /api/auth/login` (returns access + refresh JWT pair), `POST /api/auth/refresh` (validates refresh token, issues new pair), `GET /api/auth/me` (returns current user profile from JWT). Ran `prisma validate` + `prisma generate` + `tsc --noEmit` — all clean.
+- Files affected: `app/prisma/schema.prisma`, `app/prisma/migrations/0018_users/migration.sql`, `app/src/lib/jwt.ts`, `app/src/lib/auth.ts`, `app/src/app/api/auth/register/route.ts`, `app/src/app/api/auth/login/route.ts`, `app/src/app/api/auth/refresh/route.ts`, `app/src/app/api/auth/me/route.ts`
+- Learnings for next cycles:
+  - Patterns: JWT secret from `process.env.JWT_SECRET ?? "dev-secret"` — always provide a dev fallback to avoid runtime errors in test environments.
+  - Patterns: bcrypt.hash requires async/await — bcryptjs is the CJS-compatible drop-in for Next.js edge/node environments.
+  - Patterns: Resolving FK stubs from earlier migrations: use ALTER TABLE ... ADD CONSTRAINT ... FOREIGN KEY ... REFERENCES in the migration that creates the target table.
+  - Traps: `UserRole` enum from `@/generated/prisma/client` includes `public` which is a reserved word in PostgreSQL but safe as an enum value when quoted.
+---
+
 ## Iteration 13 — US-017: Event creation and retrieval API
 - What was done: Created `src/app/api/events/route.ts` (GET paginated events with 8 filter params including category filter via nested `eventType.category` relation; POST create requiring event_type_id + asset_id, optional occurred_at defaulting to now, FK validation for all provided IDs, is_system_generated always false for user-created events — system creates governance events via transition/other automated logic) and `src/app/api/assets/[id]/events/route.ts` (GET full event log for an asset ordered by occurred_at descending with pagination). No PUT/DELETE endpoints — events are immutable by design. Ran `tsc --noEmit` → clean.
 - Files affected: `app/src/app/api/events/route.ts`, `app/src/app/api/assets/[id]/events/route.ts`
