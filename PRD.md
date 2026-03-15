@@ -322,14 +322,14 @@ All four phases are in scope for this PRD. Phases must be implemented in order, 
 **Description:** As any authorized user, I want to upload a document and attach it to an asset, event, budget envelope, or other entity.
 
 **Acceptance Criteria:**
-- [ ] `POST /api/documents/upload` accepts multipart file upload; stores file in configured storage (local disk in dev, object storage in prod); returns a `file_url` and metadata
-- [ ] `POST /api/documents` creates a document record; requires `document_type_id`, `title`, `file_url`, `attached_to_entity_type`, `attached_to_entity_id`
-- [ ] `GET /api/documents` returns documents; supports filters: `attached_to_entity_type`, `attached_to_entity_id`, `document_type_id`, `lifecycle_stage_id`, `is_required`, `is_verified`
-- [ ] `GET /api/documents/:id` returns document detail with download URL
-- [ ] `PUT /api/documents/:id/verify` marks document as verified; sets `verified_by_user_id` and `verified_at`
-- [ ] `DELETE /api/documents/:id` soft-deletes (sets `is_deleted` flag); file in storage is retained
-- [ ] File size limit enforced (configurable, default 50MB)
-- [ ] Typecheck passes
+- [x] `POST /api/documents/upload` accepts multipart file upload; stores file in configured storage (local disk in dev, object storage in prod); returns a `file_url` and metadata
+- [x] `POST /api/documents` creates a document record; requires `document_type_id`, `title`, `file_url`, `attached_to_entity_type`, `attached_to_entity_id`
+- [x] `GET /api/documents` returns documents; supports filters: `attached_to_entity_type`, `attached_to_entity_id`, `document_type_id`, `lifecycle_stage_id`, `is_required`, `is_verified`
+- [x] `GET /api/documents/:id` returns document detail with download URL
+- [x] `PUT /api/documents/:id/verify` marks document as verified; sets `verified_by_user_id` and `verified_at`
+- [x] `DELETE /api/documents/:id` soft-deletes (sets `is_deleted` flag); file in storage is retained
+- [x] File size limit enforced (configurable, default 50MB)
+- [x] Typecheck passes
 
 ---
 

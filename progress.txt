@@ -112,3 +112,12 @@
   - Patterns: Soft-close pattern: when hard delete is not allowed (actual_amount > 0), update `is_closed = true` and return a descriptive message instead of 422.
   - Patterns: Grouping in memory after a single DB query (rather than multiple queries) is efficient for budget grouping logic.
 ---
+
+## Iteration 12 — US-016: Document upload and attachment API
+- What was done: Created 4 Next.js App Router route handlers. `src/app/api/documents/upload/route.ts`: POST accepts multipart form data via `req.formData()`, enforces configurable file size limit (default 50MB via MAX_FILE_SIZE_BYTES env var), saves file to `uploads/` directory (or UPLOAD_DIR env override) with a timestamp-prefixed safe filename, returns file_url, file_name, file_size_bytes, mime_type. `src/app/api/documents/route.ts`: GET paginated list with filters (attached_to_entity_type, attached_to_entity_id, document_type_id, lifecycle_stage_id, is_required, is_verified) with AttachedEntityType enum validation; POST create requiring document_type_id/title/file_url/attached_to_entity_type/attached_to_entity_id with existence checks on doc type and lifecycle stage. `src/app/api/documents/[id]/route.ts`: GET single document with download_url field; DELETE soft-deletes via is_deleted flag (file retained). `src/app/api/documents/[id]/verify/route.ts`: PUT marks is_verified=true with verified_by_user_id and verified_at; rejects if already verified (409). Ran `tsc --noEmit` → clean.
+- Files affected: `app/src/app/api/documents/upload/route.ts`, `app/src/app/api/documents/route.ts`, `app/src/app/api/documents/[id]/route.ts`, `app/src/app/api/documents/[id]/verify/route.ts`
+- Learnings for next cycles:
+  - Patterns: Next.js App Router file upload uses `req.formData()` — the File object is typed as `File` (global Web API); cast `formData.get("file")` to `File` after checking it's not a string.
+  - Patterns: Soft-delete on documents: isDeleted flag on the record; GET and DELETE both check `isDeleted` to treat deleted docs as 404.
+  - Patterns: `is_required` and `is_verified` query params: compare to the string `"true"` since searchParams always returns strings.
+---
