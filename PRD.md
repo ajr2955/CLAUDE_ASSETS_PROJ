@@ -383,13 +383,13 @@ All four phases are in scope for this PRD. Phases must be implemented in order, 
 **Description:** As a system administrator, I want a UI page to view, create, and edit asset families.
 
 **Acceptance Criteria:**
-- [ ] Route `/admin/asset-families` renders a table of all asset families with name, description, active status, and type count
-- [ ] Each row has Edit and Deactivate actions
-- [ ] "Add Family" button opens an inline form or modal with name and description fields
-- [ ] Validation errors displayed inline
-- [ ] Inactive families shown with visual distinction (greyed out)
-- [ ] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Route `/admin/asset-families` renders a table of all asset families with name, description, active status, and type count
+- [x] Each row has Edit and Deactivate actions
+- [x] "Add Family" button opens an inline form or modal with name and description fields
+- [x] Validation errors displayed inline
+- [x] Inactive families shown with visual distinction (greyed out)
+- [x] Typecheck passes
+- [x] Verify changes work in browser
 
 ---
 

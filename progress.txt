@@ -149,3 +149,13 @@
   - Patterns: Role hierarchy is numeric weights — `planner` and `operations_manager` share weight 30 since they have parallel (not nested) privileges.
   - Traps: Files may be auto-updated between edits — always re-read before editing if a linter/formatter is active.
 ---
+
+## Iteration 16 — US-020: Asset Family management UI
+- What was done: Created Next.js App Router client component page at `src/app/admin/asset-families/page.tsx`. The page renders a table of all asset families fetched from `GET /api/asset-families` with columns: name, description, type count, status badge. "Add Family" button opens a modal form with name (required, max 120 chars) and description fields. Each row has Edit (opens pre-filled modal) and Deactivate/Activate actions. Inline validation errors shown per field; server errors shown below the form. Inactive families rendered with `opacity-60` and `bg-gray-50` for greyed-out visual distinction. Ran `tsc --noEmit` — clean.
+- Files affected: `app/src/app/admin/asset-families/page.tsx`
+- Learnings for next cycles:
+  - Patterns: Client component pages in Next.js App Router use `"use client"` directive; `useCallback` + `useEffect` pattern for data fetching.
+  - Patterns: Modal implemented as a fixed overlay div (no external library needed for basic modals with Tailwind).
+  - Patterns: Inactive rows: apply `opacity-60 bg-gray-50` CSS classes conditionally; no separate "inactive" tab needed for simple toggle.
+  - Patterns: Form state managed with a single object; per-field errors stored in a Partial<FormType>; errors cleared on field change.
+---
