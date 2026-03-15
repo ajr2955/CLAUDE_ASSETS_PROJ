@@ -278,13 +278,13 @@ All four phases are in scope for this PRD. Phases must be implemented in order, 
 **Description:** As any authorized user, I want REST API endpoints for creating, reading, updating, and searching assets.
 
 **Acceptance Criteria:**
-- [ ] `GET /api/assets` returns paginated list of assets; supports filters: `family_id`, `type_id`, `status`, `lifecycle_stage_id`, `responsible_body_id`, `operational_body_id`, `ownership_model`, `is_placeholder_body`, `search` (full-text on name and code)
-- [ ] `GET /api/assets/:id` returns full asset detail including family, type, lifecycle stage, all responsible body roles, current budget envelopes, recent events (last 10), documents (count by type), and hierarchy (parent + direct children)
-- [ ] `POST /api/assets` creates a new asset; requires `asset_name`, `asset_family_id`, `asset_type_id`; auto-assigns `current_lifecycle_stage_id` to "Need Identification" and `current_status` to `in_formation`; auto-generates `asset_code` if not provided (format: `[FAMILY_PREFIX]-[YEAR]-[SEQUENCE]`)
-- [ ] `PUT /api/assets/:id` updates all non-computed fields; does not allow direct `current_lifecycle_stage_id` update (must use transition endpoint)
-- [ ] `GET /api/assets/:id/children` returns direct children in the hierarchy
-- [ ] `GET /api/assets/:id/ancestry` returns the full ancestor chain
-- [ ] Typecheck passes
+- [x] `GET /api/assets` returns paginated list of assets; supports filters: `family_id`, `type_id`, `status`, `lifecycle_stage_id`, `responsible_body_id`, `operational_body_id`, `ownership_model`, `is_placeholder_body`, `search` (full-text on name and code)
+- [x] `GET /api/assets/:id` returns full asset detail including family, type, lifecycle stage, all responsible body roles, current budget envelopes, recent events (last 10), documents (count by type), and hierarchy (parent + direct children)
+- [x] `POST /api/assets` creates a new asset; requires `asset_name`, `asset_family_id`, `asset_type_id`; auto-assigns `current_lifecycle_stage_id` to "Need Identification" and `current_status` to `in_formation`; auto-generates `asset_code` if not provided (format: `[FAMILY_PREFIX]-[YEAR]-[SEQUENCE]`)
+- [x] `PUT /api/assets/:id` updates all non-computed fields; does not allow direct `current_lifecycle_stage_id` update (must use transition endpoint)
+- [x] `GET /api/assets/:id/children` returns direct children in the hierarchy
+- [x] `GET /api/assets/:id/ancestry` returns the full ancestor chain
+- [x] Typecheck passes
 
 ---
 

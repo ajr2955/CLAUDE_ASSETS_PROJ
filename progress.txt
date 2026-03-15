@@ -77,6 +77,15 @@
   - Patterns: Placeholder body guard: check `existing.isPlaceholder && body.is_active === false && body.confirm_deactivate_placeholder !== true` to block unintended deactivation.
 ---
 
+## Iteration 9 — US-013: Asset CRUD API — core
+- What was done: Created 4 Next.js App Router route handlers for the Asset CRUD API. `src/app/api/assets/route.ts`: GET paginated asset list with 9 filter parameters (family_id, type_id, status, lifecycle_stage_id, responsible_body_id, operational_body_id, ownership_model, is_placeholder_body, search) plus pagination (page, per_page); POST create with required asset_name/asset_family_id/asset_type_id validation, family+type existence check, type-belongs-to-family check, auto-assignment to "Need Identification" stage, and asset_code auto-generation (format: PREFIX-YEAR-SEQUENCE) using family name mapping. `src/app/api/assets/[id]/route.ts`: GET full asset detail with all related data (family, type, stage, all 5 body roles, budget envelopes, last 10 events, document counts by type, parent + children); PUT update with explicit block on current_lifecycle_stage_id updates. `src/app/api/assets/[id]/children/route.ts`: GET direct children. `src/app/api/assets/[id]/ancestry/route.ts`: GET full ancestor chain walking up parent_asset_id chain with 20-level safety limit. Ran `tsc --noEmit` → clean.
+- Files affected: `app/src/app/api/assets/route.ts`, `app/src/app/api/assets/[id]/route.ts`, `app/src/app/api/assets/[id]/children/route.ts`, `app/src/app/api/assets/[id]/ancestry/route.ts`
+- Learnings for next cycles:
+  - Patterns: Asset code auto-generation uses a family-name-to-prefix map; count existing codes with that prefix to get the next sequence number.
+  - Patterns: Document counts by type require a `groupBy` query on the documents table then a secondary lookup for type names.
+  - Traps: Verify that asset_type belongs to the specified asset_family — the type-family FK check prevents mismatched classifications.
+---
+
 ## Iteration 6 — US-009: Asset Family CRUD API
 - What was done: Created `src/lib/prisma.ts` (Prisma client singleton — cast constructor to `any` to bypass Prisma 7 TS type requiring `accelerateUrl`) and `src/lib/api-response.ts` (shared `ok()`/`err()` helpers producing `{ data, error, meta }` envelope). Created Next.js App Router route handlers: `src/app/api/asset-families/route.ts` (GET all active families with type count, POST create with name validation + uniqueness check) and `src/app/api/asset-families/[id]/route.ts` (GET single family with asset types, PUT update name/description/is_active with duplicate name guard). Soft delete implemented via `is_active = false` on PUT. Ran `tsc --noEmit` → clean.
 - Files affected: `app/src/lib/prisma.ts`, `app/src/lib/api-response.ts`, `app/src/app/api/asset-families/route.ts`, `app/src/app/api/asset-families/[id]/route.ts`
