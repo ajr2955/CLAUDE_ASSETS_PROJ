@@ -365,7 +365,7 @@ All four phases are in scope for this PRD. Phases must be implemented in order, 
 **Description:** As a developer, I want route-level and resource-level access control so that users can only perform actions permitted by their role.
 
 **Acceptance Criteria:**
-- [ ] Middleware created that reads JWT `role` claim and enforces the following:
+- [x] Middleware created that reads JWT `role` claim and enforces the following:
   - `public`: read-only access to approved public asset data only
   - `contractor`: read own assigned work orders; create events and documents on assigned assets only
   - `department_user`: read all assets in their body; create and update assets in their body
@@ -373,9 +373,9 @@ All four phases are in scope for this PRD. Phases must be implemented in order, 
   - `asset_manager`: full CRUD including budgets and contracts
   - `planner`: full CRUD on planning entities and developer obligations; read all assets
   - `admin`: full access to all endpoints including user management and seed data
-- [ ] Attempting a forbidden action returns 403 with message indicating required role
-- [ ] All existing endpoints updated to require at minimum authenticated access (`public` role allowed only on explicitly public endpoints)
-- [ ] Typecheck passes
+- [x] Attempting a forbidden action returns 403 with message indicating required role
+- [x] All existing endpoints updated to require at minimum authenticated access (`public` role allowed only on explicitly public endpoints)
+- [x] Typecheck passes
 
 ---
 

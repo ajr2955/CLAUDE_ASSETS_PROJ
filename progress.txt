@@ -139,3 +139,13 @@
   - Patterns: Category filter for events requires filtering via the nested `eventType` relation: `where.eventType = { category }` — Prisma supports filtering on nested relations in `where` clauses.
   - Patterns: Events table has no `updated_at` — append-only design; `createdAt` is sufficient.
 ---
+
+## Iteration 15 — US-019: Role-based access control middleware
+- What was done: Created `src/lib/rbac.ts` with RBAC utility functions: `Role` type union, `ROLE_WEIGHT` map (public=0, contractor=10, department_user=20, operations_manager=30, planner=30, asset_manager=40, admin=100), `hasMinRole()`, `hasAnyRole()`, `requireAuth()` (returns JwtPayload or 401/403 NextResponse), and `requireAnyRole()` (exact-match role check). Added `export type { JwtPayload }` re-export to `src/lib/auth.ts` to fix the TS2459 import error in rbac.ts. Applied RBAC guards to all remaining unprotected endpoints: `assets/[id]/events` (department_user+), `events` GET+POST (department_user+), `budget-envelopes/[id]` GET (operations_manager+) / PUT+DELETE (asset_manager+), `documents` GET (department_user+) / POST (contractor+), `documents/upload` POST (contractor+), `documents/[id]` GET (department_user+) / DELETE (operations_manager+), `documents/[id]/verify` PUT (asset_manager+). Auth routes (login, refresh, register, me) use manual JWT checks and do not require the rbac middleware. Ran `tsc --noEmit` → clean.
+- Files affected: `app/src/lib/rbac.ts` (new), `app/src/lib/auth.ts` (re-export added), all document/event/budget-envelope route handlers
+- Learnings for next cycles:
+  - Patterns: `requireAuth(req, minRole)` returns `JwtPayload | NextResponse` — callers do `if (auth instanceof NextResponse) return auth;`.
+  - Patterns: `JwtPayload` must be re-exported from `auth.ts` via `export type { JwtPayload }` to allow rbac.ts to import it from `./auth`.
+  - Patterns: Role hierarchy is numeric weights — `planner` and `operations_manager` share weight 30 since they have parallel (not nested) privileges.
+  - Traps: Files may be auto-updated between edits — always re-read before editing if a linter/formatter is active.
+---
