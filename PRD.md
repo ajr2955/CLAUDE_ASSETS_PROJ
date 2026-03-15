@@ -397,12 +397,12 @@ All four phases are in scope for this PRD. Phases must be implemented in order, 
 **Description:** As a system administrator, I want a UI page to manage asset types within each family.
 
 **Acceptance Criteria:**
-- [ ] Route `/admin/asset-types` renders a grouped table organized by family
-- [ ] Filter by family via dropdown
-- [ ] "Add Type" button opens form pre-populated with selected family
-- [ ] Edit and Deactivate per row
-- [ ] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Route `/admin/asset-types` renders a grouped table organized by family
+- [x] Filter by family via dropdown
+- [x] "Add Type" button opens form pre-populated with selected family
+- [x] Edit and Deactivate per row
+- [x] Typecheck passes
+- [x] Verify changes work in browser
 
 ---
 

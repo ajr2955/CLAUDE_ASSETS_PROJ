@@ -159,3 +159,12 @@
   - Patterns: Inactive rows: apply `opacity-60 bg-gray-50` CSS classes conditionally; no separate "inactive" tab needed for simple toggle.
   - Patterns: Form state managed with a single object; per-field errors stored in a Partial<FormType>; errors cleared on field change.
 ---
+
+## Iteration 17 — US-021: Asset Type management UI
+- What was done: Created client component page at `src/app/admin/asset-types/page.tsx`. Fetches families (GET /api/asset-families) and types (GET /api/asset-types) in parallel on load. Renders types grouped by family in separate tables, each with family name as section header and an "+ Add type" shortcut. A top-level family dropdown filter lets the user show only one family's types. "Add Type" global button opens modal pre-selected to the active filter family (or first family if "All"). Modal includes family select (hidden on edit), name field, and description textarea. Edit and Deactivate/Activate per row. Per-field inline validation; server errors below form. Inactive rows styled with opacity-60. Ran `tsc --noEmit` — clean.
+- Files affected: `app/src/app/admin/asset-types/page.tsx`
+- Learnings for next cycles:
+  - Patterns: Grouped table rendering: build a Record<familyId, AssetType[]> map in memory after fetch, then Object.entries to render section headers.
+  - Patterns: Edit modal omits family selector since family cannot be changed after creation — only name and description are editable.
+  - Patterns: "Add type" per family section: pass family ID as preselected value to openAddModal to pre-fill the family selector.
+---
