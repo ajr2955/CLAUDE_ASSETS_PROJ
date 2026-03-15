@@ -292,15 +292,15 @@ All four phases are in scope for this PRD. Phases must be implemented in order, 
 **Description:** As an asset manager, I want to transition an asset from one lifecycle stage to another, with the system checking conditions and warning me if requirements are unmet but allowing me to proceed.
 
 **Acceptance Criteria:**
-- [ ] `POST /api/assets/:id/transition` accepts `{ to_stage_id, justification, override_warnings }` in body
-- [ ] Endpoint checks `lifecycle_transitions` table for a valid transition from current stage to requested stage (considering asset family)
-- [ ] If no valid transition exists, return 422 with message "No valid transition path from [current] to [requested] for this asset family"
-- [ ] If transition exists but conditions are unmet (missing required documents, missing required events), return 200 with `warnings` array listing each unmet condition and `transition_blocked: false` — the transition is NOT blocked, only warned
-- [ ] If `override_warnings: true` is passed, transition proceeds; a governance event `lifecycle_stage_changed` is auto-created with metadata including `warnings_overridden: true` and the justification text
-- [ ] If all conditions are met, transition proceeds; `lifecycle_stage_changed` event created without override flag
-- [ ] Asset `current_lifecycle_stage_id` is updated atomically with the event creation
-- [ ] Previous stage is recorded in the event metadata for full history
-- [ ] Typecheck passes
+- [x] `POST /api/assets/:id/transition` accepts `{ to_stage_id, justification, override_warnings }` in body
+- [x] Endpoint checks `lifecycle_transitions` table for a valid transition from current stage to requested stage (considering asset family)
+- [x] If no valid transition exists, return 422 with message "No valid transition path from [current] to [requested] for this asset family"
+- [x] If transition exists but conditions are unmet (missing required documents, missing required events), return 200 with `warnings` array listing each unmet condition and `transition_blocked: false` — the transition is NOT blocked, only warned
+- [x] If `override_warnings: true` is passed, transition proceeds; a governance event `lifecycle_stage_changed` is auto-created with metadata including `warnings_overridden: true` and the justification text
+- [x] If all conditions are met, transition proceeds; `lifecycle_stage_changed` event created without override flag
+- [x] Asset `current_lifecycle_stage_id` is updated atomically with the event creation
+- [x] Previous stage is recorded in the event metadata for full history
+- [x] Typecheck passes
 
 ---
 
