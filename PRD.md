@@ -236,13 +236,13 @@ All four phases are in scope for this PRD. Phases must be implemented in order, 
 **Description:** As a system administrator, I want REST API endpoints for managing asset types within a family.
 
 **Acceptance Criteria:**
-- [ ] `GET /api/asset-types` returns all active types, supports `?family_id=` filter
-- [ ] `GET /api/asset-types/:id` returns a single type
-- [ ] `POST /api/asset-types` creates a new type; requires `asset_family_id` and `name`
-- [ ] `PUT /api/asset-types/:id` updates name, description, is_active
-- [ ] Duplicate type name within the same family is rejected with 422
-- [ ] Soft delete only
-- [ ] Typecheck passes
+- [x] `GET /api/asset-types` returns all active types, supports `?family_id=` filter
+- [x] `GET /api/asset-types/:id` returns a single type
+- [x] `POST /api/asset-types` creates a new type; requires `asset_family_id` and `name`
+- [x] `PUT /api/asset-types/:id` updates name, description, is_active
+- [x] Duplicate type name within the same family is rejected with 422
+- [x] Soft delete only
+- [x] Typecheck passes
 
 ---
 
@@ -250,13 +250,13 @@ All four phases are in scope for this PRD. Phases must be implemented in order, 
 **Description:** As a system administrator, I want REST API endpoints for managing responsible bodies.
 
 **Acceptance Criteria:**
-- [ ] `GET /api/responsible-bodies` returns all bodies, supports `?body_type=` and `?include_placeholders=` filters
-- [ ] `GET /api/responsible-bodies/:id` returns body details including assets it is responsible for (count by role type)
-- [ ] `POST /api/responsible-bodies` creates a new body; requires `name` and `body_type`
-- [ ] `PUT /api/responsible-bodies/:id` updates name, description, body_type, is_active, resolution_note
-- [ ] Placeholder bodies cannot be set to `is_active = false` without explicit confirmation flag in payload
-- [ ] Soft delete only
-- [ ] Typecheck passes
+- [x] `GET /api/responsible-bodies` returns all bodies, supports `?body_type=` and `?include_placeholders=` filters
+- [x] `GET /api/responsible-bodies/:id` returns body details including assets it is responsible for (count by role type)
+- [x] `POST /api/responsible-bodies` creates a new body; requires `name` and `body_type`
+- [x] `PUT /api/responsible-bodies/:id` updates name, description, body_type, is_active, resolution_note
+- [x] Placeholder bodies cannot be set to `is_active = false` without explicit confirmation flag in payload
+- [x] Soft delete only
+- [x] Typecheck passes
 
 ---
 

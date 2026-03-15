@@ -53,6 +53,22 @@
   - Patterns: Events table has no `updated_at` — it is append-only by design; only `created_at` is needed.
 ---
 
+## Iteration 7 — US-010: Asset Type CRUD API
+- What was done: Created Next.js App Router route handlers for asset types: `src/app/api/asset-types/route.ts` (GET all active types with optional `?family_id=` filter including parent family info, POST create with `asset_family_id` + `name` validation, family existence check, and duplicate name-within-family rejection) and `src/app/api/asset-types/[id]/route.ts` (GET single type, PUT update name/description/is_active with duplicate name guard scoped to same family). Soft delete implemented via `is_active = false`. Ran `tsc --noEmit` → clean.
+- Files affected: `app/src/app/api/asset-types/route.ts`, `app/src/app/api/asset-types/[id]/route.ts`
+- Learnings for next cycles:
+  - Patterns: Prisma composite unique index `@@unique([assetFamilyId, name])` is accessed via `findUnique` with compound key object `{ assetFamilyId_name: { assetFamilyId, name } }`.
+  - Patterns: Duplicate check for updates must exclude the record being updated: `id: { not: id }`.
+---
+
+## Iteration 8 — US-011: Responsible Body CRUD API
+- What was done: Created Next.js App Router route handlers for responsible bodies: `src/app/api/responsible-bodies/route.ts` (GET all bodies with optional `?body_type=` and `?include_placeholders=` filters, includes asset counts across all 5 body roles via `_count`; POST create requiring `name` and `body_type` with uniqueness validation) and `src/app/api/responsible-bodies/[id]/route.ts` (GET single body with role-specific asset counts exposed as `asset_counts_by_role`; PUT update with placeholder deactivation guard — requires `confirm_deactivate_placeholder: true` flag to deactivate a placeholder body). Ran `tsc --noEmit` → clean.
+- Files affected: `app/src/app/api/responsible-bodies/route.ts`, `app/src/app/api/responsible-bodies/[id]/route.ts`
+- Learnings for next cycles:
+  - Traps: Prisma enums are NOT exported from `@prisma/client` — they live in `@/generated/prisma/client` (the custom output path configured in schema.prisma). Always import enums from that path.
+  - Patterns: Placeholder body guard: check `existing.isPlaceholder && body.is_active === false && body.confirm_deactivate_placeholder !== true` to block unintended deactivation.
+---
+
 ## Iteration 6 — US-009: Asset Family CRUD API
 - What was done: Created `src/lib/prisma.ts` (Prisma client singleton — cast constructor to `any` to bypass Prisma 7 TS type requiring `accelerateUrl`) and `src/lib/api-response.ts` (shared `ok()`/`err()` helpers producing `{ data, error, meta }` envelope). Created Next.js App Router route handlers: `src/app/api/asset-families/route.ts` (GET all active families with type count, POST create with name validation + uniqueness check) and `src/app/api/asset-families/[id]/route.ts` (GET single family with asset types, PUT update name/description/is_active with duplicate name guard). Soft delete implemented via `is_active = false` on PUT. Ran `tsc --noEmit` → clean.
 - Files affected: `app/src/lib/prisma.ts`, `app/src/lib/api-response.ts`, `app/src/app/api/asset-families/route.ts`, `app/src/app/api/asset-families/[id]/route.ts`
