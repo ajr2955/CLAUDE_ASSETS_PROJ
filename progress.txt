@@ -103,3 +103,12 @@
   - Patterns: Response envelope shape: `{ data, error, meta }` — `meta` is `null` for non-paginated responses.
   - Traps: Prisma 7 PrismaClient constructor TS type requires `accelerateUrl` field. Workaround: `new (PrismaClient as any)()` cast.
 ---
+
+## Iteration 11 — US-015: Budget Envelope CRUD API
+- What was done: Created 3 Next.js App Router route handlers. `src/app/api/budget-envelopes/route.ts`: GET paginated list with filters (asset_id, budget_type, fiscal_year, lifecycle_stage_id, responsible_body_id) and BudgetType enum validation; POST create requiring asset_id + budget_type + (fiscal_year OR is_multi_year), with asset/stage/body existence checks, variance_amount computed as approved - actual. `src/app/api/budget-envelopes/[id]/route.ts`: GET single envelope; PUT update mutable fields with variance_amount recomputed on every update; DELETE hard-deletes only when actual_amount = 0, otherwise soft-closes via is_closed flag. `src/app/api/assets/[id]/budgets/route.ts`: GET all envelopes for an asset grouped by budget_type with per-group totals and grand totals. Ran `tsc --noEmit` → clean.
+- Files affected: `app/src/app/api/budget-envelopes/route.ts`, `app/src/app/api/budget-envelopes/[id]/route.ts`, `app/src/app/api/assets/[id]/budgets/route.ts`
+- Learnings for next cycles:
+  - Patterns: `variance_amount = approved_amount - actual_amount` — recomputed on every PUT by reading the new values (falling back to existing stored values for fields not provided in payload).
+  - Patterns: Soft-close pattern: when hard delete is not allowed (actual_amount > 0), update `is_closed = true` and return a descriptive message instead of 422.
+  - Patterns: Grouping in memory after a single DB query (rather than multiple queries) is efficient for budget grouping logic.
+---

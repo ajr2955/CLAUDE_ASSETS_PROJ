@@ -308,13 +308,13 @@ All four phases are in scope for this PRD. Phases must be implemented in order, 
 **Description:** As a budget manager, I want API endpoints for creating and managing budget envelopes per asset and per lifecycle stage.
 
 **Acceptance Criteria:**
-- [ ] `GET /api/budget-envelopes` returns envelopes; supports filters: `asset_id`, `budget_type`, `fiscal_year`, `lifecycle_stage_id`, `responsible_body_id`
-- [ ] `GET /api/budget-envelopes/:id` returns envelope detail
-- [ ] `GET /api/assets/:id/budgets` returns all budget envelopes for an asset, grouped by budget_type, with totals
-- [ ] `POST /api/budget-envelopes` creates a new envelope; requires `asset_id`, `budget_type`; at least one of `fiscal_year` or `is_multi_year` must be set
-- [ ] `PUT /api/budget-envelopes/:id` updates approved_amount, committed_amount, actual_amount; `variance_amount` is recomputed on every update
-- [ ] `DELETE /api/budget-envelopes/:id` allowed only if `actual_amount = 0`; otherwise soft-close via an `is_closed` flag
-- [ ] Typecheck passes
+- [x] `GET /api/budget-envelopes` returns envelopes; supports filters: `asset_id`, `budget_type`, `fiscal_year`, `lifecycle_stage_id`, `responsible_body_id`
+- [x] `GET /api/budget-envelopes/:id` returns envelope detail
+- [x] `GET /api/assets/:id/budgets` returns all budget envelopes for an asset, grouped by budget_type, with totals
+- [x] `POST /api/budget-envelopes` creates a new envelope; requires `asset_id`, `budget_type`; at least one of `fiscal_year` or `is_multi_year` must be set
+- [x] `PUT /api/budget-envelopes/:id` updates approved_amount, committed_amount, actual_amount; `variance_amount` is recomputed on every update
+- [x] `DELETE /api/budget-envelopes/:id` allowed only if `actual_amount = 0`; otherwise soft-close via an `is_closed` flag
+- [x] Typecheck passes
 
 ---
 
