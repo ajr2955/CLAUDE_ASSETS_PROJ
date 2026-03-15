@@ -61,6 +61,14 @@
   - Patterns: Duplicate check for updates must exclude the record being updated: `id: { not: id }`.
 ---
 
+## Iteration 9 — US-012: Lifecycle Stage management API
+- What was done: Created Next.js App Router route handlers for lifecycle stages and transitions. `src/app/api/lifecycle-stages/route.ts` (GET all stages ordered by display_order), `src/app/api/lifecycle-stages/[id]/route.ts` (GET single stage with outgoing active transitions including toStage and appliesToFamily details), `src/app/api/lifecycle-transitions/route.ts` (GET all transitions with optional ?from_stage_id= and ?family_id= filters — family filter returns transitions for that family OR applies-to-all transitions; POST create requiring from_stage_id, to_stage_id, warning_message with existence validation), `src/app/api/lifecycle-transitions/[id]/route.ts` (PUT update required_document_types, required_events, warning_message, is_active). Lifecycle stages are read-only via API. Ran `tsc --noEmit` → clean.
+- Files affected: `app/src/app/api/lifecycle-stages/route.ts`, `app/src/app/api/lifecycle-stages/[id]/route.ts`, `app/src/app/api/lifecycle-transitions/route.ts`, `app/src/app/api/lifecycle-transitions/[id]/route.ts`
+- Learnings for next cycles:
+  - Patterns: For family-scoped transition queries, use `OR: [{ appliesToFamilyId: familyId }, { appliesToFamilyId: null }]` to return both family-specific and universal transitions.
+  - Patterns: `include: { transitionsFrom: { where: { isActive: true }, include: { toStage: ..., appliesToFamily: ... } } }` gives outgoing transitions for stage detail endpoint.
+---
+
 ## Iteration 8 — US-011: Responsible Body CRUD API
 - What was done: Created Next.js App Router route handlers for responsible bodies: `src/app/api/responsible-bodies/route.ts` (GET all bodies with optional `?body_type=` and `?include_placeholders=` filters, includes asset counts across all 5 body roles via `_count`; POST create requiring `name` and `body_type` with uniqueness validation) and `src/app/api/responsible-bodies/[id]/route.ts` (GET single body with role-specific asset counts exposed as `asset_counts_by_role`; PUT update with placeholder deactivation guard — requires `confirm_deactivate_placeholder: true` flag to deactivate a placeholder body). Ran `tsc --noEmit` → clean.
 - Files affected: `app/src/app/api/responsible-bodies/route.ts`, `app/src/app/api/responsible-bodies/[id]/route.ts`

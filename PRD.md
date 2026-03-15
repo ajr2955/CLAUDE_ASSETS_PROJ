@@ -264,13 +264,13 @@ All four phases are in scope for this PRD. Phases must be implemented in order, 
 **Description:** As a developer and administrator, I want API endpoints for reading lifecycle stages and managing allowed transitions so that the state machine is configurable.
 
 **Acceptance Criteria:**
-- [ ] `GET /api/lifecycle-stages` returns all stages ordered by `display_order`
-- [ ] `GET /api/lifecycle-stages/:id` returns stage details including outgoing transitions
-- [ ] `GET /api/lifecycle-transitions` returns all transitions, supports `?from_stage_id=` and `?family_id=` filters
-- [ ] `POST /api/lifecycle-transitions` creates a new transition rule; requires `from_stage_id`, `to_stage_id`, `warning_message`
-- [ ] `PUT /api/lifecycle-transitions/:id` updates required_document_types, required_events, warning_message, is_active
-- [ ] Lifecycle stages themselves are read-only via API (managed by migration/seed only)
-- [ ] Typecheck passes
+- [x] `GET /api/lifecycle-stages` returns all stages ordered by `display_order`
+- [x] `GET /api/lifecycle-stages/:id` returns stage details including outgoing transitions
+- [x] `GET /api/lifecycle-transitions` returns all transitions, supports `?from_stage_id=` and `?family_id=` filters
+- [x] `POST /api/lifecycle-transitions` creates a new transition rule; requires `from_stage_id`, `to_stage_id`, `warning_message`
+- [x] `PUT /api/lifecycle-transitions/:id` updates required_document_types, required_events, warning_message, is_active
+- [x] Lifecycle stages themselves are read-only via API (managed by migration/seed only)
+- [x] Typecheck passes
 
 ---
 
