@@ -1,0 +1,63 @@
+# Progress Log
+
+## Learnings
+- Prisma 7.x: datasource URL goes in `prisma.config.ts` (not `schema.prisma`). The `url` field in schema.prisma is rejected.
+- `npx prisma validate` is the correct command to validate schema syntax without a DB connection.
+- `npx prisma generate` works without a live DB (generates TS client from schema).
+- `npx tsc --noEmit` validates TypeScript without emitting files.
+- When no PostgreSQL is available locally, migration SQL is written manually and validated via schema validation + typecheck.
+- Project stack: Next.js 15 (App Router), TypeScript, Prisma 7, PostgreSQL. Code lives in `app/` subdirectory.
+- Prisma 7 PrismaClient constructor requires either `accelerateUrl` or `adapter` — TS type rejects plain `{ log: [...] }` options. Workaround: cast constructor to `any` and type the result as `PrismaClient`.
+
+---
+
+## Iteration 1 — Project Initialization + US-001: Asset Family schema and migration
+- What was done: Initialized Next.js 15 TypeScript project in `app/`, installed Prisma 7 with dotenv, ran `prisma init`. Added `AssetFamily`, `AssetType` (stub), and `Asset` (stub) models to `prisma/schema.prisma`. Created migration SQL at `prisma/migrations/0001_asset_families/migration.sql` with CREATE TABLE + INSERT seed data for all 9 families. Generated Prisma client. Ran `tsc --noEmit` — clean.
+- Files affected: `app/prisma/schema.prisma`, `app/prisma/migrations/0001_asset_families/migration.sql`, `app/prisma.config.ts`
+- Learnings for next cycles:
+  - Patterns: Stub models (AssetType, Asset) are needed in schema.prisma for relations to compile. Expand them fully in their respective US stories.
+  - Traps: Prisma 7 rejects `url = env(...)` in schema.prisma datasource block.
+  - Helpful context: Migration SQL uses `gen_random_uuid()` from pgcrypto extension. All seed data uses INSERT without explicit IDs (auto-generated).
+---
+
+## Iteration 2 — US-005: Asset core schema and migration
+- What was done: The `Asset` model was already fully defined in `schema.prisma` from a prior session (including all enums `AssetStatus`, `OwnershipModel`, all FK relations to AssetFamily, AssetType, LifecycleStage, ResponsibleBody x5, self-referential parent, and all nullable stub FKs for Phase 2/3). Created migration SQL at `prisma/migrations/0005_assets/migration.sql` with: two CREATE TYPE enums, CREATE TABLE assets with all columns and FK constraints (Phase 3 FK stubs omitted from REFERENCES since target tables don't exist yet), and 5 CREATE INDEX statements. Ran `prisma validate` → valid. Ran `prisma generate` → success. Ran `tsc --noEmit` → clean.
+- Files affected: `app/prisma/migrations/0005_assets/migration.sql`
+- Learnings for next cycles:
+  - Patterns: Phase 3/future FK stubs (planning_entity_id, developer_obligation_id, active_budget_envelope_id, location_id) are declared as plain UUID columns without REFERENCES in the SQL — the FK constraints will be added via ALTER TABLE in the migrations where those target tables are created.
+  - Traps: Do not add REFERENCES for tables that don't exist yet in earlier migrations; it causes FK constraint errors at runtime even if Prisma schema compiles fine.
+  - Helpful context: `defaultMode` in settings.local.json belongs inside the `permissions` object per Claude Code schema validation, not at root level.
+---
+
+## Iteration 3 — US-006: Budget Envelope schema and migration
+- What was done: Added `BudgetType` enum and `BudgetEnvelope` model to `prisma/schema.prisma`. Added reverse relations to `Asset`, `LifecycleStage`, and `ResponsibleBody`. Extra fields `isClosed` and `varianceEventCreated` added now for Phase 4 business logic. Created migration SQL at `prisma/migrations/0006_budget_envelopes/migration.sql` with CREATE TYPE budget_type, CREATE TABLE budget_envelopes, and 4 indexes. Ran `prisma validate` → valid, `prisma generate` → success, `tsc --noEmit` → clean. Marked US-006 complete in PRD.md.
+- Files affected: `app/prisma/schema.prisma`, `app/prisma/migrations/0006_budget_envelopes/migration.sql`
+- Learnings for next cycles:
+  - Patterns: Always add reverse relation arrays to all referenced models when creating a new model with FK relations.
+  - Patterns: Extra utility fields (is_closed, variance_event_created) can be added early if needed for later phases without breaking anything.
+---
+
+## Iteration 4 — US-007: Document schema and migration
+- What was done: Added `DocumentType` model, `AttachedEntityType` enum, and `Document` model to `prisma/schema.prisma`. Added `documents` reverse relation to `LifecycleStage`. User FK columns (`uploaded_by_user_id`, `verified_by_user_id`) are plain UUID nullable stubs — no REFERENCES since users table is created in US-018. Created migration SQL at `prisma/migrations/0007_documents/migration.sql` with: CREATE TABLE document_types + 26 INSERT seed rows, CREATE TYPE attached_entity_type, CREATE TABLE documents with all columns, and 3 indexes. Ran `prisma validate` → valid, `prisma generate` → success, `tsc --noEmit` → clean.
+- Files affected: `app/prisma/schema.prisma`, `app/prisma/migrations/0007_documents/migration.sql`
+- Learnings for next cycles:
+  - Patterns: FK stubs to future tables (users) are plain UUID columns in SQL — REFERENCES added via ALTER TABLE in the migration that creates the target table.
+  - Patterns: `is_deleted` soft-delete flag added directly to documents table to support the soft-delete requirement from US-016.
+---
+
+## Iteration 5 — US-008: Event schema and migration
+- What was done: Added `EventCategory` enum, `EventType` model, and `Event` model to `prisma/schema.prisma`. Added `events` reverse relation to `Asset`, `LifecycleStage`, and `ResponsibleBody` (named relation `"EventResponsibleBody"` to avoid ambiguity). `recorded_by_user_id` is a plain UUID nullable stub — no REFERENCES since users table created in US-018. Created migration SQL at `prisma/migrations/0008_events/migration.sql` with: CREATE TYPE event_category, CREATE TABLE event_types, INSERT seed data for all 34 event types (10 business, 16 operational, 8 governance), CREATE TABLE events with all columns, and 4 indexes. Ran `prisma validate` → valid, `prisma generate` → success, `tsc --noEmit` → clean. Marked US-008 complete in PRD.md.
+- Files affected: `app/prisma/schema.prisma`, `app/prisma/migrations/0008_events/migration.sql`
+- Learnings for next cycles:
+  - Patterns: When a model has multiple FK relations to the same table (e.g., ResponsibleBody), each relation needs a unique Prisma relation name to avoid ambiguity errors.
+  - Patterns: Events table has no `updated_at` — it is append-only by design; only `created_at` is needed.
+---
+
+## Iteration 6 — US-009: Asset Family CRUD API
+- What was done: Created `src/lib/prisma.ts` (Prisma client singleton — cast constructor to `any` to bypass Prisma 7 TS type requiring `accelerateUrl`) and `src/lib/api-response.ts` (shared `ok()`/`err()` helpers producing `{ data, error, meta }` envelope). Created Next.js App Router route handlers: `src/app/api/asset-families/route.ts` (GET all active families with type count, POST create with name validation + uniqueness check) and `src/app/api/asset-families/[id]/route.ts` (GET single family with asset types, PUT update name/description/is_active with duplicate name guard). Soft delete implemented via `is_active = false` on PUT. Ran `tsc --noEmit` → clean.
+- Files affected: `app/src/lib/prisma.ts`, `app/src/lib/api-response.ts`, `app/src/app/api/asset-families/route.ts`, `app/src/app/api/asset-families/[id]/route.ts`
+- Learnings for next cycles:
+  - Patterns: Next.js 15 App Router dynamic route params are now async — `params` must be `await`-ed in route handlers: `const { id } = await params`.
+  - Patterns: Response envelope shape: `{ data, error, meta }` — `meta` is `null` for non-paginated responses.
+  - Traps: Prisma 7 PrismaClient constructor TS type requires `accelerateUrl` field. Workaround: `new (PrismaClient as any)()` cast.
+---
