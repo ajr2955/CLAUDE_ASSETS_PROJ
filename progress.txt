@@ -121,3 +121,11 @@
   - Patterns: Soft-delete on documents: isDeleted flag on the record; GET and DELETE both check `isDeleted` to treat deleted docs as 404.
   - Patterns: `is_required` and `is_verified` query params: compare to the string `"true"` since searchParams always returns strings.
 ---
+
+## Iteration 13 — US-017: Event creation and retrieval API
+- What was done: Created `src/app/api/events/route.ts` (GET paginated events with 8 filter params including category filter via nested `eventType.category` relation; POST create requiring event_type_id + asset_id, optional occurred_at defaulting to now, FK validation for all provided IDs, is_system_generated always false for user-created events — system creates governance events via transition/other automated logic) and `src/app/api/assets/[id]/events/route.ts` (GET full event log for an asset ordered by occurred_at descending with pagination). No PUT/DELETE endpoints — events are immutable by design. Ran `tsc --noEmit` → clean.
+- Files affected: `app/src/app/api/events/route.ts`, `app/src/app/api/assets/[id]/events/route.ts`
+- Learnings for next cycles:
+  - Patterns: Category filter for events requires filtering via the nested `eventType` relation: `where.eventType = { category }` — Prisma supports filtering on nested relations in `where` clauses.
+  - Patterns: Events table has no `updated_at` — append-only design; `createdAt` is sufficient.
+---

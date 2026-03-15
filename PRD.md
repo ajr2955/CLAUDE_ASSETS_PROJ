@@ -337,12 +337,12 @@ All four phases are in scope for this PRD. Phases must be implemented in order, 
 **Description:** As any authorized user, I want to create events on assets and retrieve the event log.
 
 **Acceptance Criteria:**
-- [ ] `POST /api/events` creates a new event; requires `event_type_id`, `asset_id`; `occurred_at` defaults to now if not provided
-- [ ] `GET /api/events` returns paginated events; supports filters: `asset_id`, `event_type_id`, `category`, `lifecycle_stage_id`, `responsible_body_id`, `occurred_at_from`, `occurred_at_to`, `is_system_generated`
-- [ ] `GET /api/assets/:id/events` returns full event log for an asset ordered by `occurred_at` descending
-- [ ] Events cannot be updated or deleted via API (immutable log)
-- [ ] System-generated governance events are created automatically by the transition endpoint (US-014), budget variance logic (Phase 4), and document completeness rules (Phase 4)
-- [ ] Typecheck passes
+- [x] `POST /api/events` creates a new event; requires `event_type_id`, `asset_id`; `occurred_at` defaults to now if not provided
+- [x] `GET /api/events` returns paginated events; supports filters: `asset_id`, `event_type_id`, `category`, `lifecycle_stage_id`, `responsible_body_id`, `occurred_at_from`, `occurred_at_to`, `is_system_generated`
+- [x] `GET /api/assets/:id/events` returns full event log for an asset ordered by `occurred_at` descending
+- [x] Events cannot be updated or deleted via API (immutable log)
+- [x] System-generated governance events are created automatically by the transition endpoint (US-014), budget variance logic (Phase 4), and document completeness rules (Phase 4)
+- [x] Typecheck passes
 
 ---
 
