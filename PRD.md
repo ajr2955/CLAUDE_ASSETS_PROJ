@@ -679,14 +679,14 @@ All four phases are in scope for this PRD. Phases must be implemented in order, 
 **Description:** As a developer and user, I want to query and manage asset hierarchy — parent-child relationships — so that buildings, floors, gardens, and their components can be modeled correctly.
 
 **Acceptance Criteria:**
-- [ ] `assets.parent_asset_id` FK (added in US-005) is now fully utilized
-- [ ] `GET /api/assets/:id/children` returns direct children only
-- [ ] `GET /api/assets/:id/descendants` returns all descendants recursively (via recursive CTE), up to 5 levels deep
-- [ ] `GET /api/assets/:id/ancestry` returns full ancestor chain from root to current
-- [ ] `POST /api/assets/:id/set-parent` accepts `{ parent_asset_id }` and sets or changes parent; validates that setting parent does not create a circular reference
-- [ ] Asset list view (`GET /api/assets`) supports `?root_only=true` to return only top-level assets
-- [ ] `GET /api/assets/tree` returns a nested tree structure for a given root asset or family
-- [ ] Typecheck passes
+- [x] `assets.parent_asset_id` FK (added in US-005) is now fully utilized
+- [x] `GET /api/assets/:id/children` returns direct children only
+- [x] `GET /api/assets/:id/descendants` returns all descendants recursively (via recursive CTE), up to 5 levels deep
+- [x] `GET /api/assets/:id/ancestry` returns full ancestor chain from root to current
+- [x] `POST /api/assets/:id/set-parent` accepts `{ parent_asset_id }` and sets or changes parent; validates that setting parent does not create a circular reference
+- [x] Asset list view (`GET /api/assets`) supports `?root_only=true` to return only top-level assets
+- [x] `GET /api/assets/tree` returns a nested tree structure for a given root asset or family
+- [x] Typecheck passes
 
 ---
 
