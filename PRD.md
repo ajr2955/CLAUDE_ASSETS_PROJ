@@ -738,13 +738,13 @@ All four phases are in scope for this PRD. Phases must be implemented in order, 
 **Description:** As a planner or asset manager, I want API endpoints for managing handover records that formally transfer an asset between bodies.
 
 **Acceptance Criteria:**
-- [ ] `GET /api/handover-records` returns records; supports filters: `asset_id`, `handover_status`, `delivered_by_body_id`, `received_by_body_id`
-- [ ] `GET /api/assets/:id/handover-records` returns all handover records for an asset
-- [ ] `POST /api/handover-records` creates a handover record with `status = pending`; an `asset_delivered` event is auto-created on the asset
-- [ ] `PUT /api/handover-records/:id/accept` sets status to `accepted` or `accepted_with_conditions`; if conditions, requires `conditions_description`; auto-creates `asset_received` event on asset; updates `asset.handover_date` to the handover record's `handover_date`
-- [ ] `PUT /api/handover-records/:id/reject` sets status to `rejected`; requires rejection reason in payload; auto-creates event
-- [ ] If `missing_documents` list is non-empty at time of acceptance, a `missing_document_detected` governance event is auto-created
-- [ ] Typecheck passes
+- [x] `GET /api/handover-records` returns records; supports filters: `asset_id`, `handover_status`, `delivered_by_body_id`, `received_by_body_id`
+- [x] `GET /api/assets/:id/handover-records` returns all handover records for an asset
+- [x] `POST /api/handover-records` creates a handover record with `status = pending`; an `asset_delivered` event is auto-created on the asset
+- [x] `PUT /api/handover-records/:id/accept` sets status to `accepted` or `accepted_with_conditions`; if conditions, requires `conditions_description`; auto-creates `asset_received` event on asset; updates `asset.handover_date` to the handover record's `handover_date`
+- [x] `PUT /api/handover-records/:id/reject` sets status to `rejected`; requires rejection reason in payload; auto-creates event
+- [x] If `missing_documents` list is non-empty at time of acceptance, a `missing_document_detected` governance event is auto-created
+- [x] Typecheck passes
 
 ---
 
