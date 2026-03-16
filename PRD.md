@@ -1047,13 +1047,13 @@ All four phases are in scope for this PRD. Phases must be implemented in order, 
 **Description:** As a planner, I want a dedicated page to manage planning entities and track their progress toward becoming operational assets.
 
 **Acceptance Criteria:**
-- [ ] Route `/planning` renders a list of planning entities with columns: planning_code, name, family, type, status badge, target delivery date, overdue indicator, linked developer obligation flag, placeholder receiving body warning
-- [ ] Filter panel: family, type, status, planning body, overdue toggle, placeholder body toggle
-- [ ] "Add Planning Entity" button opens creation form
-- [ ] Each row links to a planning entity detail page
-- [ ] Planning entity detail page shows: all fields, linked developer obligation (if any), documents tab, events tab, milestone progress bar
-- [ ] "Convert to Asset" button on detail page (for `planner` and `admin`); opens a confirmation modal showing what will be created; on confirm, redirects to new asset detail page
-- [ ] Typecheck passes
+- [x] Route `/planning` renders a list of planning entities with columns: planning_code, name, family, type, status badge, target delivery date, overdue indicator, linked developer obligation flag, placeholder receiving body warning
+- [x] Filter panel: family, type, status, planning body, overdue toggle, placeholder body toggle
+- [x] "Add Planning Entity" button opens creation form
+- [x] Each row links to a planning entity detail page
+- [x] Planning entity detail page shows: all fields, linked developer obligation (if any), documents tab, events tab, milestone progress bar
+- [x] "Convert to Asset" button on detail page (for `planner` and `admin`); opens a confirmation modal showing what will be created; on confirm, redirects to new asset detail page
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ---

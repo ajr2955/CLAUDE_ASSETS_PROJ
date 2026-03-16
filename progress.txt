@@ -545,3 +545,11 @@
   - Patterns: Status auto-logic: expected_amount>0 && actual_amount=0 → expected; actual>=expected → received; actual>0 && actual<expected → partial.
   - Patterns: YTD summary: filter records with periodStart >= Jan 1 current year, sum in-memory over record set.
   - Next task: US-056 — Planning Entity management UI.
+
+## US-056 — Planning Entity management UI (2026-03-16)
+- Files affected: `app/src/app/planning/page.tsx`, `app/src/app/planning/[id]/page.tsx`
+- Learnings for next cycles:
+  - Patterns: `useParams` is from `next/navigation` in App Router, not from `react`.
+  - Patterns: Planning list page: family/type/status/body filter dropdowns, overdue toggle, placeholder toggle, table with badge-coloured status, red target date if overdue, TBD Body/Dev Obligation flags per row.
+  - Patterns: Planning detail page: milestone progress bar (6 stages: identified→planning_approved→tender→awarded→construction→converted_to_asset), tabs (overview/documents/events), convert-to-asset confirmation modal that redirects to new asset.
+  - Next task: US-056 browser verify → US-057 Developer Obligation tracking UI.
