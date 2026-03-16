@@ -494,3 +494,14 @@
   - Patterns: Overdue filter combines targetDeliveryDate < now WITH status NOT IN [delivered, converted_to_asset] — both conditions in same where clause.
   - Patterns: Blocking status=converted_to_asset in PUT prevents accidental bypassing of the conversion endpoint.
   - Next task: US-051 — Developer Obligation API.
+
+---
+
+## Iteration 49 — US-051: Developer Obligation API
+- What was done: Created 3 Next.js App Router route handlers. `src/app/api/developer-obligations/route.ts`: GET list with filters (status/funding_model enum-validated, developer_name contains insensitive, family_id, receiving_body_is_placeholder, overdue flag); POST create with uniqueness check on obligation_reference. `src/app/api/developer-obligations/[id]/route.ts`: GET full detail; PUT update with auto-governance events — if actual_delivery_date differs from committed by > 30 days and planningEntity.linkedAssetId exists, creates `overdue_milestone_flagged` event; if gaps_identified is set and linkedAssetId exists, creates `asset_at_risk_flagged` event. `src/app/api/developer-obligations/[id]/milestone/[index]/route.ts`: PUT patches a specific milestone in the JSONB array by index. Ran `tsc --noEmit` — clean.
+- Files affected: `app/src/app/api/developer-obligations/route.ts` (new), `app/src/app/api/developer-obligations/[id]/route.ts` (new), `app/src/app/api/developer-obligations/[id]/milestone/[index]/route.ts` (new)
+- Learnings for next cycles:
+  - Patterns: JSONB array update by index: fetch record, map over array updating index i, save updated array.
+  - Patterns: Cast `Milestone[]` to `object[]` for Prisma JSONB input — `Milestone[]` doesn't satisfy `InputJsonValue`.
+  - Patterns: Governance events after update: fire them after the main update query completes, using Promise.all for parallel creation.
+  - Next task: US-052 — Allocation API.

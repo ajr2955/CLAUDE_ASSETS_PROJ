@@ -976,14 +976,14 @@ All four phases are in scope for this PRD. Phases must be implemented in order, 
 **Description:** As a planner, I want API endpoints for managing developer obligations and tracking their delivery milestones.
 
 **Acceptance Criteria:**
-- [ ] `GET /api/developer-obligations` returns obligations; supports filters: `status`, `developer_name`, `promised_asset_family_id`, `overdue` (boolean), `receiving_body_is_placeholder`
-- [ ] `GET /api/developer-obligations/:id` returns full detail including linked planning entity and milestones
-- [ ] `POST /api/developer-obligations` creates obligation
-- [ ] `PUT /api/developer-obligations/:id` updates all mutable fields including milestones array
-- [ ] `PUT /api/developer-obligations/:id/milestone/:index` updates a specific milestone's actual_date and status within the milestones JSONB array
-- [ ] If `actual_delivery_date` is set and differs from `committed_delivery_date` by more than 30 days, a `overdue_milestone_flagged` governance event is auto-created on the linked asset if one exists
-- [ ] If `gaps_identified` is populated, a governance event `asset_at_risk_flagged` is auto-created
-- [ ] Typecheck passes
+- [x] `GET /api/developer-obligations` returns obligations; supports filters: `status`, `developer_name`, `promised_asset_family_id`, `overdue` (boolean), `receiving_body_is_placeholder`
+- [x] `GET /api/developer-obligations/:id` returns full detail including linked planning entity and milestones
+- [x] `POST /api/developer-obligations` creates obligation
+- [x] `PUT /api/developer-obligations/:id` updates all mutable fields including milestones array
+- [x] `PUT /api/developer-obligations/:id/milestone/:index` updates a specific milestone's actual_date and status within the milestones JSONB array
+- [x] If `actual_delivery_date` is set and differs from `committed_delivery_date` by more than 30 days, a `overdue_milestone_flagged` governance event is auto-created on the linked asset if one exists
+- [x] If `gaps_identified` is populated, a governance event `asset_at_risk_flagged` is auto-created
+- [x] Typecheck passes
 
 ---
 
