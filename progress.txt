@@ -563,3 +563,22 @@
   - Patterns: Milestone timeline: map over JSONB array, compute status (completed/overdue/pending) from actual_date and target_date comparison, render colored dot + badge + target vs actual dates.
   - Patterns: Flag Gap flow: PUT to existing obligation endpoint with gaps_identified field; API auto-creates asset_at_risk_flagged governance event if linked asset exists.
   - Next task: US-058 — Asset transfer and body assignment UI.
+
+## Iteration 55 — US-058: Asset transfer and body assignment UI
+- What was done: Added full body assignment editing UI to the asset detail page (`src/app/assets/[id]/page.tsx`). Added `BodyTransfer` interface. Added 10+ new state variables for: edit mode toggle, all bodies for search, per-role typeahead query/open state, pending transfer confirmation data, transfer reason, submission state, body transfer history. Added 3 new callbacks: `fetchAllBodies` (lazy-loads all responsible bodies), `fetchBodyTransferHistory`, `handleBodyTransferConfirm`. Modified the Responsible Bodies section to: show "Edit Assignments" button that toggles edit mode; in view mode render the existing BodyCard grid; in edit mode render 5 typeahead inputs (one per role) that filter loaded bodies and show placeholder ⚠ TBD badge; selecting a body in any typeahead opens a confirmation modal. Confirmation modal shows: role, from-body, to-body (with placeholder warning if applicable), required reason textarea, and confirm button. On confirm, `POST /api/body-transfers` is called atomically, asset re-fetches, toast shown. Added collapsible "Body Transfer History" section below the responsibility cards showing all past transfers with date and reason. TypeScript check passes cleanly.
+- Files affected: `app/src/app/assets/[id]/page.tsx` (modified)
+- Learnings for next cycles:
+  - Patterns: IIFE `{(() => { const BODY_ROLES = [...]; return ...; })()}` inside JSX works well for defining local arrays used inside the render without polluting component scope.
+  - Patterns: Typeahead onBlur with setTimeout(200ms) pattern allows onMouseDown to fire before the dropdown closes — prevents selection loss.
+  - Patterns: `fetchDataRef.current()` in the transfer confirm callback re-fetches asset without circular dependency.
+  - Patterns: app is a git submodule — `git add src/...` must be run inside `app/` directory, not the root.
+  - Next task: US-059 — Revenue and collection UI on asset detail page.
+
+## Iteration 56 — US-059: Revenue and collection UI on asset detail page
+- What was done: Added a "Revenue" tab to the asset detail page (`src/app/assets/[id]/page.tsx`). Added 4 new interfaces: `RevenueRecord`, `RevenueSummary`, `AddRevenueForm`, `MarkReceivedForm`. Updated `AssetDetail.budgetEnvelopes` from `unknown[]` to typed array to enable visibility check. Added `activeTab` union to include `"revenue"`. Added 12 state variables for revenue data, add-record modal, and mark-received modal. Added 3 callbacks: `fetchRevenueData` (parallel fetch of summary + records), `handleAddRevenueSubmit`, `handleMarkReceived`. Updated `useEffect` for tab switching to call `fetchRevenueData` on revenue tab activation. Updated tab navigation: renders tabs via IIFE that computes `showRevenueTab` (true if any budget envelope has type `lease_income` or `service_charges`), conditionally appending "revenue" to the tabs array. Revenue tab content: 3-card YTD summary row (expected/received/overdue), records table grouped by period (YYYY-MM), per-row "Mark Received" button, Add Revenue Record modal with full form fields, Mark Received modal. Overdue detection: `status === "expected" && periodEnd < now`. TypeScript check passes cleanly.
+- Files affected: `app/src/app/assets/[id]/page.tsx` (modified)
+- Learnings for next cycles:
+  - Patterns: Tab conditional visibility: compute a flag from existing asset data (budgetEnvelopes), spread extra tab into the array only when flag is true; tabs array cast to `string[]` for the map to avoid TS const inference issues.
+  - Patterns: `setActiveTab(tab as typeof activeTab)` needed when tab is typed as `string` after cast.
+  - Patterns: Revenue records grouped by `periodStart.slice(0, 7)` (YYYY-MM) keys, sorted descending; each group rendered as a sub-table.
+  - Next task: US-060 — Document completeness rules engine.

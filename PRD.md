@@ -1092,13 +1092,13 @@ All four phases are in scope for this PRD. Phases must be implemented in order, 
 **Description:** As an asset manager, I want to view and manage revenue records for revenue-generating assets.
 
 **Acceptance Criteria:**
-- [ ] Asset detail page includes a "Revenue" tab, visible only for assets with `is_revenue_generating` allocations or `lease_income` / `service_charges` budget envelopes
-- [ ] Tab shows: revenue summary card (expected YTD, received YTD, overdue YTD in red), and a table of revenue records grouped by period
-- [ ] "Add Revenue Record" button opens form: revenue_type, period_start, period_end, expected_amount, allocation/contract linkage
-- [ ] Each record has a "Mark Received" action that opens a small form for actual_amount and payment_date
-- [ ] Overdue records (expected but unpaid past period_end) highlighted in red
-- [ ] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Asset detail page includes a "Revenue" tab, visible only for assets with `is_revenue_generating` allocations or `lease_income` / `service_charges` budget envelopes
+- [x] Tab shows: revenue summary card (expected YTD, received YTD, overdue YTD in red), and a table of revenue records grouped by period
+- [x] "Add Revenue Record" button opens form: revenue_type, period_start, period_end, expected_amount, allocation/contract linkage
+- [x] Each record has a "Mark Received" action that opens a small form for actual_amount and payment_date
+- [x] Overdue records (expected but unpaid past period_end) highlighted in red
+- [x] Typecheck passes
+- [x] Verify changes work in browser
 
 ---
 
