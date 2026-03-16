@@ -285,3 +285,12 @@
   - Patterns: Multiple FK relations from HandoverRecord to ResponsibleBody require named relations: `@relation("HandoverDeliveredByBody")` and `@relation("HandoverReceivedByBody")` — and matching named reverse relations on ResponsibleBody.
   - Patterns: An asset having multiple handover records is supported naturally by a one-to-many relation (asset has handoverRecords array) — no special modeling needed.
 ---
+
+## Iteration 30 — US-034: GIS Location schema and migration
+- What was done: Added `GeometryType` enum and `GisLocation` model to `prisma/schema.prisma`. Added `gisLocation GisLocation?` reverse relation to `Asset`. Created migration SQL at `prisma/migrations/0034_gis_locations/migration.sql` with CREATE TYPE geometry_type, CREATE TABLE gis_locations (with unique asset_id FK, lat/lng decimals, geojson JSONB, neighborhood/district/parcel/map_layer fields), ALTER TABLE assets ADD CONSTRAINT to resolve the location_id FK stub from US-005, and 3 CREATE INDEX statements (lat+lng compound, district, neighborhood). Ran `prisma validate` — valid, `prisma generate` — success, `tsc --noEmit` — clean.
+- Files affected: `app/prisma/schema.prisma`, `app/prisma/migrations/0034_gis_locations/migration.sql`
+- Learnings for next cycles:
+  - Patterns: One-to-one relation in Prisma: `@unique` on the FK side + `GisLocation?` on the Asset side. The GisLocation model holds the FK to assets.
+  - Patterns: Resolving a pre-declared FK stub (assets.location_id) via ALTER TABLE ADD CONSTRAINT in the migration that creates the target table — same approach used for events and documents user FKs.
+  - Patterns: Separate indexes for district and neighborhood are better than a compound index since they're queried independently; lat+lng compound index for proximity queries.
+---

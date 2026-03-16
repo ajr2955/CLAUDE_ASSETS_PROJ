@@ -655,7 +655,7 @@ All four phases are in scope for this PRD. Phases must be implemented in order, 
 **Description:** As a developer, I want a `gis_locations` table to store geographic coordinates and spatial metadata for assets, enabling map-based queries.
 
 **Acceptance Criteria:**
-- [ ] Table `gis_locations` created with columns:
+- [x] Table `gis_locations` created with columns:
   - `id` (UUID PK)
   - `asset_id` (FK → assets, unique — one primary location per asset; secondary can use metadata)
   - `latitude` (decimal, precision 10, scale 8, nullable)
@@ -668,10 +668,10 @@ All four phases are in scope for this PRD. Phases must be implemented in order, 
   - `parcel_number` (string, nullable — cadastral reference)
   - `map_layer_reference` (string, nullable — external GIS system ID)
   - `created_at`, `updated_at`
-- [ ] Foreign key from `assets.location_id` to `gis_locations.id` now resolves
-- [ ] Index on `latitude`, `longitude`, `district`, `neighborhood`
-- [ ] Migration runs cleanly
-- [ ] Typecheck passes
+- [x] Foreign key from `assets.location_id` to `gis_locations.id` now resolves
+- [x] Index on `latitude`, `longitude`, `district`, `neighborhood`
+- [x] Migration runs cleanly
+- [x] Typecheck passes
 
 ---
 
