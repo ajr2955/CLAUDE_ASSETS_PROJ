@@ -276,3 +276,12 @@
   - Patterns: CHECK constraint on integer range (`condition_score BETWEEN 1 AND 5`) enforced in SQL migration only — Prisma schema has no native range validator.
   - Patterns: Named relation `@relation("ConditionInspectedByBody")` required since ResponsibleBody now has multiple ConditionRecord-related entries would otherwise be ambiguous.
 ---
+
+## Iteration 29 — US-033: Handover Record schema and migration
+- What was done: Added `HandoverStatus` enum (pending, accepted, accepted_with_conditions, rejected) and `HandoverRecord` model to `prisma/schema.prisma`. Added named reverse relations `handoverRecordsDelivered HandoverRecord[] @relation("HandoverDeliveredByBody")` and `handoverRecordsReceived HandoverRecord[] @relation("HandoverReceivedByBody")` to `ResponsibleBody`, and `handoverRecords HandoverRecord[]` to `Asset`. User FKs (delivered_by_user_id, received_by_user_id) are plain UUID nullable stubs — no REFERENCES since user FK constraints can be added later via ALTER TABLE. Created migration SQL at `prisma/migrations/0033_handover_records/migration.sql` with CREATE TYPE handover_status, CREATE TABLE handover_records with all columns and FK constraints to assets and responsible_bodies, and 3 CREATE INDEX statements. Ran `prisma validate` → valid, `prisma generate` → success, `tsc --noEmit` → clean.
+- Files affected: `app/prisma/schema.prisma`, `app/prisma/migrations/0033_handover_records/migration.sql`
+- Learnings for next cycles:
+  - Patterns: HandoverStatus enum value `accepted_with_conditions` contains underscores — valid in both Prisma enums and PostgreSQL enum types.
+  - Patterns: Multiple FK relations from HandoverRecord to ResponsibleBody require named relations: `@relation("HandoverDeliveredByBody")` and `@relation("HandoverReceivedByBody")` — and matching named reverse relations on ResponsibleBody.
+  - Patterns: An asset having multiple handover records is supported naturally by a one-to-many relation (asset has handoverRecords array) — no special modeling needed.
+---

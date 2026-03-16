@@ -628,7 +628,7 @@ All four phases are in scope for this PRD. Phases must be implemented in order, 
 **Description:** As a developer, I want a `handover_records` table to represent the formal transfer of an asset from a planning/construction body to an operational body.
 
 **Acceptance Criteria:**
-- [ ] Table `handover_records` created with columns:
+- [x] Table `handover_records` created with columns:
   - `id` (UUID PK)
   - `asset_id` (FK → assets, not null)
   - `delivered_by_body_id` (FK → responsible_bodies, not null)
@@ -644,10 +644,10 @@ All four phases are in scope for this PRD. Phases must be implemented in order, 
   - `warranty_expiry_date` (date, nullable)
   - `notes` (text)
   - `created_at`, `updated_at`
-- [ ] An asset can have multiple handover records over its life (e.g., from developer to municipality, then from planning body to operational body)
-- [ ] Index on `asset_id`, `handover_date`, `handover_status`
-- [ ] Migration runs cleanly
-- [ ] Typecheck passes
+- [x] An asset can have multiple handover records over its life (e.g., from developer to municipality, then from planning body to operational body)
+- [x] Index on `asset_id`, `handover_date`, `handover_status`
+- [x] Migration runs cleanly
+- [x] Typecheck passes
 
 ---
 
