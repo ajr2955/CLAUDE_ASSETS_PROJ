@@ -694,14 +694,14 @@ All four phases are in scope for this PRD. Phases must be implemented in order, 
 **Description:** As an asset manager, I want API endpoints for managing contracts attached to assets.
 
 **Acceptance Criteria:**
-- [ ] `GET /api/contracts` returns contracts; supports filters: `asset_id`, `contract_type_id`, `status`, `counterparty_type`, `expiring_within_days` (filters by `end_date <= now + N days`)
-- [ ] `GET /api/contracts/:id` returns full contract detail
-- [ ] `GET /api/assets/:id/contracts` returns all contracts for an asset
-- [ ] `POST /api/contracts` creates a contract; requires `asset_id`, `contract_type_id`, `counterparty_name`, `start_date`
-- [ ] `PUT /api/contracts/:id` updates all mutable fields
-- [ ] `POST /api/contracts/:id/renew` creates a renewal: sets current contract `status = renewed`, creates a new contract record linked to the same asset with a new `contract_reference` and updated dates; a `contract_renewed` event is auto-created on the asset
-- [ ] `PUT /api/contracts/:id/status` transitions status with valid values; `terminated` status requires a `termination_reason` in payload
-- [ ] Typecheck passes
+- [x] `GET /api/contracts` returns contracts; supports filters: `asset_id`, `contract_type_id`, `status`, `counterparty_type`, `expiring_within_days` (filters by `end_date <= now + N days`)
+- [x] `GET /api/contracts/:id` returns full contract detail
+- [x] `GET /api/assets/:id/contracts` returns all contracts for an asset
+- [x] `POST /api/contracts` creates a contract; requires `asset_id`, `contract_type_id`, `counterparty_name`, `start_date`
+- [x] `PUT /api/contracts/:id` updates all mutable fields
+- [x] `POST /api/contracts/:id/renew` creates a renewal: sets current contract `status = renewed`, creates a new contract record linked to the same asset with a new `contract_reference` and updated dates; a `contract_renewed` event is auto-created on the asset
+- [x] `PUT /api/contracts/:id/status` transitions status with valid values; `terminated` status requires a `termination_reason` in payload
+- [x] Typecheck passes
 
 ---
 

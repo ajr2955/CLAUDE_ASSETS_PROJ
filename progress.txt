@@ -294,3 +294,25 @@
   - Patterns: Resolving a pre-declared FK stub (assets.location_id) via ALTER TABLE ADD CONSTRAINT in the migration that creates the target table — same approach used for events and documents user FKs.
   - Patterns: Separate indexes for district and neighborhood are better than a compound index since they're queried independently; lat+lng compound index for proximity queries.
 ---
+
+## Iteration 31 — US-035: Asset hierarchy support and API
+- What was done: Created 3 new API route handlers and updated the existing assets list endpoint. `src/app/api/assets/[id]/descendants/route.ts`: GET returns all descendants recursively via BFS (breadth-first search) level by level, up to 5 levels deep, each node includes depth field. `src/app/api/assets/[id]/set-parent/route.ts`: POST sets or changes parent_asset_id with circular reference detection (walks up ancestor chain checking if current asset id appears), allows clearing parent with null, rejects self-referential assignment. `src/app/api/assets/tree/route.ts`: GET returns nested tree structure; accepts root_asset_id (single subtree) or family_id (forest of root-level assets in family); requires one of the two params (returns 422 if neither provided); buildSubtree recursion up to 5 levels deep. Updated `src/app/api/assets/route.ts` to read `?root_only=true` query param and add `parentAssetId: null` to the Prisma where clause. Ran `tsc --noEmit` — clean.
+- Files affected: `app/src/app/api/assets/[id]/descendants/route.ts` (new), `app/src/app/api/assets/[id]/set-parent/route.ts` (new), `app/src/app/api/assets/tree/route.ts` (new), `app/src/app/api/assets/route.ts` (updated)
+- Learnings for next cycles:
+  - Patterns: Recursive descendants via BFS: iterate level by level collecting IDs, then query children of those IDs; accumulate results with depth field. More efficient than recursive DB calls per node.
+  - Patterns: Circular reference check for set-parent: walk up from proposed parent using while loop; if current asset's id is found in ancestor chain, reject with 422.
+  - Patterns: Tree endpoint uses `buildSubtree` recursive async function that fetches children at each level; terminates at maxDepth.
+  - Traps: Prisma `select` object used as `as const` cannot be safely cast to `any` type parameters — create explicit TypeScript types for query results and cast with `as FlatAsset`.
+  - Traps: Implicit `any` error on variable that references itself in initializer — fix by adding explicit type annotation on the `const` declaration.
+  - Patterns: `root_only=true` filter maps to `parentAssetId: null` in Prisma where clause — returns only top-level assets.
+---
+
+## Iteration 32 — US-036: Contract CRUD API
+- What was done: Created 5 Next.js App Router route handlers for the Contract CRUD API. `src/app/api/contracts/route.ts`: GET paginated list with filters (asset_id, contract_type_id, status, counterparty_type, expiring_within_days — computes cutoff date as now + N days and uses `endDate: { lte: cutoff }`); POST create requiring asset_id/contract_type_id/counterparty_name/start_date with asset+contractType existence checks, auto-generated contractReference (CTR-YEAR-SEQUENCE) if not provided. `src/app/api/contracts/[id]/route.ts`: GET full detail with contractType/asset/responsibleBody includes; PUT update all mutable fields. `src/app/api/contracts/[id]/renew/route.ts`: POST renewal — marks existing contract as `renewed`, creates new contract copying all fields with new reference and provided dates, auto-creates `contract_renewed` governance event on the asset via transaction spread pattern. `src/app/api/contracts/[id]/status/route.ts`: PUT status transition with ContractStatus enum validation; `terminated` status requires `termination_reason` in payload (appended to notes). `src/app/api/assets/[id]/contracts/route.ts`: GET all contracts for a specific asset. Ran `tsc --noEmit` — clean.
+- Files affected: `app/src/app/api/contracts/route.ts`, `app/src/app/api/contracts/[id]/route.ts`, `app/src/app/api/contracts/[id]/renew/route.ts`, `app/src/app/api/contracts/[id]/status/route.ts`, `app/src/app/api/assets/[id]/contracts/route.ts`
+- Learnings for next cycles:
+  - Patterns: `expiring_within_days` filter: compute `cutoff = new Date(); cutoff.setDate(cutoff.getDate() + days)` then `endDate: { lte: cutoff }` in Prisma where clause.
+  - Patterns: Renewal uses the same `prisma.$transaction([...spread])` pattern from US-014 — spread a conditional event create array so it's a no-op when the event type is not found.
+  - Patterns: Termination reason appended to notes field as a workaround since there's no dedicated termination_reason column — this keeps the schema minimal.
+  - Patterns: ContractStatus and CounterpartyType enums imported from `@/generated/prisma/client` for runtime validation.
+---
