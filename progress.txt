@@ -463,3 +463,12 @@
   - Patterns: Both assets.developer_obligation_id (US-005 stub) and planning_entities.developer_obligation_id (US-046 stub) are resolved here since developer_obligations is now the target table.
   - Patterns: Named relation "DevObligationPlanningEntity" on the developer_obligations side + the reverse array on PlanningEntity disambiguates the one-to-many relation from planning_entities → developer_obligations.
   - Next task: US-048 — Allocation schema and migration.
+
+---
+
+## Iteration 46 — US-048: Allocation schema and migration
+- What was done: Added `AllocationType` and `AllocationStatus` enums plus `Allocation` model to `prisma/schema.prisma`. Reused existing `PaymentFrequency` enum for `feeFrequency` (already defined in US-030 for contracts). Added reverse relations to `Asset` (allocations) and `ResponsibleBody` (allocations via "AllocationBody" named relation). Created migration SQL at `prisma/migrations/0048_allocations/migration.sql` with: CREATE TYPE allocation_type, CREATE TYPE allocation_status, CREATE TABLE allocations (reusing payment_frequency enum from US-030 for fee_frequency), and 4 CREATE INDEX statements. Ran `prisma validate` + `prisma generate` + `tsc --noEmit` — all clean.
+- Files affected: `app/prisma/schema.prisma`, `app/prisma/migrations/0048_allocations/migration.sql`
+- Learnings for next cycles:
+  - Patterns: Reusing an existing enum (payment_frequency) for a new field in a different table is valid in both Prisma and PostgreSQL — no need to create a duplicate enum.
+  - Next task: US-049 — Body Transfer schema and migration.

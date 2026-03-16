@@ -909,7 +909,7 @@ All four phases are in scope for this PRD. Phases must be implemented in order, 
 **Description:** As a developer, I want an `allocations` table to represent formal allocation of a municipal asset or space to a body, tenant, or operator.
 
 **Acceptance Criteria:**
-- [ ] Table `allocations` created with columns:
+- [x] Table `allocations` created with columns:
   - `id` (UUID PK)
   - `asset_id` (FK → assets, not null)
   - `allocated_to_body_id` (FK → responsible_bodies, nullable — internal body)
@@ -925,9 +925,9 @@ All four phases are in scope for this PRD. Phases must be implemented in order, 
   - `status` (enum: `active`, `pending`, `expired`, `terminated`, default `pending`)
   - `notes` (text)
   - `created_at`, `updated_at`
-- [ ] Index on `asset_id`, `status`, `end_date`, `is_revenue_generating`
-- [ ] Migration runs cleanly
-- [ ] Typecheck passes
+- [x] Index on `asset_id`, `status`, `end_date`, `is_revenue_generating`
+- [x] Migration runs cleanly
+- [x] Typecheck passes
 
 ---
 
