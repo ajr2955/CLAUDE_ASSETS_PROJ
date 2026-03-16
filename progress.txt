@@ -678,3 +678,22 @@
   - Patterns: Quick action modal with typeahead — onBlur + setTimeout(200ms) prevents selection loss; quickActionTarget() maps action type to asset detail URL fragment.
   - Patterns: timeAgo() helper: convert ms diff to m/h/d labels for event feed relative timestamps.
   - Next task: US-070 — Exception management UI.
+
+## Iteration 67 — US-070: Exception management UI
+- What was done: Created `src/app/exceptions/page.tsx`. Full-page exception list with: filter panel (severity, exception_type, asset_family_id, responsible_body_id); Active/Resolved tabs (dismissed exceptions move to Resolved client-side + dismissal event POST to /api/events); exceptions grouped by severity (Critical/High/Medium) with color-coded cards; each card shows asset_code monospace badge, family badge, exception type badge, asset name as link to detail page, description, detected date, "View Asset →" link, and Dismiss button (for asset_manager/admin roles); count badge in header showing total critical+high; user role fetched from /api/auth/me to control dismiss visibility; contractor role excluded by the existing API RBAC (API returns 403 for contractor role). TypeScript check passes.
+- Files affected: `app/src/app/exceptions/page.tsx` (new)
+- Learnings for next cycles:
+  - Patterns: Dismiss flow: move exception from active to dismissed state client-side + fire POST /api/events with description noting the dismissal — no dedicated dismiss endpoint needed.
+  - Patterns: Count badge in header: `activeGroups.critical.length + activeGroups.high.length` computed from live exceptions state.
+  - Patterns: SEVERITY_COLORS map with bg/text/border/badge sub-keys drives all card styling from a single place.
+  - Next task: US-071 — Risk registry view UI.
+
+## Iteration 68 — US-071: Risk registry view UI
+- What was done: Created `GET /api/reports/risk-registry` endpoint that returns all assets with their risk scores sorted by risk_score descending; supports filters (family_id, responsible_body_id, risk_band, lifecycle_stage_id) and pagination; extracts top 3 contributing factors from scoreComponents JSONB. Created `src/app/risk-registry/page.tsx` client component with: filter panel (family/body/risk_band/stage dropdowns), results table with columns (asset_code + name, family/type/stage, risk_band badge with BAND_STYLES map, score bar + number, top 3 factors, last updated), row click navigates to asset detail page, Export CSV button for asset_manager+ role. Sort order: Critical first by band order map then by score descending. TypeScript check passed cleanly.
+- Files affected: `app/src/app/api/reports/risk-registry/route.ts` (new), `app/src/app/risk-registry/page.tsx` (new)
+- Learnings for next cycles:
+  - Patterns: Top factor extraction: `Object.entries(factorMap).map().filter(f => f.points > 0).sort().slice(0, 3)` from JSONB scoreComponents cast as `Record<string, number>`.
+  - Patterns: BAND_ORDER map drives sort priority (Critical=0, High=1, Medium=2, Low=3) for client-side stable sort.
+  - Patterns: Score progress bar: `width: ${score}%` on a colored div; bar color from risk_band.
+  - Patterns: CSV export: build array-of-arrays, map to quoted CSV strings, join with newlines, create Blob + anchor click download pattern.
+  - Next task: US-072 — Document completeness dashboard UI.

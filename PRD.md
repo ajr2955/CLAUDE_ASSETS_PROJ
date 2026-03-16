@@ -1298,14 +1298,14 @@ All four phases are in scope for this PRD. Phases must be implemented in order, 
 **Description:** As an asset manager or administrator, I want a risk registry view listing all assets ordered by risk score.
 
 **Acceptance Criteria:**
-- [ ] Route `/risk-registry` renders a table of all assets with a computed risk score
-- [ ] Columns: asset_code, asset_name, family, type, risk_band (color-coded badge), risk_score, top contributing factors (top 3 from score_components), last updated
-- [ ] Default sort: risk_score descending (Critical first)
-- [ ] Filter by family, responsible_body, risk_band, lifecycle_stage
-- [ ] Clicking a row opens the asset detail page
-- [ ] Export to CSV button (for `asset_manager`+) — exports current filtered view
+- [x] Route `/risk-registry` renders a table of all assets with a computed risk score
+- [x] Columns: asset_code, asset_name, family, type, risk_band (color-coded badge), risk_score, top contributing factors (top 3 from score_components), last updated
+- [x] Default sort: risk_score descending (Critical first)
+- [x] Filter by family, responsible_body, risk_band, lifecycle_stage
+- [x] Clicking a row opens the asset detail page
+- [x] Export to CSV button (for `asset_manager`+) — exports current filtered view
 - [x] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Verify changes work in browser
 
 ---
 
