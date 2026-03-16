@@ -1054,7 +1054,7 @@ All four phases are in scope for this PRD. Phases must be implemented in order, 
 - [x] Planning entity detail page shows: all fields, linked developer obligation (if any), documents tab, events tab, milestone progress bar
 - [x] "Convert to Asset" button on detail page (for `planner` and `admin`); opens a confirmation modal showing what will be created; on confirm, redirects to new asset detail page
 - [x] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Verify changes work in browser
 
 ---
 
