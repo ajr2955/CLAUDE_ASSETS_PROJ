@@ -177,3 +177,13 @@
   - Traps: `.map()` returning sibling rows (e.g., main row + expand row) requires `<React.Fragment key={...}>` not `<>` since bare fragments don't support the `key` prop.
   - Patterns: Import `Fragment` from "react" alongside `useCallback`, `useEffect`, `useState` when rendering keyed fragments in lists.
 ---
+
+## Iteration 19 — US-023: Asset list view with filters and search
+- What was done: Created client component page at `src/app/assets/page.tsx`. Fetches filter options (families, types, stages, bodies) in parallel on load. Renders a left filter panel (collapsible sections, multi-select checkboxes) and a main content area with a data table. Filter panel covers: Family, Type (dependent on Family — filtered by selectedFamilies in memory), Status, Lifecycle Stage, Responsible Body, Ownership Model, and a Placeholder Body checkbox. Search input debounced 300ms updates `debouncedSearch` state. All filters and search reset page to 1 when changed. API called with applicable filter params (single-value filters only since API supports one value at a time). Client-side sort on current page results by assetCode, assetName, currentStatus, currentLifecycleStage with toggle asc/desc. Pagination controls (25/page) with numbered page buttons. Results count shown above table. Each row links to `/assets/:id`. Placeholder body assets show amber warning icon. Ran `tsc --noEmit` — clean.
+- Files affected: `app/src/app/assets/page.tsx`
+- Learnings for next cycles:
+  - Patterns: Type filter depends on Family selection — filter `allTypes` array client-side by `selectedFamilies` to produce `availableTypes` for the Type checkboxes.
+  - Patterns: Debounced search with `useRef<ReturnType<typeof setTimeout>>` pattern — cancel previous timer on each keystroke, fire after 300ms.
+  - Patterns: When API only supports single-value filters, pass only the first selected value (or none) per filter rather than trying to pass arrays.
+  - Patterns: CollapsibleFilterSection and CheckItem as local helper components keep the JSX readable without needing external dependencies.
+---

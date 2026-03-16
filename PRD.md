@@ -424,16 +424,16 @@ All four phases are in scope for this PRD. Phases must be implemented in order, 
 **Description:** As any authorized user, I want a searchable, filterable list of all assets visible to my role so that I can find the asset I need quickly.
 
 **Acceptance Criteria:**
-- [ ] Route `/assets` renders a table of assets with columns: asset_code, asset_name, family, type, status, lifecycle stage, responsible body, last event date
-- [ ] Filter panel includes: Family (multi-select), Type (multi-select, dependent on Family), Status (multi-select), Lifecycle Stage (multi-select), Responsible Body (multi-select), Ownership Model (multi-select), Placeholder Body flag (checkbox)
-- [ ] Search box filters by asset_name and asset_code (debounced, 300ms)
-- [ ] Pagination: 25 assets per page with page controls
-- [ ] Each row links to the asset detail page
-- [ ] Column sort on asset_code, asset_name, status, lifecycle stage
-- [ ] Results count displayed above table
-- [ ] Users with `public` role see only assets marked as publicly visible
-- [ ] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Route `/assets` renders a table of assets with columns: asset_code, asset_name, family, type, status, lifecycle stage, responsible body, last event date
+- [x] Filter panel includes: Family (multi-select), Type (multi-select, dependent on Family), Status (multi-select), Lifecycle Stage (multi-select), Responsible Body (multi-select), Ownership Model (multi-select), Placeholder Body flag (checkbox)
+- [x] Search box filters by asset_name and asset_code (debounced, 300ms)
+- [x] Pagination: 25 assets per page with page controls
+- [x] Each row links to the asset detail page
+- [x] Column sort on asset_code, asset_name, status, lifecycle stage
+- [x] Results count displayed above table
+- [x] Users with `public` role see only assets marked as publicly visible
+- [x] Typecheck passes
+- [x] Verify changes work in browser
 
 ---
 
