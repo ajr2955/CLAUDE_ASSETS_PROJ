@@ -168,3 +168,12 @@
   - Patterns: Edit modal omits family selector since family cannot be changed after creation — only name and description are editable.
   - Patterns: "Add type" per family section: pass family ID as preselected value to openAddModal to pre-fill the family selector.
 ---
+
+## Iteration 18 — US-022: Responsible Body management UI
+- What was done: Fixed and enhanced existing skeleton page at `src/app/admin/responsible-bodies/page.tsx`. Corrected `_count` property names to match API response (`assetsAsStrategicOwner`, `assetsAsResponsible`, `assetsAsOperational`, `assetsAsMaintenance`, `assetsAsDataSteward`). Fixed React key issue — `.map()` returned bare `<>` fragments; replaced with `<Fragment key={body.id}>` imported from React. Page renders table with name, body_type (human-readable label), total asset count, status badge. Placeholder bodies show amber "Open Decision" badge. Expandable row shows `resolution_note` in amber-styled box when "View note" is clicked. Edit modal includes resolution_note textarea (shown for placeholder bodies or when body_type === "placeholder"). Toggle active/inactive uses `confirm()` dialog; placeholder body deactivation passes `confirm_deactivate_placeholder: true` to the API. Ran `tsc --noEmit` — clean.
+- Files affected: `app/src/app/admin/responsible-bodies/page.tsx`
+- Learnings for next cycles:
+  - Traps: `_count` field names in Prisma responses reflect the relation names in schema.prisma — verify them against the actual API route handler, not guessing from snake_case DB column names.
+  - Traps: `.map()` returning sibling rows (e.g., main row + expand row) requires `<React.Fragment key={...}>` not `<>` since bare fragments don't support the `key` prop.
+  - Patterns: Import `Fragment` from "react" alongside `useCallback`, `useEffect`, `useState` when rendering keyed fragments in lists.
+---
