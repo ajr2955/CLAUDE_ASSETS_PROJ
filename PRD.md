@@ -490,15 +490,15 @@ All four phases are in scope for this PRD. Phases must be implemented in order, 
 **Description:** As a budget manager, I want to view and manage all budget envelopes for an asset from the asset detail page.
 
 **Acceptance Criteria:**
-- [ ] Asset detail page includes a "Budgets" tab
-- [ ] Tab renders a table of all budget envelopes grouped by budget_type; columns: type, lifecycle stage, fiscal year / multi-year range, approved, committed, actual, variance (color-coded: green if variance ≥ 0, red if negative)
-- [ ] "Add Budget Envelope" button opens a form: budget_type (select), lifecycle_stage (select, optional), fiscal_year or multi-year range, amounts
-- [ ] Inline edit for approved, committed, actual amounts
-- [ ] Total row per group and grand total row at bottom
-- [ ] Closed envelopes shown greyed out with "Closed" badge
-- [ ] Users with `department_user` role see budgets in read-only mode
-- [ ] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Asset detail page includes a "Budgets" tab
+- [x] Tab renders a table of all budget envelopes grouped by budget_type; columns: type, lifecycle stage, fiscal year / multi-year range, approved, committed, actual, variance (color-coded: green if variance ≥ 0, red if negative)
+- [x] "Add Budget Envelope" button opens a form: budget_type (select), lifecycle_stage (select, optional), fiscal_year or multi-year range, amounts
+- [x] Inline edit for approved, committed, actual amounts
+- [x] Total row per group and grand total row at bottom
+- [x] Closed envelopes shown greyed out with "Closed" badge
+- [x] Users with `department_user` role see budgets in read-only mode
+- [x] Typecheck passes
+- [x] Verify changes work in browser
 
 ---
 
