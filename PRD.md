@@ -1235,9 +1235,9 @@ All four phases are in scope for this PRD. Phases must be implemented in order, 
 **Description:** As a developer, I want a department-specific dashboard API that scopes all KPIs to the requesting user's responsible body.
 
 **Acceptance Criteria:**
-- [ ] `GET /api/dashboard/department` accepts query param `?body_id=` (required for admin; auto-resolved from JWT for department_user and operations_manager roles)
-- [ ] Returns same structure as executive dashboard but all counts filtered to assets where `responsible_body_id`, `operational_body_id`, or `maintenance_body_id` matches the body_id
-- [ ] Additional department-specific fields:
+- [x] `GET /api/dashboard/department` accepts query param `?body_id=` (required for admin; auto-resolved from JWT for department_user and operations_manager roles)
+- [x] Returns same structure as executive dashboard but all counts filtered to assets where `responsible_body_id`, `operational_body_id`, or `maintenance_body_id` matches the body_id
+- [x] Additional department-specific fields:
   - `assets_needing_inspection`: assets where last condition record is older than 12 months
   - `work_orders_by_category`: count per category for this body
   - `my_contracts_expiring`: contracts where responsible_body_id matches, expiring within 90 days

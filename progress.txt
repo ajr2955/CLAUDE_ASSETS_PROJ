@@ -650,3 +650,12 @@
   - Patterns: Simple in-memory cache: module-level `cachedData` and `cacheExpiresAt` variables; reset on write, return early on read when `Date.now() < cacheExpiresAt`.
   - Patterns: Budget variance total from metadata JSONB: cast `event.metadata as Record<string, unknown>`, check `typeof meta["variance_amount"] === "number"`, accumulate.
   - Next task: US-067 — Department-level dashboard backend.
+
+## Iteration 64 — US-067: Department-level dashboard — backend
+- What was done: Created `src/app/api/dashboard/department/route.ts` with `GET /api/dashboard/department`. Requires department_user+ role. For department_user/operations_manager roles, auto-resolves body_id from DB via JWT sub → User.responsibleBodyId; for asset_manager/admin roles, body_id query param is required. All queries filtered to assets where responsibleBodyId, operationalBodyId, or maintenanceBodyId matches the target body. Returns: total_assets (by status and family), assets_by_lifecycle_stage, assets_at_risk (from AssetRiskScore High/Critical), work_orders_summary (by status + overdue count), work_orders_by_category, my_contracts_expiring (within 90 days), assets_needing_inspection (all body assets minus those with condition record in last 12 months), condition_overview (score distribution), recent_events (last 10). All name lookups done in a second parallel Promise.all after IDs are known. tsc --noEmit passes cleanly.
+- Files affected: `app/src/app/api/dashboard/department/route.ts` (new)
+- Learnings for next cycles:
+  - Patterns: Body-scoped asset filter uses OR across responsibleBodyId/operationalBodyId/maintenanceBodyId — same OR pattern reused across all sub-queries.
+  - Patterns: assets_needing_inspection: fetch all body asset IDs + assets with recent condition records → subtract sets in memory.
+  - Patterns: For department_user role, look up responsibleBodyId from DB (not from JWT — JWT only contains sub/email/role/type).
+  - Next task: US-068 — Executive KPI dashboard UI.
