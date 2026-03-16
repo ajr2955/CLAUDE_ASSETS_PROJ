@@ -805,7 +805,7 @@ All four phases are in scope for this PRD. Phases must be implemented in order, 
 - [x] Condition history shown as a timeline below the current condition card
 - [x] If safety_condition is `unsafe` or `major_hazard`, a red banner shown at the top of the asset detail page with text: "Safety Issue — Immediate attention required"
 - [x] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Verify changes work in browser
 
 ---
 
@@ -813,14 +813,14 @@ All four phases are in scope for this PRD. Phases must be implemented in order, 
 **Description:** As a planner or asset manager, I want to manage handover records directly from the asset detail page.
 
 **Acceptance Criteria:**
-- [ ] Asset detail page includes a "Handover" tab
-- [ ] Tab shows all handover records in chronological order with: delivered_by, received_by, handover_date, status badge
-- [ ] Pending handovers highlighted with pulsing indicator
-- [ ] Handover detail expands to show defects list, missing documents, and conditions
-- [ ] "Record Handover" button (for `planner` and `asset_manager`) opens a form with all required fields; defects list is a dynamic list editor
-- [ ] Accept and Reject action buttons on pending handovers (for `asset_manager` and `admin`)
-- [ ] Missing documents listed with red warning icons; if accepted with conditions, conditions text shown in amber
-- [ ] Typecheck passes
+- [x] Asset detail page includes a "Handover" tab
+- [x] Tab shows all handover records in chronological order with: delivered_by, received_by, handover_date, status badge
+- [x] Pending handovers highlighted with pulsing indicator
+- [x] Handover detail expands to show defects list, missing documents, and conditions
+- [x] "Record Handover" button (for `planner` and `asset_manager`) opens a form with all required fields; defects list is a dynamic list editor
+- [x] Accept and Reject action buttons on pending handovers (for `asset_manager` and `admin`)
+- [x] Missing documents listed with red warning icons; if accepted with conditions, conditions text shown in amber
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ---
