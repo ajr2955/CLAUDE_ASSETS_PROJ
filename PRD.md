@@ -506,15 +506,15 @@ All four phases are in scope for this PRD. Phases must be implemented in order, 
 **Description:** As any authorized user, I want to view, upload, and manage documents attached to an asset from the asset detail page.
 
 **Acceptance Criteria:**
-- [ ] Asset detail page includes a "Documents" tab
-- [ ] Tab renders a list of documents grouped by document_type; each item shows: type badge, title, file name, upload date, uploaded by, verified badge if verified
-- [ ] "Upload Document" button opens a form: document_type (select), title, file picker, lifecycle_stage (optional), expiry_date (optional)
-- [ ] File drag-and-drop supported
-- [ ] Each document row has: Download button, Verify button (for `asset_manager`+), Delete button (soft-delete, with confirmation)
-- [ ] Required documents (from completeness rules, Phase 4) shown with a red "Required — Missing" placeholder if not yet uploaded
-- [ ] Documents can also be attached to events; event log items show a paperclip icon if they have attached documents
-- [ ] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Asset detail page includes a "Documents" tab
+- [x] Tab renders a list of documents grouped by document_type; each item shows: type badge, title, file name, upload date, uploaded by, verified badge if verified
+- [x] "Upload Document" button opens a form: document_type (select), title, file picker, lifecycle_stage (optional), expiry_date (optional)
+- [x] File drag-and-drop supported
+- [x] Each document row has: Download button, Verify button (for `asset_manager`+), Delete button (soft-delete, with confirmation)
+- [x] Required documents (from completeness rules, Phase 4) shown with a red "Required — Missing" placeholder if not yet uploaded
+- [x] Documents can also be attached to events; event log items show a paperclip icon if they have attached documents
+- [x] Typecheck passes
+- [x] Verify changes work in browser
 
 ---
 
