@@ -1077,14 +1077,14 @@ All four phases are in scope for this PRD. Phases must be implemented in order, 
 **Description:** As an asset manager, I want a UI workflow to transfer responsibility for an asset from one body to another, with full confirmation.
 
 **Acceptance Criteria:**
-- [ ] Asset detail page "Responsibilities" section has an "Edit Assignments" action (for `asset_manager`+)
-- [ ] Opening this shows all 5 body role fields as editable typeahead dropdowns
-- [ ] Changing any field shows a confirmation dialog: "You are transferring [role] from [current body] to [new body]. This will be recorded permanently. Add a reason:" with a required reason text field
-- [ ] On confirm, `POST /api/body-transfers` is called; asset detail page updates immediately
-- [ ] Body transfer history shown in a collapsible section below the responsibility cards
-- [ ] Placeholder body assignments shown with warning icon; selecting a placeholder body shows: "This body is a placeholder — organizational ownership decision pending"
-- [ ] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Asset detail page "Responsibilities" section has an "Edit Assignments" action (for `asset_manager`+)
+- [x] Opening this shows all 5 body role fields as editable typeahead dropdowns
+- [x] Changing any field shows a confirmation dialog: "You are transferring [role] from [current body] to [new body]. This will be recorded permanently. Add a reason:" with a required reason text field
+- [x] On confirm, `POST /api/body-transfers` is called; asset detail page updates immediately
+- [x] Body transfer history shown in a collapsible section below the responsibility cards
+- [x] Placeholder body assignments shown with warning icon; selecting a placeholder body shows: "This body is a placeholder — organizational ownership decision pending"
+- [x] Typecheck passes
+- [x] Verify changes work in browser
 
 ---
 
