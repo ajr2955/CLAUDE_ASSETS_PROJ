@@ -1142,15 +1142,15 @@ All four phases are in scope for this PRD. Phases must be implemented in order, 
 **Description:** As a developer, I want a reusable validation service that checks whether an asset meets all conditions for a lifecycle transition, powering both the API soft enforcement and the UI warning system.
 
 **Acceptance Criteria:**
-- [ ] A `TransitionValidationService` (or equivalent module) is created and exported
-- [ ] It accepts `(asset_id, from_stage_id, to_stage_id)` and returns: `{ is_valid_path: boolean, unmet_conditions: Array<{ type: 'document' | 'event', description: string, is_blocking: false }> }`
-- [ ] Soft enforcement: `is_blocking` is always `false` — no condition ever blocks the transition, only warns
-- [ ] Service checks `lifecycle_transitions` table for `required_document_types` and `required_events`
-- [ ] For each required document type, checks `documents` table for existence attached to this asset
-- [ ] For each required event type, checks `events` table for at least one such event on this asset
-- [ ] Service is called by `POST /api/assets/:id/transition` (US-014) and by the `GET /api/assets/:id/transition-readiness/:to_stage_id` endpoint
-- [ ] `GET /api/assets/:id/transition-readiness/:to_stage_id` is a new read-only endpoint that returns the validation result without performing any transition — used by the UI to show warnings before the user confirms
-- [ ] Typecheck passes
+- [x] A `TransitionValidationService` (or equivalent module) is created and exported
+- [x] It accepts `(asset_id, from_stage_id, to_stage_id)` and returns: `{ is_valid_path: boolean, unmet_conditions: Array<{ type: 'document' | 'event', description: string, is_blocking: false }> }`
+- [x] Soft enforcement: `is_blocking` is always `false` — no condition ever blocks the transition, only warns
+- [x] Service checks `lifecycle_transitions` table for `required_document_types` and `required_events`
+- [x] For each required document type, checks `documents` table for existence attached to this asset
+- [x] For each required event type, checks `events` table for at least one such event on this asset
+- [x] Service is called by `POST /api/assets/:id/transition` (US-014) and by the `GET /api/assets/:id/transition-readiness/:to_stage_id` endpoint
+- [x] `GET /api/assets/:id/transition-readiness/:to_stage_id` is a new read-only endpoint that returns the validation result without performing any transition — used by the UI to show warnings before the user confirms
+- [x] Typecheck passes
 
 ---
 
@@ -1169,7 +1169,7 @@ All four phases are in scope for this PRD. Phases must be implemented in order, 
 - [ ] Table `asset_risk_scores` created: `id`, `asset_id` (unique), `risk_score` (integer), `risk_band` (enum), `score_components` (JSONB), `computed_at` (timestamp)
 - [ ] Risk scores recomputed on: new condition record, work order status change, document upload, budget update, governance event creation
 - [ ] `GET /api/assets/:id/risk-score` returns current risk score and component breakdown
-- [ ] Typecheck passes
+- [x] Typecheck passes
 
 ---
 
@@ -1183,7 +1183,7 @@ All four phases are in scope for this PRD. Phases must be implemented in order, 
 - [ ] Backlog items marked overdue (target_completion_date < today and not closed) are counted separately
 - [ ] Backlog includes `estimated_cost` and `actual_cost` totals per group
 - [ ] `GET /api/reports/overdue-work-orders` returns all overdue open work orders sorted by priority then overdue days descending; supports filter by body and family
-- [ ] Typecheck passes
+- [x] Typecheck passes
 
 ---
 
@@ -1206,7 +1206,7 @@ All four phases are in scope for this PRD. Phases must be implemented in order, 
   - `handover_pending_over_30_days`: handover record in pending status for more than 30 days
 - [ ] Exceptions filtered by caller's responsible_body_id when role is `department_user` or `operations_manager`; admin and headquarters roles see all exceptions
 - [ ] Supports filters: `exception_type`, `severity`, `asset_family_id`, `responsible_body_id`
-- [ ] Typecheck passes
+- [x] Typecheck passes
 
 ---
 
@@ -1227,7 +1227,7 @@ All four phases are in scope for this PRD. Phases must be implemented in order, 
   - `placeholder_bodies_summary`: count of assets assigned to placeholder bodies, list of placeholder bodies with asset counts
 - [ ] All values computable from the database in a single query pass (no N+1)
 - [ ] Response cached for 5 minutes (configurable)
-- [ ] Typecheck passes
+- [x] Typecheck passes
 
 ---
 
@@ -1242,7 +1242,7 @@ All four phases are in scope for this PRD. Phases must be implemented in order, 
   - `work_orders_by_category`: count per category for this body
   - `my_contracts_expiring`: contracts where responsible_body_id matches, expiring within 90 days
   - `recent_events`: last 10 events on this body's assets
-- [ ] Typecheck passes
+- [x] Typecheck passes
 
 ---
 
@@ -1258,7 +1258,7 @@ All four phases are in scope for this PRD. Phases must be implemented in order, 
 - [ ] Placeholder Bodies panel: list of placeholder bodies with asset count and resolution_note
 - [ ] Developer Obligations panel: overdue obligations with developer name, promised asset type, overdue days
 - [ ] All panels link through to filtered list views
-- [ ] Typecheck passes
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ---
@@ -1273,7 +1273,7 @@ All four phases are in scope for this PRD. Phases must be implemented in order, 
 - [ ] Condition overview: distribution of condition scores (1–5) for my assets as a mini bar chart
 - [ ] Recent events feed: last 10 events on my assets
 - [ ] Quick actions: Create Work Order, Record Inspection, Upload Document — all with asset typeahead pre-fill
-- [ ] Typecheck passes
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ---
@@ -1289,7 +1289,7 @@ All four phases are in scope for this PRD. Phases must be implemented in order, 
 - [ ] Dismiss button on each exception (for `asset_manager`+); dismissed exceptions moved to a "Resolved" tab; a dismissal event created on the asset
 - [ ] Count badge on navigation menu item showing total active critical + high exceptions
 - [ ] `contractor` role does not see this page
-- [ ] Typecheck passes
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ---
@@ -1304,7 +1304,7 @@ All four phases are in scope for this PRD. Phases must be implemented in order, 
 - [ ] Filter by family, responsible_body, risk_band, lifecycle_stage
 - [ ] Clicking a row opens the asset detail page
 - [ ] Export to CSV button (for `asset_manager`+) — exports current filtered view
-- [ ] Typecheck passes
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ---
@@ -1318,7 +1318,7 @@ All four phases are in scope for this PRD. Phases must be implemented in order, 
 - [ ] Clicking a row expands to show: list of required document types for current stage, green check if present, red X if missing
 - [ ] Filter by family, stage, responsible_body, `has_missing` toggle (show only assets with missing documents)
 - [ ] "Go to asset" link on each row
-- [ ] Typecheck passes
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ---
@@ -1333,7 +1333,7 @@ All four phases are in scope for this PRD. Phases must be implemented in order, 
 - [ ] Public map view at `/public/map` using the same Leaflet component, with only active assets shown
 - [ ] No authentication required for these routes
 - [ ] API endpoints `/api/public/assets` and `/api/public/gis-locations/geojson` do not require JWT
-- [ ] Typecheck passes
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ---
