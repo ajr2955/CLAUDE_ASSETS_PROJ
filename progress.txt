@@ -453,3 +453,13 @@
   - Patterns: `linked_asset_id` FK can reference assets directly (no circular issue) since it's a nullable FK from planning_entities to assets.
   - Patterns: `developer_obligation_id` stays as plain UUID stub — FK constraint will be added in US-047 migration when developer_obligations table is created.
   - Next task: US-047 — Developer Obligation schema and migration.
+
+---
+
+## Iteration 45 — US-047: Developer Obligation schema and migration
+- What was done: Added `DeveloperObligationFundingModel` and `DeveloperObligationStatus` enums plus `DeveloperObligation` model to `prisma/schema.prisma`. Added reverse relations to AssetFamily (developerObligations), AssetType (developerObligations), ResponsibleBody (developerObligationsAsReceiving), and PlanningEntity (developerObligations via "DevObligationPlanningEntity" named relation). Created migration SQL at `prisma/migrations/0047_developer_obligations/migration.sql` with: 2 CREATE TYPE enums, CREATE TABLE developer_obligations with all columns and FK constraints, ALTER TABLE planning_entities ADD CONSTRAINT to resolve planning_entities.developer_obligation_id FK stub from US-046, ALTER TABLE assets ADD CONSTRAINT to resolve assets.developer_obligation_id FK stub from US-005, and 4 CREATE INDEX statements. Ran `prisma validate` + `prisma generate` + `tsc --noEmit` — all clean.
+- Files affected: `app/prisma/schema.prisma`, `app/prisma/migrations/0047_developer_obligations/migration.sql`
+- Learnings for next cycles:
+  - Patterns: Both assets.developer_obligation_id (US-005 stub) and planning_entities.developer_obligation_id (US-046 stub) are resolved here since developer_obligations is now the target table.
+  - Patterns: Named relation "DevObligationPlanningEntity" on the developer_obligations side + the reverse array on PlanningEntity disambiguates the one-to-many relation from planning_entities → developer_obligations.
+  - Next task: US-048 — Allocation schema and migration.

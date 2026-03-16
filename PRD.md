@@ -879,7 +879,7 @@ All four phases are in scope for this PRD. Phases must be implemented in order, 
 **Description:** As a developer (software), I want a `developer_obligations` table to represent a developer's commitment to deliver or fund a future public asset.
 
 **Acceptance Criteria:**
-- [ ] Table `developer_obligations` created with columns:
+- [x] Table `developer_obligations` created with columns:
   - `id` (UUID PK)
   - `obligation_reference` (string, unique, not null — human-readable reference)
   - `related_project_name` (string, not null — name of the development project)
@@ -899,9 +899,9 @@ All four phases are in scope for this PRD. Phases must be implemented in order, 
   - `delivery_milestones` (JSONB array of objects: { milestone_name, target_date, actual_date, status })
   - `notes` (text)
   - `created_at`, `updated_at`
-- [ ] Index on `status`, `developer_name`, `committed_delivery_date`, `promised_asset_family_id`
-- [ ] Migration runs cleanly
-- [ ] Typecheck passes
+- [x] Index on `status`, `developer_name`, `committed_delivery_date`, `promised_asset_family_id`
+- [x] Migration runs cleanly
+- [x] Typecheck passes
 
 ---
 
