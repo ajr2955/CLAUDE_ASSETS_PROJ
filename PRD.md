@@ -956,19 +956,19 @@ All four phases are in scope for this PRD. Phases must be implemented in order, 
 **Description:** As a planner, I want API endpoints to manage planning entities and convert them to active assets.
 
 **Acceptance Criteria:**
-- [ ] `GET /api/planning-entities` returns entities; supports filters: `family_id`, `type_id`, `status`, `planning_body_id`, `developer_obligation_id`, `overdue` (boolean — `target_delivery_date < now AND status NOT IN (delivered, converted_to_asset)`)
-- [ ] `GET /api/planning-entities/:id` returns full detail
-- [ ] `POST /api/planning-entities` creates a new entity
-- [ ] `PUT /api/planning-entities/:id` updates mutable fields
-- [ ] `POST /api/planning-entities/:id/convert-to-asset` converts a planning entity to a real asset:
+- [x] `GET /api/planning-entities` returns entities; supports filters: `family_id`, `type_id`, `status`, `planning_body_id`, `developer_obligation_id`, `overdue` (boolean — `target_delivery_date < now AND status NOT IN (delivered, converted_to_asset)`)
+- [x] `GET /api/planning-entities/:id` returns full detail
+- [x] `POST /api/planning-entities` creates a new entity
+- [x] `PUT /api/planning-entities/:id` updates mutable fields
+- [x] `POST /api/planning-entities/:id/convert-to-asset` converts a planning entity to a real asset:
   - Creates a new record in `assets` pre-populated with family, type, bodies from the planning entity
   - Sets `planning_entity.status = converted_to_asset` and `planning_entity.linked_asset_id`
   - Sets `asset.planning_entity_id` to the planning entity
   - Sets asset lifecycle stage to "Establishment / Implementation / Intake"
   - Creates a `plan_reviewed` event on the new asset
   - Returns the new asset ID
-- [ ] Placeholder receiving body flag shown in API response if `intended_receiving_body_is_placeholder = true`
-- [ ] Typecheck passes
+- [x] Placeholder receiving body flag shown in API response if `intended_receiving_body_is_placeholder = true`
+- [x] Typecheck passes
 
 ---
 

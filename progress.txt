@@ -482,3 +482,15 @@
   - Patterns: Immutability for body_transfers: no `updated_at` column in schema or SQL, and no PUT/DELETE endpoints will be created.
   - Patterns: Two FKs to the same table (from_body_id, to_body_id → responsible_bodies) require named relations: "BodyTransferFrom" and "BodyTransferTo".
   - Next task: US-050 — Planning Entity API.
+
+---
+
+## Iteration 48 — US-050: Planning Entity API
+- What was done: Created 3 Next.js App Router route handlers. `src/app/api/planning-entities/route.ts`: GET list with filters (family_id, type_id, status enum-validated, planning_body_id, developer_obligation_id, overdue flag sets targetDeliveryDate < now + status NOT IN [delivered, converted_to_asset]); POST create requiring name/asset_family_id/asset_type_id with type-belongs-to-family check, auto-generated planning_code (PE-YEAR-SEQUENCE). `src/app/api/planning-entities/[id]/route.ts`: GET full detail with family/type/bodies/obligations includes; PUT update with guard blocking manual status=converted_to_asset. `src/app/api/planning-entities/[id]/convert-to-asset/route.ts`: POST conversion — finds "Establishment" lifecycle stage by name contains, auto-generates asset_code using family-prefix map, creates asset in transaction, then updates planning_entity (status=converted_to_asset, linked_asset_id) and patches event asset_id in a second transaction (workaround since prisma.$transaction doesn't return IDs for use in subsequent creates within the same transaction). Ran `tsc --noEmit` — clean.
+- Files affected: `app/src/app/api/planning-entities/route.ts` (new), `app/src/app/api/planning-entities/[id]/route.ts` (new), `app/src/app/api/planning-entities/[id]/convert-to-asset/route.ts` (new)
+- Learnings for next cycles:
+  - Patterns: Convert-to-asset uses two sequential $transactions: first creates the asset (gets the ID), second updates planning entity + patches event assetId.
+  - Patterns: Family prefix map for asset_code auto-generation — same map as in assets/route.ts POST handler.
+  - Patterns: Overdue filter combines targetDeliveryDate < now WITH status NOT IN [delivered, converted_to_asset] — both conditions in same where clause.
+  - Patterns: Blocking status=converted_to_asset in PUT prevents accidental bypassing of the conversion endpoint.
+  - Next task: US-051 — Developer Obligation API.
