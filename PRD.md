@@ -1214,7 +1214,7 @@ All four phases are in scope for this PRD. Phases must be implemented in order, 
 **Description:** As a developer, I want backend API endpoints that power the executive-level dashboard with cross-portfolio KPIs.
 
 **Acceptance Criteria:**
-- [ ] `GET /api/dashboard/executive` returns:
+- [x] `GET /api/dashboard/executive` returns:
   - `total_assets`: count by status and family
   - `assets_by_lifecycle_stage`: count per stage per family
   - `assets_at_risk`: count where risk_band in ('High', 'Critical')
@@ -1225,8 +1225,8 @@ All four phases are in scope for this PRD. Phases must be implemented in order, 
   - `maintenance_backlog_summary`: total open work orders, total overdue, estimated cost
   - `contracts_expiring_summary`: count expiring within 30, 60, 90 days
   - `placeholder_bodies_summary`: count of assets assigned to placeholder bodies, list of placeholder bodies with asset counts
-- [ ] All values computable from the database in a single query pass (no N+1)
-- [ ] Response cached for 5 minutes (configurable)
+- [x] All values computable from the database in a single query pass (no N+1)
+- [x] Response cached for 5 minutes (configurable)
 - [x] Typecheck passes
 
 ---

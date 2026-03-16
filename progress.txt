@@ -640,3 +640,13 @@
   - Patterns: ApiMeta type only allows page/per_page/total — use `total` for exception count; don't add custom fields to meta.
   - Patterns: shouldCheck() helper avoids repetitive filterExceptionType check across 11 branches.
   - Next task: US-066 — Executive KPI dashboard backend.
+
+## Iteration 63 — US-066: Executive KPI dashboard — backend
+- What was done: Created `src/app/api/dashboard/executive/route.ts` with `GET /api/dashboard/executive`. Requires asset_manager+ role. All data fetched in a single Promise.all of ~25 parallel DB queries: asset counts grouped by status and family, asset counts by lifecycle stage + family, assets_at_risk count from AssetRiskScore (High/Critical bands), open exceptions proxied via counts from contract/condition/workOrder/budgetEnvelope/handover tables, developer obligations summary (total/delivered/overdue/placeholder counts), planning entities summary (total/converted/overdue), budget variance summary (distinct asset_ids with budget_variance_detected events this fiscal year + summed variance_amount from metadata), maintenance backlog aggregate, contracts expiring within 30/60/90 days, and placeholder bodies with role-specific asset counts. Stage/family name lookups done in a second parallel pair of queries after the IDs are known. In-memory cache: `cachedData` + `cacheExpiresAt` pattern; TTL configurable via `DASHBOARD_CACHE_TTL_MS` env var (default 5 minutes). `tsc --noEmit` passes cleanly.
+- Files affected: `app/src/app/api/dashboard/executive/route.ts` (new)
+- Learnings for next cycles:
+  - Patterns: Promise.all of 25 independent queries + a second Promise.all for name resolution is a clean two-pass approach that avoids N+1 without a single giant JOIN.
+  - Patterns: `no_condition_record_in_1_year` requires a two-step query (fetch all active assets, fetch recent inspections, subtract) — returned as a `.then()` chained from the first query within the same Promise.all.
+  - Patterns: Simple in-memory cache: module-level `cachedData` and `cacheExpiresAt` variables; reset on write, return early on read when `Date.now() < cacheExpiresAt`.
+  - Patterns: Budget variance total from metadata JSONB: cast `event.metadata as Record<string, unknown>`, check `typeof meta["variance_amount"] === "number"`, accumulate.
+  - Next task: US-067 — Department-level dashboard backend.
