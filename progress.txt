@@ -398,3 +398,14 @@
   - Pattern: `as const` array in tab navigation — add new tab value to the tuple for TypeScript to accept it.
   - Pattern: Inner IIFE `{activeTab === "tab" && (() => { ... })()}` works well for defining local helper functions per tab without polluting component scope.
   - Next task: US-043 — Condition Record UI on asset detail page.
+
+---
+
+## Iteration 40 — US-043: Condition Record UI on asset detail page
+- What was done: Added a "Condition" tab to the asset detail page (`src/app/assets/[id]/page.tsx`). Added `ConditionRecord` and `RecordInspectionForm` interfaces. Added condition state variables (conditionRecords, currentCondition, conditionLoading/error, showRecordInspection, recordInspectionForm/errors/submitting/generalError). Added `fetchConditionRecords` callback (fetches from GET /api/assets/:id/condition-records, sets currentCondition to first record) and `handleRecordInspectionSubmit` callback. Updated `activeTab` type to include "condition". Updated `useEffect` to call `fetchConditionRecords` on tab switch. Updated tab navigation array and label mapping. Added a red safety banner at the top of the page (after the placeholder body banner) that shows when `currentCondition.safetyCondition === "unsafe" || "major_hazard"`. Added Condition tab content via IIFE pattern: prominently styled score card (color-coded 5=green→1=red) with all condition fields, timeline history list for prior records, and a "Record Inspection" modal with all fields (date, score select, structural/safety/maintenance/replacement selects, next inspection due, notes). TypeScript check passed cleanly.
+- Files affected: `app/src/app/assets/[id]/page.tsx` (modified)
+- Learnings for next cycles:
+  - Patterns: Safety banner stored in `currentCondition` state (first record from condition-records endpoint); lazy-loaded when Condition tab is first activated — no extra API call at page load.
+  - Patterns: Score color coding via `SCORE_COLORS: Record<number, string>` map inside the IIFE; avoids polluting component scope.
+  - Patterns: Timeline history via `conditionRecords.slice(1)` — first record is current condition displayed in card, rest shown in timeline.
+  - Next task: US-043 "Verify changes work in browser" then US-044 — Handover Record UI.
