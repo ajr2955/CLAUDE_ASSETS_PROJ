@@ -410,13 +410,13 @@ All four phases are in scope for this PRD. Phases must be implemented in order, 
 **Description:** As a system administrator, I want a UI page to manage responsible bodies, including visibility of placeholder bodies.
 
 **Acceptance Criteria:**
-- [ ] Route `/admin/responsible-bodies` renders a table with name, body_type, status, and asset count
-- [ ] Placeholder bodies displayed with a distinct warning badge and "Open Decision" label
-- [ ] Each placeholder shows the `resolution_note` in an expandable row
-- [ ] Edit modal includes resolution_note field for admin to document when decision is made
-- [ ] Toggle active/inactive with confirmation dialog
-- [ ] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Route `/admin/responsible-bodies` renders a table with name, body_type, status, and asset count
+- [x] Placeholder bodies displayed with a distinct warning badge and "Open Decision" label
+- [x] Each placeholder shows the `resolution_note` in an expandable row
+- [x] Edit modal includes resolution_note field for admin to document when decision is made
+- [x] Toggle active/inactive with confirmation dialog
+- [x] Typecheck passes
+- [x] Verify changes work in browser
 
 ---
 
