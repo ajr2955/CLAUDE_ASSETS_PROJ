@@ -591,3 +591,13 @@
   - Patterns: completeness_score = Math.round((satisfiedCount / total) * 100); return 100 when total === 0 (no rules = fully complete).
   - Patterns: Cross-reference existing documents via `documentTypeId: { in: requiredDocTypeIds }` query, build a Set of satisfied type IDs, map over rules array for the result.
   - Next task: US-061 — Budget variance detection and governance events.
+
+## Iteration 58 — US-061: Budget variance detection and governance events
+- What was done: Updated PUT /api/budget-envelopes/:id to trigger variance detection after every update. After updating the envelope, checks if actual_amount > approved_amount by more than BUDGET_VARIANCE_THRESHOLD (default 10%, configurable via env var). If threshold crossed AND varianceEventCreated is false, creates a budget_variance_detected governance event with metadata (budget_type, approved_amount, actual_amount, variance_amount, variance_percent) and sets varianceEventCreated=true in a single $transaction. Created GET /api/assets/:id/budget-variance-summary that returns all envelopes for an asset where varianceAmount < 0 with percentage breakdowns and total_overrun sum. Created GET /api/reports/budget-variance that finds all assets with budget_variance_detected governance events in the target fiscal year (default current year); supports filters by family_id, body_id, fiscal_year, budget_type; returns asset list with their overrun envelope details. Ran tsc --noEmit — clean.
+- Files affected: `app/src/app/api/budget-envelopes/[id]/route.ts` (updated), `app/src/app/api/assets/[id]/budget-variance-summary/route.ts` (new), `app/src/app/api/reports/budget-variance/route.ts` (new)
+- Learnings for next cycles:
+  - Patterns: Variance detection triggered in-request (synchronous) after the update rather than a background job — same result since Next.js API routes are already async.
+  - Patterns: varianceEventCreated boolean on envelope prevents duplicate events — only fires once per envelope.
+  - Patterns: Reports endpoint finds assets via Event table (eventTypeId + occurredAt year filter, distinct assetId) then joins to asset data — avoids N+1.
+  - Patterns: `BUDGET_VARIANCE_THRESHOLD` env var configures the threshold (default 0.10 = 10%).
+  - Next task: US-062 — Lifecycle transition rules validation service.

@@ -1129,12 +1129,12 @@ All four phases are in scope for this PRD. Phases must be implemented in order, 
 **Description:** As a developer, I want automatic detection of budget variance so that assets with significant cost overruns trigger governance events.
 
 **Acceptance Criteria:**
-- [ ] A background job (or triggered function) runs on every `budget_envelopes` update
-- [ ] If `actual_amount > approved_amount` by more than a configurable threshold (default 10%), a `budget_variance_detected` governance event is auto-created on the asset with metadata: `{ budget_type, approved_amount, actual_amount, variance_amount, variance_percent }`
-- [ ] The event is created only once per envelope per variance crossing (not on every subsequent update) — tracked by a `variance_event_created` boolean on the envelope
-- [ ] `GET /api/assets/:id/budget-variance-summary` returns all envelopes where `variance_amount < 0` with percentage breakdowns
-- [ ] `GET /api/reports/budget-variance` returns all assets with at least one variance event in the current fiscal year; supports filters by family, body, fiscal_year, budget_type
-- [ ] Typecheck passes
+- [x] A background job (or triggered function) runs on every `budget_envelopes` update
+- [x] If `actual_amount > approved_amount` by more than a configurable threshold (default 10%), a `budget_variance_detected` governance event is auto-created on the asset with metadata: `{ budget_type, approved_amount, actual_amount, variance_amount, variance_percent }`
+- [x] The event is created only once per envelope per variance crossing (not on every subsequent update) — tracked by a `variance_event_created` boolean on the envelope
+- [x] `GET /api/assets/:id/budget-variance-summary` returns all envelopes where `variance_amount < 0` with percentage breakdowns
+- [x] `GET /api/reports/budget-variance` returns all assets with at least one variance event in the current fiscal year; supports filters by family, body, fiscal_year, budget_type
+- [x] Typecheck passes
 
 ---
 
