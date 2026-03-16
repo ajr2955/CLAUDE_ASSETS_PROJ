@@ -441,15 +441,15 @@ All four phases are in scope for this PRD. Phases must be implemented in order, 
 **Description:** As an authorized user, I want a dedicated asset detail page showing all core fields, responsible bodies, and current lifecycle stage.
 
 **Acceptance Criteria:**
-- [ ] Route `/assets/:id` renders the asset detail page
-- [ ] Header section displays: asset_code, asset_name, family badge, type badge, status badge, ownership_model badge
-- [ ] Core fields section displays: address, area_sqm, service_start_date, handover_date, decommission_date, notes, gis_reference
-- [ ] Responsible Bodies section displays all six body roles (strategic owner, responsible, operational, maintenance, data steward, funding source) — each shows the body name or "Not assigned"
-- [ ] If any body is a placeholder, a warning banner is shown: "This asset is assigned to a placeholder body — organizational ownership not yet resolved"
-- [ ] Lifecycle Stage section shows current stage as a horizontal stepper with all 10 stages; current stage highlighted; completed stages marked
-- [ ] Edit button (for authorized roles) opens edit form
-- [ ] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Route `/assets/:id` renders the asset detail page
+- [x] Header section displays: asset_code, asset_name, family badge, type badge, status badge, ownership_model badge
+- [x] Core fields section displays: address, area_sqm, service_start_date, handover_date, decommission_date, notes, gis_reference
+- [x] Responsible Bodies section displays all six body roles (strategic owner, responsible, operational, maintenance, data steward, funding source) — each shows the body name or "Not assigned"
+- [x] If any body is a placeholder, a warning banner is shown: "This asset is assigned to a placeholder body — organizational ownership not yet resolved"
+- [x] Lifecycle Stage section shows current stage as a horizontal stepper with all 10 stages; current stage highlighted; completed stages marked
+- [x] Edit button (for authorized roles) opens edit form
+- [x] Typecheck passes
+- [x] Verify changes work in browser
 
 ---
 

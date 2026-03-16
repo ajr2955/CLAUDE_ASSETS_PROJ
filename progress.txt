@@ -187,3 +187,13 @@
   - Patterns: When API only supports single-value filters, pass only the first selected value (or none) per filter rather than trying to pass arrays.
   - Patterns: CollapsibleFilterSection and CheckItem as local helper components keep the JSX readable without needing external dependencies.
 ---
+
+## Iteration 20 — US-024: Asset detail page — header and core fields
+- What was done: Created client component page at `src/app/assets/[id]/page.tsx`. Fetches asset detail from `GET /api/assets/:id` and all lifecycle stages from `GET /api/lifecycle-stages` in parallel. Renders: (1) Back link to /assets; (2) Amber placeholder-body warning banner if any assigned body has `isPlaceholder = true`; (3) Header card with asset_code (monospace badge), asset_name (h1), family badge (violet), type badge (blue), status badge (color-coded by status), and ownership_model badge; Edit button navigates to `/assets/:id/edit`; (4) Lifecycle Stage horizontal stepper with all 10 stages — completed stages show green checkmark, current stage highlighted in blue, future stages greyed out with connecting bars color-coded; (5) Core fields grid (address, areaSqm, serviceStartDate, handoverDate, decommissionDate, gisReference, notes, parentAsset link); (6) Responsible Bodies section with 5 body roles in a responsive grid — each shows body name or "Not assigned" italic, placeholder bodies show "TBD" amber badge; (7) Child assets list if any, with links. Ran `tsc --noEmit` — clean.
+- Files affected: `app/src/app/assets/[id]/page.tsx`
+- Learnings for next cycles:
+  - Patterns: Parallel fetch of asset + stages with Promise.all in useCallback; stages used to render the full stepper regardless of how many are seeded.
+  - Patterns: Lifecycle stepper: compare `stage.displayOrder < currentStageOrder` for completed, `=== currentStageOrder` for current; connecting bars between stages conditionally colored.
+  - Patterns: `useParams<{ id: string }>()` from next/navigation for the dynamic route param in client components.
+  - Patterns: Body roles rendered as cards via local BodyCard component; `isPlaceholder` flag drives amber TBD badge and top-level warning banner.
+---
