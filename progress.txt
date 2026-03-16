@@ -350,3 +350,16 @@
   - Patterns: Missing documents governance event: cast `record.missingDocuments as string[] | null`, check `Array.isArray(missingDocs) && missingDocs.length > 0`, then spread a conditional event create into the transaction.
   - Patterns: Rejection reason stored by appending to `notes` field (no dedicated column) — consistent with termination_reason pattern used in contracts.
   - Patterns: For reject event type, use `findFirst({ where: { name: { in: ["status_changed", "asset_reassigned"] } } })` as a fallback lookup since there is no dedicated "handover_rejected" event type.
+
+---
+
+## Iteration 36 — US-040: GIS Location API
+- What was done: Created 4 Next.js App Router route handlers for the GIS Location API. `src/app/api/gis-locations/route.ts`: GET paginated list with filters (district case-insensitive contains, neighborhood case-insensitive contains, has_coordinates boolean — `latitude: { not: null }, longitude: { not: null }` for true, `OR: [{ latitude: null }, { longitude: null }]` for false); POST create requiring asset_id, checks for existing location (409 if exists), creates GisLocation record, then updates asset.location_id in a second query (two-step since location.id is needed for the asset update). `src/app/api/gis-locations/[id]/route.ts`: PUT updates coordinates and metadata fields; validates geometry_type enum; only updates fields present in body. `src/app/api/gis-locations/near/route.ts`: GET proximity search requiring lat/lng/radius_meters params; applies bounding box pre-filter in DB then precise Haversine formula in-memory; returns results with distance_meters field sorted by distance ascending. `src/app/api/gis-locations/geojson/route.ts`: GET GeoJSON FeatureCollection with optional family_id/status/lifecycle_stage_id filters on nested asset; uses `Prisma.JsonNull` for the `geojson: { not: Prisma.JsonNull }` filter; returns standard GeoJSON FeatureCollection with asset properties in each Feature's properties. Ran `tsc --noEmit` — clean.
+- Files affected: `app/src/app/api/gis-locations/route.ts` (new), `app/src/app/api/gis-locations/[id]/route.ts` (new), `app/src/app/api/gis-locations/near/route.ts` (new), `app/src/app/api/gis-locations/geojson/route.ts` (new)
+- Learnings for next cycles:
+  - Patterns: `has_coordinates=true` filter maps to `latitude: { not: null }, longitude: { not: null }` on the GisLocation model.
+  - Patterns: Haversine proximity search: pre-filter with bounding box in DB (`latDelta = radius/111000`, `lngDelta = radius / (111000 * cos(lat))`) then apply precise Haversine in-memory and sort by distance.
+  - Patterns: GeoJSON FeatureCollection: use `Prisma.JsonNull` (not plain `null`) in `geojson: { not: Prisma.JsonNull }` filter — plain null is not a valid `InputJsonValue`.
+  - Patterns: Use `Prisma.AssetWhereInput` and `Prisma.GisLocationWhereInput` typed where objects instead of `Record<string, unknown>` when spreading into findMany to avoid include inference issues.
+  - Patterns: Named `include` constant doesn't infer asset include; use inline `include` in the findMany call for typed result access.
+  - Traps: The `near` static segment conflicts with `[id]` dynamic segment — since Next.js App Router resolves static segments first, `near/route.ts` is correctly matched before `[id]/route.ts` for `/api/gis-locations/near` requests.

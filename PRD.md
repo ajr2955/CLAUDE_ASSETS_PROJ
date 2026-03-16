@@ -752,12 +752,12 @@ All four phases are in scope for this PRD. Phases must be implemented in order, 
 **Description:** As an operations manager, I want API endpoints to manage GIS locations for assets.
 
 **Acceptance Criteria:**
-- [ ] `GET /api/gis-locations` returns locations; supports filters: `district`, `neighborhood`, `has_coordinates` (boolean)
-- [ ] `GET /api/gis-locations/near` accepts `lat`, `lng`, `radius_meters`; returns assets within the radius ordered by distance
-- [ ] `POST /api/gis-locations` creates a location record and links it to an asset via `asset_id`; asset's `location_id` is updated
-- [ ] `PUT /api/gis-locations/:id` updates coordinates and metadata
-- [ ] `GET /api/gis-locations/geojson` returns a GeoJSON FeatureCollection of all assets with coordinates; supports `family_id`, `status`, `lifecycle_stage_id` filters for selective export
-- [ ] Typecheck passes
+- [x] `GET /api/gis-locations` returns locations; supports filters: `district`, `neighborhood`, `has_coordinates` (boolean)
+- [x] `GET /api/gis-locations/near` accepts `lat`, `lng`, `radius_meters`; returns assets within the radius ordered by distance
+- [x] `POST /api/gis-locations` creates a location record and links it to an asset via `asset_id`; asset's `location_id` is updated
+- [x] `PUT /api/gis-locations/:id` updates coordinates and metadata
+- [x] `GET /api/gis-locations/geojson` returns a GeoJSON FeatureCollection of all assets with coordinates; supports `family_id`, `status`, `lifecycle_stage_id` filters for selective export
+- [x] Typecheck passes
 
 ---
 
