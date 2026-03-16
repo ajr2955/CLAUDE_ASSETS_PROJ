@@ -774,7 +774,7 @@ All four phases are in scope for this PRD. Phases must be implemented in order, 
 - [x] Renew action opens pre-filled form for new contract dates
 - [x] Contract history (renewed contracts) shown in a collapsible sub-row
 - [x] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Verify changes work in browser
 
 ---
 

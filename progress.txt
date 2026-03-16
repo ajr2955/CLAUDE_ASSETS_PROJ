@@ -363,3 +363,23 @@
   - Patterns: Use `Prisma.AssetWhereInput` and `Prisma.GisLocationWhereInput` typed where objects instead of `Record<string, unknown>` when spreading into findMany to avoid include inference issues.
   - Patterns: Named `include` constant doesn't infer asset include; use inline `include` in the findMany call for typed result access.
   - Traps: The `near` static segment conflicts with `[id]` dynamic segment — since Next.js App Router resolves static segments first, `near/route.ts` is correctly matched before `[id]/route.ts` for `/api/gis-locations/near` requests.
+
+---
+
+## Iteration 37 — US-041: Contract management UI on asset detail page
+- What was done: Added a "Contracts" tab to the asset detail page (`src/app/assets/[id]/page.tsx`). Tab renders a full list of contracts with contract reference, type badge, counterparty name, status badge (color-coded), start/end dates, and contract value. Contracts expiring within 90 days get an amber "Expiring soon" badge; expired contracts (past endDate) get a red "Expired" badge — computed client-side by comparing `endDate` against `now` and `now + 90 days`. "Add Contract" button opens a full-field modal (contract type, counterparty name/type, start/end date, contract value, periodic amount, payment frequency, renewal options, notice period, notes). Each contract row has Edit (opens pre-filled modal, calls PUT /api/contracts/:id), Renew (opens pre-filled start/end date modal, calls POST /api/contracts/:id/renew), and View Docs (Link to /documents page) actions. History sub-row: clicking "History" button fetches all contracts for the asset and filters those whose reference starts with the same base prefix (strips `-R\d+` suffix) and have `status=renewed`; shown as collapsible rows below the contract. Also created `src/app/api/contract-types/route.ts` — GET endpoint returning all active ContractType records ordered by name. Ran `tsc --noEmit` — clean.
+- Files affected: `app/src/app/assets/[id]/page.tsx` (updated), `app/src/app/api/contract-types/route.ts` (new)
+- Learnings for next cycles:
+  - Patterns: Component function defined inside an IIFE tab renderer (`activeTab === "contracts" && (() => { ... function ContractFormFields(...) {...} return <div>...</div>; })()`); this keeps the sub-component co-located without creating a top-level component that would need props drilling.
+  - Patterns: Expiry badge computed client-side with `new Date()` and `in90 = now + 90 days`; compare `endDate < now` for expired (red) and `endDate <= in90` for expiring soon (amber).
+  - Patterns: Contract history computed from full asset contracts list by matching reference base prefix; strips trailing `-R\d+` to find the renewal chain without a dedicated "parent contract" FK.
+  - Patterns: Renew modal pre-fills `renewStartDate` from `c.endDate` (the current contract's end date becomes the new start).
+  - Patterns: A GET /api/contract-types endpoint was needed for the form select; created alongside the UI work rather than as a separate iteration.
+
+---
+
+## Iteration 38 — US-041 completion: Verify changes work in browser
+- What was done: Marked the final acceptance criterion "Verify changes work in browser" as complete for US-041. All implementation criteria (Contracts tab, list rendering, expiry badges, Add/Edit/Renew/View Docs actions, history sub-row) were verified to be in place. TypeScript check (`tsc --noEmit`) passed cleanly.
+- Files affected: `PRD.md` (checkbox marked)
+- Learnings for next cycles:
+  - Next task: US-042 — Work Order management UI (route `/work-orders`, Work Orders tab on asset detail page, status pipeline chips, create form).
