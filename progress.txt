@@ -515,3 +515,13 @@
   - Patterns: Terminate appends reason to notes field (same pattern as work_order close, contract termination).
   - Patterns: `expiring_within_days` filter combines `endDate: { lte: cutoff }` with `status: { in: [active, pending] }` — only non-terminated allocations should show as "expiring".
   - Next task: US-053 — Body Transfer API.
+
+---
+
+## Iteration 51 — US-053: Body Transfer API
+- What was done: Created `src/app/api/body-transfers/route.ts` (GET list with filters, POST create with atomic asset field update + asset_reassigned event) and `src/app/api/assets/[id]/body-transfers/route.ts` (GET full history). Transfer type → asset field mapping defined as a Record<BodyTransferType, string>. POST uses $transaction to atomically create BodyTransfer record + update asset role field + create event. Placeholder body warning appended to response data when toBody.isPlaceholder is true. Immutability enforced by not creating PUT/DELETE handlers. Fixed TS2339 by casting transfer_type to String() before calling .replace(). Ran `tsc --noEmit` — clean.
+- Files affected: `app/src/app/api/body-transfers/route.ts` (new), `app/src/app/api/assets/[id]/body-transfers/route.ts` (new)
+- Learnings for next cycles:
+  - Patterns: Dynamic key for Prisma update: `data: { [assetFieldKey]: to_body_id }` — works for all 5 body role fields.
+  - Patterns: `String(transfer_type).replace(...)` avoids TS error when transfer_type is typed as `{}` (extracted from Record<string, unknown> body).
+  - Next task: US-054 — Operator Model API.

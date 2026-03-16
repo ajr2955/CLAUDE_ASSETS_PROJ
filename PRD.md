@@ -1005,16 +1005,16 @@ All four phases are in scope for this PRD. Phases must be implemented in order, 
 **Description:** As an asset manager, I want API endpoints to transfer responsibility for an asset from one body to another, with full auditability.
 
 **Acceptance Criteria:**
-- [ ] `GET /api/body-transfers` returns transfers; supports filters: `asset_id`, `transfer_type`, `from_body_id`, `to_body_id`
-- [ ] `GET /api/assets/:id/body-transfers` returns full transfer history for an asset
-- [ ] `POST /api/body-transfers` creates a transfer record and updates the corresponding role field on the `assets` table atomically:
+- [x] `GET /api/body-transfers` returns transfers; supports filters: `asset_id`, `transfer_type`, `from_body_id`, `to_body_id`
+- [x] `GET /api/assets/:id/body-transfers` returns full transfer history for an asset
+- [x] `POST /api/body-transfers` creates a transfer record and updates the corresponding role field on the `assets` table atomically:
   - `transfer_type = responsible_body` → updates `assets.responsible_body_id`
   - `transfer_type = operational_body` → updates `assets.operational_body_id`
   - etc.
   - An `asset_reassigned` event is auto-created on the asset with metadata indicating from/to bodies
-- [ ] Body transfers are immutable: no PUT, no DELETE
-- [ ] If `to_body_id` is a placeholder body, a warning is returned in the response: `{ warning: "Target body is a placeholder — organizational ownership not yet resolved" }` — but transfer proceeds
-- [ ] Typecheck passes
+- [x] Body transfers are immutable: no PUT, no DELETE
+- [x] If `to_body_id` is a placeholder body, a warning is returned in the response: `{ warning: "Target body is a placeholder — organizational ownership not yet resolved" }` — but transfer proceeds
+- [x] Typecheck passes
 
 ---
 
