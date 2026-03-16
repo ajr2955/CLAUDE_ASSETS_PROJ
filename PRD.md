@@ -1250,16 +1250,16 @@ All four phases are in scope for this PRD. Phases must be implemented in order, 
 **Description:** As a headquarters user or administrator, I want a visual dashboard showing the full municipal asset portfolio status at a glance.
 
 **Acceptance Criteria:**
-- [ ] Route `/dashboard` renders the executive dashboard (visible to `admin`, `asset_manager`, and `operations_manager` roles with full portfolio access)
-- [ ] Summary stat cards: Total Assets (with breakdown link), Assets at Risk (red if > 0), Open Exceptions (amber), Active Developer Obligations, Planning Entities in Progress
-- [ ] Chart: Assets by Lifecycle Stage (horizontal bar chart per family)
-- [ ] Chart: Budget Variance Overview (stacked bar by budget_type showing approved vs actual across top 10 variance assets)
-- [ ] Exceptions panel: top 10 exceptions sorted by severity with asset name, type, and link
-- [ ] Placeholder Bodies panel: list of placeholder bodies with asset count and resolution_note
-- [ ] Developer Obligations panel: overdue obligations with developer name, promised asset type, overdue days
-- [ ] All panels link through to filtered list views
+- [x] Route `/dashboard` renders the executive dashboard (visible to `admin`, `asset_manager`, and `operations_manager` roles with full portfolio access)
+- [x] Summary stat cards: Total Assets (with breakdown link), Assets at Risk (red if > 0), Open Exceptions (amber), Active Developer Obligations, Planning Entities in Progress
+- [x] Chart: Assets by Lifecycle Stage (horizontal bar chart per family)
+- [x] Chart: Budget Variance Overview (stacked bar by budget_type showing approved vs actual across top 10 variance assets)
+- [x] Exceptions panel: top 10 exceptions sorted by severity with asset name, type, and link
+- [x] Placeholder Bodies panel: list of placeholder bodies with asset count and resolution_note
+- [x] Developer Obligations panel: overdue obligations with developer name, promised asset type, overdue days
+- [x] All panels link through to filtered list views
 - [x] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Verify changes work in browser
 
 ---
 
@@ -1267,14 +1267,14 @@ All four phases are in scope for this PRD. Phases must be implemented in order, 
 **Description:** As a department user or operations manager, I want a dashboard scoped to my body's assets.
 
 **Acceptance Criteria:**
-- [ ] Route `/dashboard/department` renders department-scoped view (auto-scoped to user's body)
-- [ ] Summary cards: My Assets, Overdue Work Orders (red if > 0), Assets Needing Inspection, Expiring Contracts
-- [ ] Work Order pipeline: count per status shown as a horizontal funnel
-- [ ] Condition overview: distribution of condition scores (1–5) for my assets as a mini bar chart
-- [ ] Recent events feed: last 10 events on my assets
-- [ ] Quick actions: Create Work Order, Record Inspection, Upload Document — all with asset typeahead pre-fill
+- [x] Route `/dashboard/department` renders department-scoped view (auto-scoped to user's body)
+- [x] Summary cards: My Assets, Overdue Work Orders (red if > 0), Assets Needing Inspection, Expiring Contracts
+- [x] Work Order pipeline: count per status shown as a horizontal funnel
+- [x] Condition overview: distribution of condition scores (1–5) for my assets as a mini bar chart
+- [x] Recent events feed: last 10 events on my assets
+- [x] Quick actions: Create Work Order, Record Inspection, Upload Document — all with asset typeahead pre-fill
 - [x] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Verify changes work in browser
 
 ---
 

@@ -659,3 +659,22 @@
   - Patterns: assets_needing_inspection: fetch all body asset IDs + assets with recent condition records → subtract sets in memory.
   - Patterns: For department_user role, look up responsibleBodyId from DB (not from JWT — JWT only contains sub/email/role/type).
   - Next task: US-068 — Executive KPI dashboard UI.
+
+## Iteration 65 — US-068: Executive KPI dashboard UI
+- What was done: Created `src/app/dashboard/page.tsx` as a full client-component executive dashboard. Fetches in parallel: /api/dashboard/executive (main KPIs), /api/exceptions (top 10 critical then high), /api/developer-obligations?overdue=true (overdue panel). Renders: (1) 5 summary stat cards (Total Assets/At Risk/Exceptions/Dev Obligations/Planning) with color coding and links; (2) Assets by Lifecycle Stage horizontal bar chart using pure CSS/Tailwind bars; (3) Budget Variance Overview panel with variance stats + contracts expiring 30/60/90 day breakdown; (4) Top 10 Exceptions panel with severity-colored cards linking to asset detail; (5) Placeholder Bodies panel with amber warning cards and resolution notes; (6) Overdue Developer Obligations panel with days-overdue badges. All panels link to filtered list views. TypeScript check passes cleanly.
+- Files affected: `app/src/app/dashboard/page.tsx` (new)
+- Learnings for next cycles:
+  - Patterns: Pure CSS horizontal bar chart: `width: ${(value/max)*100}%` on a colored div inside a gray container — no charting library needed.
+  - Patterns: Top exceptions: fetch critical severity first, then fetch high if < 10 results, deduplicate by `asset_id:exception_type` key.
+  - Patterns: StatCard with optional `href` renders either a plain div or a `<Link>` wrapper.
+  - Next task: US-069 — Department dashboard UI.
+
+## Iteration 66 — US-069: Department dashboard UI
+- What was done: Created `src/app/dashboard/department/page.tsx` as the department-scoped dashboard. Fetches from GET /api/dashboard/department (auto-resolved body from JWT). Renders: (1) 4 summary stat cards (My Assets, Overdue Work Orders red if >0, Assets Needing Inspection, Expiring Contracts); (2) Work Order Pipeline — horizontal bar funnel using CSS height scaling by count per status (Open/Assigned/In Progress/Pending Approval/Closed); (3) Condition Overview — 5-score mini bar chart (1=Critical red to 5=Excellent green) with per-score count; (4) Work Orders by Category horizontal bar chart; (5) Contracts Expiring table with days-until badge colored red if ≤30d, amber otherwise; (6) Recent Events feed with robot icon for system-generated, category badge, timeAgo helper, asset link; (7) Quick Actions row (Create Work Order / Record Inspection / Upload Document) each opening a modal with an asset typeahead (300ms debounce search to /api/assets) that navigates to the appropriate asset detail tab on select.
+- Files affected: `app/src/app/dashboard/department/page.tsx` (new)
+- Learnings for next cycles:
+  - Patterns: Work order funnel: bar heights in pixels proportional to count/maxCount; fixed min height of 8px for zero-count bars; labels below.
+  - Patterns: Score color map Record<number, string> for Tailwind bg classes; score distribution sorted descending (5 to 1).
+  - Patterns: Quick action modal with typeahead — onBlur + setTimeout(200ms) prevents selection loss; quickActionTarget() maps action type to asset detail URL fragment.
+  - Patterns: timeAgo() helper: convert ms diff to m/h/d labels for event feed relative timestamps.
+  - Next task: US-070 — Exception management UI.
