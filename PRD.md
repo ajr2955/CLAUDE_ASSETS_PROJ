@@ -991,13 +991,13 @@ All four phases are in scope for this PRD. Phases must be implemented in order, 
 **Description:** As an asset manager, I want API endpoints for managing asset allocations.
 
 **Acceptance Criteria:**
-- [ ] `GET /api/allocations` returns allocations; supports filters: `asset_id`, `status`, `allocation_type`, `is_revenue_generating`, `expiring_within_days`
-- [ ] `GET /api/assets/:id/allocations` returns all allocations for an asset
-- [ ] `POST /api/allocations` creates an allocation; auto-creates an `asset_transferred` event on the asset
-- [ ] `PUT /api/allocations/:id` updates mutable fields
-- [ ] `PUT /api/allocations/:id/terminate` terminates an allocation; requires reason; sets `status = terminated`; auto-creates event
-- [ ] Revenue-generating allocations expose `periodic_fee` and `fee_frequency` for use by the revenue model in Phase 4
-- [ ] Typecheck passes
+- [x] `GET /api/allocations` returns allocations; supports filters: `asset_id`, `status`, `allocation_type`, `is_revenue_generating`, `expiring_within_days`
+- [x] `GET /api/assets/:id/allocations` returns all allocations for an asset
+- [x] `POST /api/allocations` creates an allocation; auto-creates an `asset_transferred` event on the asset
+- [x] `PUT /api/allocations/:id` updates mutable fields
+- [x] `PUT /api/allocations/:id/terminate` terminates an allocation; requires reason; sets `status = terminated`; auto-creates event
+- [x] Revenue-generating allocations expose `periodic_fee` and `fee_frequency` for use by the revenue model in Phase 4
+- [x] Typecheck passes
 
 ---
 
