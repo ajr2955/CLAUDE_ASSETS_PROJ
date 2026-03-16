@@ -790,7 +790,7 @@ All four phases are in scope for this PRD. Phases must be implemented in order, 
 - [x] Status pipeline displayed as horizontal status chips: Open → Assigned → In Progress → Pending Approval → Closed
 - [x] Contractors see only their assigned work orders
 - [x] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Verify changes work in browser
 
 ---
 
