@@ -472,3 +472,13 @@
 - Learnings for next cycles:
   - Patterns: Reusing an existing enum (payment_frequency) for a new field in a different table is valid in both Prisma and PostgreSQL — no need to create a duplicate enum.
   - Next task: US-049 — Body Transfer schema and migration.
+
+---
+
+## Iteration 47 — US-049: Body Transfer schema and migration
+- What was done: Added `BodyTransferType` enum and `BodyTransfer` model to `prisma/schema.prisma`. No `updatedAt` field — body transfers are immutable (append-only, same as events). `authorizedByUserId` is a plain UUID stub. Named relations "BodyTransferFrom" and "BodyTransferTo" on ResponsibleBody to disambiguate two FKs from the same table. Added reverse relations `bodyTransfers` to Asset, `bodyTransfersFrom` and `bodyTransfersTo` to ResponsibleBody. Created migration SQL at `prisma/migrations/0049_body_transfers/migration.sql` with CREATE TYPE body_transfer_type and CREATE TABLE body_transfers. Ran `prisma validate` + `prisma generate` + `tsc --noEmit` — all clean.
+- Files affected: `app/prisma/schema.prisma`, `app/prisma/migrations/0049_body_transfers/migration.sql`
+- Learnings for next cycles:
+  - Patterns: Immutability for body_transfers: no `updated_at` column in schema or SQL, and no PUT/DELETE endpoints will be created.
+  - Patterns: Two FKs to the same table (from_body_id, to_body_id → responsible_bodies) require named relations: "BodyTransferFrom" and "BodyTransferTo".
+  - Next task: US-050 — Planning Entity API.

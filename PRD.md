@@ -935,7 +935,7 @@ All four phases are in scope for this PRD. Phases must be implemented in order, 
 **Description:** As a developer, I want a `body_transfers` table to record the formal transfer of asset responsibility from one organizational body to another.
 
 **Acceptance Criteria:**
-- [ ] Table `body_transfers` created with columns:
+- [x] Table `body_transfers` created with columns:
   - `id` (UUID PK)
   - `asset_id` (FK → assets, not null)
   - `transfer_type` (enum: `strategic_owner`, `responsible_body`, `operational_body`, `maintenance_body`, `data_steward`)
@@ -946,9 +946,9 @@ All four phases are in scope for this PRD. Phases must be implemented in order, 
   - `authorized_by_user_id` (FK → users, nullable)
   - `notes` (text)
   - `created_at`
-- [ ] Body transfers are immutable (no update or delete)
-- [ ] Migration runs cleanly
-- [ ] Typecheck passes
+- [x] Body transfers are immutable (no update or delete)
+- [x] Migration runs cleanly
+- [x] Typecheck passes
 
 ---
 
