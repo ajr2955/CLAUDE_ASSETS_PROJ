@@ -535,3 +535,13 @@
   - Patterns: `updateMany` for terminating multiple allocations atomically — no need for individual updates.
   - Patterns: Operator model = allocation(type=operator) + optional contract(type=operator_agreement) — no new table needed.
   - Next task: US-055 — Revenue and Collection model API.
+
+---
+
+## Iteration 53 — US-055: Revenue and Collection model API
+- What was done: Added `RevenueType` and `RevenueStatus` enums plus `RevenueRecord` model to schema. Added reverse relations to Asset (revenueRecords), Allocation (revenueRecords), and Contract (revenueRecords). Created migration SQL at `prisma/migrations/0055_revenue_records/migration.sql`. Created 4 API route handlers: `revenue-records/route.ts` (GET list with filters, POST create with auto-status logic); `revenue-records/[id]/mark-received/route.ts` (PUT sets actual_amount, payment_date, and computes received vs partial status); `assets/[id]/revenue-summary/route.ts` (GET YTD summary aggregated in-memory from DB records). Ran `prisma validate` + `prisma generate` + `tsc --noEmit` — all clean.
+- Files affected: `app/prisma/schema.prisma`, `app/prisma/migrations/0055_revenue_records/migration.sql`, `app/src/app/api/revenue-records/route.ts`, `app/src/app/api/revenue-records/[id]/mark-received/route.ts`, `app/src/app/api/assets/[id]/revenue-summary/route.ts`
+- Learnings for next cycles:
+  - Patterns: Status auto-logic: expected_amount>0 && actual_amount=0 → expected; actual>=expected → received; actual>0 && actual<expected → partial.
+  - Patterns: YTD summary: filter records with periodStart >= Jan 1 current year, sum in-memory over record set.
+  - Next task: US-056 — Planning Entity management UI.

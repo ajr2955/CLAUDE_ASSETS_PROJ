@@ -1034,12 +1034,12 @@ All four phases are in scope for this PRD. Phases must be implemented in order, 
 **Description:** As an asset manager, I want to track revenue expected and received from revenue-generating assets (lease income, booking fees, service charges).
 
 **Acceptance Criteria:**
-- [ ] Table `revenue_records` created with columns: `id`, `asset_id`, `allocation_id` (nullable), `contract_id` (nullable), `revenue_type` (enum: `lease_income`, `booking_fee`, `service_charge`, `operator_fee`, `other`), `period_start` (date), `period_end` (date), `expected_amount` (decimal), `actual_amount` (decimal), `payment_date` (date, nullable), `status` (enum: `expected`, `received`, `partial`, `overdue`, `waived`), `notes` (text), `created_at`, `updated_at`
-- [ ] `GET /api/revenue-records` returns records; supports filters: `asset_id`, `status`, `revenue_type`, `period_start_from`, `period_end_to`
-- [ ] `POST /api/revenue-records` creates a record; if `expected_amount > 0` and no `actual_amount`, status defaults to `expected`
-- [ ] `PUT /api/revenue-records/:id/mark-received` sets actual_amount and payment_date; updates status to `received` or `partial`
-- [ ] `GET /api/assets/:id/revenue-summary` returns totals: total expected YTD, total received YTD, total overdue
-- [ ] Typecheck passes
+- [x] Table `revenue_records` created with columns: `id`, `asset_id`, `allocation_id` (nullable), `contract_id` (nullable), `revenue_type` (enum: `lease_income`, `booking_fee`, `service_charge`, `operator_fee`, `other`), `period_start` (date), `period_end` (date), `expected_amount` (decimal), `actual_amount` (decimal), `payment_date` (date, nullable), `status` (enum: `expected`, `received`, `partial`, `overdue`, `waived`), `notes` (text), `created_at`, `updated_at`
+- [x] `GET /api/revenue-records` returns records; supports filters: `asset_id`, `status`, `revenue_type`, `period_start_from`, `period_end_to`
+- [x] `POST /api/revenue-records` creates a record; if `expected_amount > 0` and no `actual_amount`, status defaults to `expected`
+- [x] `PUT /api/revenue-records/:id/mark-received` sets actual_amount and payment_date; updates status to `received` or `partial`
+- [x] `GET /api/assets/:id/revenue-summary` returns totals: total expected YTD, total received YTD, total overdue
+- [x] Typecheck passes
 
 ---
 
