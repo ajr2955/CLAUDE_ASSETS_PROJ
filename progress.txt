@@ -249,3 +249,12 @@
   - Patterns: IIFE pattern `{activeTab === "events" && (() => { ... })()}` works in JSX for complex tab content that needs local variables (like CATEGORY_COLORS, handleApplyFilter, groupedEventTypes).
   - Patterns: `<optgroup>` inside `<select>` for grouped event type dropdown.
 ---
+
+## Iteration 26 — US-030: Contract schema and migration
+- What was done: Added `ContractType` model and `Contract` model to `prisma/schema.prisma`. Added three new enums: `CounterpartyType` (tenant, supplier, operator, developer, authority, other), `PaymentFrequency` (monthly, quarterly, annual, one_off), `ContractStatus` (draft, active, expired, terminated, renewed). Added reverse relation `contracts Contract[]` to `Asset` model and `contracts Contract[] @relation("ContractBody")` to `ResponsibleBody` model. Created migration SQL at `prisma/migrations/0030_contracts/migration.sql` with: CREATE TABLE contract_types + 6 INSERT seed rows, three CREATE TYPE enums, CREATE TABLE contracts with all columns and FK constraints (assets, contract_types, responsible_bodies), and 4 CREATE INDEX statements. Ran `prisma validate` → valid, `prisma generate` → success, `tsc --noEmit` → clean.
+- Files affected: `app/prisma/schema.prisma`, `app/prisma/migrations/0030_contracts/migration.sql`
+- Learnings for next cycles:
+  - Patterns: When a model has multiple FK relations to the same table (ResponsibleBody), use a named relation string (e.g., `@relation("ContractBody")`) and add the matching named reverse relation on ResponsibleBody.
+  - Patterns: PaymentFrequency enum value `one_off` is valid in Prisma even though it contains an underscore — no quoting needed.
+  - Patterns: ContractType is a lookup table (like DocumentType) — simple id/name/description/isActive structure with seed data in the migration.
+---
