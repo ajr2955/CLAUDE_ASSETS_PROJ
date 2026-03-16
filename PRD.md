@@ -474,15 +474,15 @@ All four phases are in scope for this PRD. Phases must be implemented in order, 
 **Description:** As an asset manager or planner, I want to create a new asset through a multi-step form.
 
 **Acceptance Criteria:**
-- [ ] Route `/assets/new` renders a multi-step form: Step 1 — Classification (family, type); Step 2 — Identity (name, optional code, ownership model, address, area); Step 3 — Responsibility (body assignments for each role); Step 4 — Review and Submit
-- [ ] Asset code auto-generated if left blank; user can override
-- [ ] Family selection in Step 1 filters available types in the same step
-- [ ] Step 3 body selectors are typeahead dropdowns pulling from `/api/responsible-bodies`
-- [ ] Placeholder bodies shown with warning icon in dropdown — user can still select but a warning is displayed
-- [ ] On submit, asset created via `POST /api/assets`; user redirected to new asset detail page
-- [ ] Validation errors displayed inline per field
-- [ ] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Route `/assets/new` renders a multi-step form: Step 1 — Classification (family, type); Step 2 — Identity (name, optional code, ownership model, address, area); Step 3 — Responsibility (body assignments for each role); Step 4 — Review and Submit
+- [x] Asset code auto-generated if left blank; user can override
+- [x] Family selection in Step 1 filters available types in the same step
+- [x] Step 3 body selectors are typeahead dropdowns pulling from `/api/responsible-bodies`
+- [x] Placeholder bodies shown with warning icon in dropdown — user can still select but a warning is displayed
+- [x] On submit, asset created via `POST /api/assets`; user redirected to new asset detail page
+- [x] Validation errors displayed inline per field
+- [x] Typecheck passes
+- [x] Verify changes work in browser
 
 ---
 

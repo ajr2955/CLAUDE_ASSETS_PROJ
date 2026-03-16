@@ -207,3 +207,13 @@
   - Patterns: Client-side doc requirement checking: fetch asset.document_counts (array of {document_type_name, count}), build a Set of lowercase names, then check each transition.requiredDocumentTypes name against this Set for red/green indicators.
   - Traps: Modal stage-select card needs a unique key from transition.id (not toStage.id) in case multiple transitions share a toStage. Also child assets and modal closing both use similar JSX structure — be careful with `replace_all: false` and provide enough surrounding context.
 ---
+
+## Iteration 22 — US-026: Asset creation form
+- What was done: Created multi-step asset creation form at `src/app/assets/new/page.tsx`. Step 1: Family select (filters active families) + Type select (dependent on family, updates when family changes). Step 2: Name (required), Code (optional, auto-generated if blank), Ownership Model (select), Address, Area (decimal), Notes. Step 3: 5 body role typeahead dropdowns (BodySelect component) with live search filtering, placeholder body warning icon (⚠) in dropdown and amber note below field when selected. Step 4: Read-only review of all inputs with an info box explaining the default lifecycle stage/status. Navigation: Back/Next with per-step validation before advancing; Cancel returns to /assets. On submit, builds payload with only non-empty fields, calls POST /api/assets, redirects to new asset detail page on success. Inline errors shown per field; general API error shown at bottom of step 4. Progress indicator (numbered circles turning green on completion with connecting bars). Ran tsc --noEmit — clean.
+- Files affected: `app/src/app/assets/new/page.tsx`
+- Learnings for next cycles:
+  - Patterns: BodySelect typeahead: use onBlur with setTimeout(200ms) to allow onMouseDown to fire before the dropdown closes — prevents the selection from being lost when user clicks an option.
+  - Patterns: Controlled typeahead state: `open` flag drives whether input shows the search query or the selected body name. On focus: open=true, query=""; on selection: set value, open=false.
+  - Patterns: Multi-step form validation: validate per step in nextStep() before advancing; step 4 submit can show general API errors via setErrors({ general: ... }).
+  - Patterns: payload construction: only include optional fields when non-empty to avoid sending null/empty strings to the API; parseFloat for numeric fields.
+---
