@@ -1022,11 +1022,11 @@ All four phases are in scope for this PRD. Phases must be implemented in order, 
 **Description:** As an asset manager or administrator, I want to assign an operator to an asset and manage operator agreements.
 
 **Acceptance Criteria:**
-- [ ] An operator is a combination of an `allocation` record (type `operator`) plus an optional linked `contract` (type `operator_agreement`)
-- [ ] `POST /api/assets/:id/assign-operator` is a convenience endpoint that: creates an allocation of type `operator`, optionally creates a linked contract, and updates `assets.operational_body_id` if the operator is a known body; auto-creates `operator_changed` event
-- [ ] `PUT /api/assets/:id/change-operator` terminates the existing operator allocation and calls assign-operator logic for the new one
-- [ ] `GET /api/assets/:id/current-operator` returns the active operator allocation and linked contract if any
-- [ ] Typecheck passes
+- [x] An operator is a combination of an `allocation` record (type `operator`) plus an optional linked `contract` (type `operator_agreement`)
+- [x] `POST /api/assets/:id/assign-operator` is a convenience endpoint that: creates an allocation of type `operator`, optionally creates a linked contract, and updates `assets.operational_body_id` if the operator is a known body; auto-creates `operator_changed` event
+- [x] `PUT /api/assets/:id/change-operator` terminates the existing operator allocation and calls assign-operator logic for the new one
+- [x] `GET /api/assets/:id/current-operator` returns the active operator allocation and linked contract if any
+- [x] Typecheck passes
 
 ---
 

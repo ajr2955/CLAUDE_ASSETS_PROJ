@@ -525,3 +525,13 @@
   - Patterns: Dynamic key for Prisma update: `data: { [assetFieldKey]: to_body_id }` — works for all 5 body role fields.
   - Patterns: `String(transfer_type).replace(...)` avoids TS error when transfer_type is typed as `{}` (extracted from Record<string, unknown> body).
   - Next task: US-054 — Operator Model API.
+
+---
+
+## Iteration 52 — US-054: Operator Model API
+- What was done: Created 3 Next.js App Router route handlers. `assets/[id]/current-operator/route.ts`: GET returns active operator allocation (findFirst by allocationType=operator + status=active) and active operator_agreement contract. `assets/[id]/assign-operator/route.ts`: POST creates operator allocation + auto-creates operator_changed event; optionally creates operator_agreement contract if `contract` object provided in body; updates asset.operational_body_id if allocated_to_body_id is set. `assets/[id]/change-operator/route.ts`: PUT terminates existing active operator allocations (updateMany) + terminates active operator_agreement contracts, then runs the same assign-operator logic inline. Ran `tsc --noEmit` — clean.
+- Files affected: `app/src/app/api/assets/[id]/current-operator/route.ts`, `app/src/app/api/assets/[id]/assign-operator/route.ts`, `app/src/app/api/assets/[id]/change-operator/route.ts`
+- Learnings for next cycles:
+  - Patterns: `updateMany` for terminating multiple allocations atomically — no need for individual updates.
+  - Patterns: Operator model = allocation(type=operator) + optional contract(type=operator_agreement) — no new table needed.
+  - Next task: US-055 — Revenue and Collection model API.
