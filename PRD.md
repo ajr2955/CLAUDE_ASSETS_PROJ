@@ -1282,15 +1282,15 @@ All four phases are in scope for this PRD. Phases must be implemented in order, 
 **Description:** As any authorized user, I want a dedicated exceptions page to review and act on all flagged issues.
 
 **Acceptance Criteria:**
-- [ ] Route `/exceptions` renders the exception list
-- [ ] Exceptions grouped by severity: Critical (red), High (orange), Medium (amber)
-- [ ] Each exception card shows: asset name, asset code, family badge, exception type label, description, detected date, a link to the relevant asset detail page
-- [ ] Filter panel: severity, exception_type, family, responsible_body
-- [ ] Dismiss button on each exception (for `asset_manager`+); dismissed exceptions moved to a "Resolved" tab; a dismissal event created on the asset
-- [ ] Count badge on navigation menu item showing total active critical + high exceptions
-- [ ] `contractor` role does not see this page
+- [x] Route `/exceptions` renders the exception list
+- [x] Exceptions grouped by severity: Critical (red), High (orange), Medium (amber)
+- [x] Each exception card shows: asset name, asset code, family badge, exception type label, description, detected date, a link to the relevant asset detail page
+- [x] Filter panel: severity, exception_type, family, responsible_body
+- [x] Dismiss button on each exception (for `asset_manager`+); dismissed exceptions moved to a "Resolved" tab; a dismissal event created on the asset
+- [x] Count badge on navigation menu item showing total active critical + high exceptions
+- [x] `contractor` role does not see this page
 - [x] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Verify changes work in browser
 
 ---
 
