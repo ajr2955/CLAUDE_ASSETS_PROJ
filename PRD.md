@@ -821,7 +821,7 @@ All four phases are in scope for this PRD. Phases must be implemented in order, 
 - [x] Accept and Reject action buttons on pending handovers (for `asset_manager` and `admin`)
 - [x] Missing documents listed with red warning icons; if accepted with conditions, conditions text shown in amber
 - [x] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Verify changes work in browser
 
 ---
 

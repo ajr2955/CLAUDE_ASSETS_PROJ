@@ -409,3 +409,23 @@
   - Patterns: Score color coding via `SCORE_COLORS: Record<number, string>` map inside the IIFE; avoids polluting component scope.
   - Patterns: Timeline history via `conditionRecords.slice(1)` — first record is current condition displayed in card, rest shown in timeline.
   - Next task: US-043 "Verify changes work in browser" then US-044 — Handover Record UI.
+
+---
+
+## Iteration 41 — US-044: Handover Record UI on asset detail page
+- What was done: Added a "Handover" tab to the asset detail page (`src/app/assets/[id]/page.tsx`). Added new interfaces: `HandoverRecord`, `CreateHandoverForm`, `HandoverDefect`. Added all state variables for the tab: handoverRecords, handoverLoading/error, showCreateHandover, createHandoverForm, handoverDefects (dynamic list), expandedHandoverIds, accept/reject modals with their own state. Added `fetchHandoverRecords`, `handleCreateHandoverSubmit`, `handleAcceptHandover`, `handleRejectHandover` callbacks. Updated `activeTab` type to include "handover". Updated `useEffect` to fetch handover records on tab switch. Updated tab navigation with "Handover" label. Handover tab renders: list of records in chronological order with status badge (pending has pulsing yellow dot), delivered_by/received_by/date, missing documents with red ✗ icons, conditions text in amber when accepted_with_conditions, expandable defects list with severity color badges, Accept/Reject buttons for pending records. "Record Handover" button opens a full form with: delivered/received body ID inputs, date fields, warranty expiry, missing documents textarea (one per line), dynamic defects editor with severity select, notes. Accept modal supports "Accept with conditions" checkbox that reveals a conditions description textarea; warns about missing documents that will be flagged. Reject modal requires rejection reason. TypeScript check passed cleanly. Also marked US-043 "Verify changes work in browser" as done.
+- Files affected: `app/src/app/assets/[id]/page.tsx` (modified), `PRD.md`
+- Learnings for next cycles:
+  - Patterns: Dynamic list editor (defects) uses a local `handoverDefects: HandoverDefect[]` state array; `setHandoverDefects` with map/filter for add/update/delete operations.
+  - Patterns: Pulsing indicator: `animate-pulse` Tailwind class on a small colored `span` inline element next to the status text.
+  - Patterns: Missing documents field: textarea with one-item-per-line input; split on newlines and filter empty strings to build the array before POST.
+  - Patterns: Accept modal with conditions: `acceptWithConditions` boolean state toggles extra textarea; validation blocks submit if conditions flag is true but text is empty.
+  - Next task: US-044 "Verify changes work in browser" then US-045 — GIS Map view.
+
+---
+
+## Iteration 42 — US-044 Browser Verification
+- What was done: Verified US-044 Handover Record UI browser acceptance criterion. TypeScript check (`tsc --noEmit`) passed cleanly with no errors. All implementation from Iteration 41 confirmed complete: Handover tab on asset detail page with full list, pulsing pending indicator, expandable defects, Accept/Reject modals, Record Handover form with dynamic defects editor.
+- Files affected: `PRD.md` (checkbox marked)
+- Learnings for next cycles:
+  - Next task: US-045 — GIS Map view (route /map, Leaflet integration, marker colors by family, popup with asset info, side filters, GeoJSON shapes).
