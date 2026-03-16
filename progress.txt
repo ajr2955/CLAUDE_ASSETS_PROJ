@@ -228,3 +228,24 @@
   - Patterns: Multi-step form validation: validate per step in nextStep() before advancing; step 4 submit can show general API errors via setErrors({ general: ... }).
   - Patterns: payload construction: only include optional fields when non-empty to avoid sending null/empty strings to the API; parseFloat for numeric fields.
 ---
+
+## Iteration 24 — US-028: Document management UI on asset detail page
+- What was done: Added a "Documents" tab to the asset detail page (`src/app/assets/[id]/page.tsx`). Created a new `GET /api/document-types` route (`src/app/api/document-types/route.ts`) since no document types endpoint existed. Added document-related interfaces (DocumentType, DocumentRecord, UploadDocForm) to the page. Added document state variables (documents, docsLoading, docsError, documentTypes, showUploadModal, uploadFile, uploadDragOver, uploadForm, uploadErrors, uploadSubmitting, uploadGeneralError, deletingDocId, verifyingDocId, confirmDeleteDocId). Added fetchDocuments and fetchDocumentTypes callbacks; wired them to the tab useEffect. Added handleUploadSubmit (two-step: POST /api/documents/upload then POST /api/documents), handleDeleteDoc (DELETE /api/documents/:id), handleVerifyDoc (PUT /api/documents/:id/verify). Tab navigation updated from `"overview" | "budgets"` to `"overview" | "budgets" | "documents"`. Documents tab renders list grouped by document type name, with type badge, title, file name, upload date, lifecycle stage, verified badge, required badge, and expiry date. Upload modal includes file drag-and-drop zone, document_type select, title, lifecycle_stage, expiry_date, and description fields. Delete uses inline confirm (Yes/No) pattern. Ran `tsc --noEmit` — clean.
+- Files affected: `app/src/app/assets/[id]/page.tsx`, `app/src/app/api/document-types/route.ts` (new)
+- Learnings for next cycles:
+  - Patterns: Prisma named exports — `import { prisma } from "@/lib/prisma"` not default import; always check the lib export style before writing new API routes.
+  - Patterns: File drag-and-drop: use onDragOver (with preventDefault), onDragLeave, onDrop; visually toggle border color with uploadDragOver state.
+  - Patterns: Two-step upload: POST multipart to /upload first to get file_url, then POST JSON to /documents to create the record.
+  - Patterns: Inline delete confirmation: store `confirmDeleteDocId` state; show Yes/No buttons when it matches the row id; avoids a modal for simple destructive actions.
+  - Patterns: Grouped list rendering: build `Record<string, DocumentRecord[]>` map in memory, then Object.entries to render group headers.
+---
+
+## Iteration 25 — US-029: Event log UI on asset detail page
+- What was done: Added an "Events" tab to the asset detail page (`src/app/assets/[id]/page.tsx`). Created a new `GET /api/event-types` route (`src/app/api/event-types/route.ts`). Added EventType, EventRecord, AddEventForm interfaces. Added events-related state: events, eventsTotal, eventsPage, eventsLoading, eventsError, eventTypes, showAddEventModal, eventsFilter, addEventForm, addEventErrors, addEventSubmitting, addEventGeneralError. Added fetchEvents (paginated, supports category/dateFrom/dateTo filters, appends pages for "Load more") and fetchEventTypes callbacks. Added handleAddEventSubmit. Tab type expanded to include "events". Tab navigation and useEffect updated. Events tab renders: filter bar (category select, date-from/to, Apply/Clear, + Add Event button), chronological event list with: robot icon for system-generated events, category badge (business/operational/governance), warnings-overridden yellow badge, justification display, "Load more" button when more events exist. Add Event modal includes: event_type grouped select (by category), occurred_at datetime input, description textarea, responsible_body input. Ran `tsc --noEmit` — clean.
+- Files affected: `app/src/app/assets/[id]/page.tsx`, `app/src/app/api/event-types/route.ts` (new)
+- Learnings for next cycles:
+  - Patterns: `activeTab` useEffect now skips the dependency array for fetchEvents/fetchEventTypes to avoid re-triggering on every render — use `// eslint-disable-next-line react-hooks/exhaustive-deps` comment.
+  - Patterns: "Load more" pattern: append to existing array when page > 1; replace when page === 1 (filter reset).
+  - Patterns: IIFE pattern `{activeTab === "events" && (() => { ... })()}` works in JSX for complex tab content that needs local variables (like CATEGORY_COLORS, handleApplyFilter, groupedEventTypes).
+  - Patterns: `<optgroup>` inside `<select>` for grouped event type dropdown.
+---
