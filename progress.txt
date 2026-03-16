@@ -429,3 +429,16 @@
 - Files affected: `PRD.md` (checkbox marked)
 - Learnings for next cycles:
   - Next task: US-045 — GIS Map view (route /map, Leaflet integration, marker colors by family, popup with asset info, side filters, GeoJSON shapes).
+
+---
+
+## Iteration 43 — US-045: GIS Map view
+- What was done: Installed `leaflet` and `@types/leaflet`. Created two files: `src/app/map/LeafletMap.tsx` (client-only Leaflet component using dynamic import) and `src/app/map/page.tsx` (full map page with side panel). LeafletMap renders `circleMarker` for point features (avoids icon URL issues), `L.geoJSON` for polygon/line geometry, popups with asset name/type/status/stage/link. Page has collapsible side panel with family/type/status/lifecycle-stage filter selects (debounced 300ms), family color legend, map status count, and Unmapped Assets list (cross-references all assets against mapped IDs). Family colors are derived from a 9-color array assigned by index. Map is centered on Tel Aviv (32.0853, 34.7818) as default. TypeScript check passed cleanly.
+- Files affected: `app/src/app/map/LeafletMap.tsx` (new), `app/src/app/map/page.tsx` (new), `PRD.md`, `progress.txt`
+- Learnings for next cycles:
+  - Patterns: Leaflet in Next.js App Router: `dynamic(() => import("./LeafletMap"), { ssr: false })` in the parent page; `"use client"` + `require("leaflet")` inside useEffect in the component to avoid SSR issues.
+  - Patterns: Circle markers (`L.circleMarker`) avoid the Leaflet default icon webpack path issue entirely ― preferred over fixing icon URLs for custom deployments.
+  - Patterns: Re-initialize layers on features prop change: remove old layers from `layersRef.current`, clear the array, then add new layers.
+  - Patterns: Unmapped assets: fetch all assets matching filters + fetch geojson matching same filters, subtract to get unmapped set.
+  - Patterns: Sidebar collapse: `w-10` vs `w-80` with `transition-all duration-200` for smooth animation.
+  - Next task: US-046 — Planning Entity schema and migration.

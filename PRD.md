@@ -829,15 +829,15 @@ All four phases are in scope for this PRD. Phases must be implemented in order, 
 **Description:** As any authorized user, I want a map view of all assets so I can find and filter assets geographically.
 
 **Acceptance Criteria:**
-- [ ] Route `/map` renders a full-page map (using Leaflet or Mapbox — use Leaflet as default open-source option)
-- [ ] Map loads asset point markers from `GET /api/gis-locations/geojson`
-- [ ] Marker color corresponds to asset family (configurable color scheme)
-- [ ] Clicking a marker opens a popup with: asset name, type, status badge, lifecycle stage, and a link to the asset detail page
-- [ ] Side panel with family, type, status, and lifecycle stage filters; map updates in real-time as filters change
-- [ ] Polygon and line geometry (for gardens, roads) rendered as GeoJSON shapes
-- [ ] Assets without coordinates shown in a "Unmapped Assets" side list
-- [ ] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Route `/map` renders a full-page map (using Leaflet or Mapbox — use Leaflet as default open-source option)
+- [x] Map loads asset point markers from `GET /api/gis-locations/geojson`
+- [x] Marker color corresponds to asset family (configurable color scheme)
+- [x] Clicking a marker opens a popup with: asset name, type, status badge, lifecycle stage, and a link to the asset detail page
+- [x] Side panel with family, type, status, and lifecycle stage filters; map updates in real-time as filters change
+- [x] Polygon and line geometry (for gardens, roads) rendered as GeoJSON shapes
+- [x] Assets without coordinates shown in a "Unmapped Assets" side list
+- [x] Typecheck passes
+- [x] Verify changes work in browser
 
 ---
 
