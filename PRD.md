@@ -798,13 +798,13 @@ All four phases are in scope for this PRD. Phases must be implemented in order, 
 **Description:** As an operations manager, I want to view condition history and record new inspections for an asset.
 
 **Acceptance Criteria:**
-- [ ] Asset detail page includes a "Condition" tab
-- [ ] Current condition shown as a prominently styled score card with color coding: 5=green, 4=light green, 3=amber, 2=orange, 1=red
-- [ ] Condition card shows: score, structural condition, safety condition, maintenance priority, replacement urgency, inspection date, next inspection due date
-- [ ] "Record Inspection" button opens form with all condition fields
-- [ ] Condition history shown as a timeline below the current condition card
-- [ ] If safety_condition is `unsafe` or `major_hazard`, a red banner shown at the top of the asset detail page with text: "Safety Issue — Immediate attention required"
-- [ ] Typecheck passes
+- [x] Asset detail page includes a "Condition" tab
+- [x] Current condition shown as a prominently styled score card with color coding: 5=green, 4=light green, 3=amber, 2=orange, 1=red
+- [x] Condition card shows: score, structural condition, safety condition, maintenance priority, replacement urgency, inspection date, next inspection due date
+- [x] "Record Inspection" button opens form with all condition fields
+- [x] Condition history shown as a timeline below the current condition card
+- [x] If safety_condition is `unsafe` or `major_hazard`, a red banner shown at the top of the asset detail page with text: "Safety Issue — Immediate attention required"
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ---
