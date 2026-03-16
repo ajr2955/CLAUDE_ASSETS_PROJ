@@ -849,7 +849,7 @@ All four phases are in scope for this PRD. Phases must be implemented in order, 
 **Description:** As a developer, I want a `planning_entities` table to represent assets that exist only in the planning stage, before they become physical or registered operational assets.
 
 **Acceptance Criteria:**
-- [ ] Table `planning_entities` created with columns:
+- [x] Table `planning_entities` created with columns:
   - `id` (UUID PK)
   - `name` (string, not null)
   - `planning_code` (string, unique, auto-generated)
@@ -869,9 +869,9 @@ All four phases are in scope for this PRD. Phases must be implemented in order, 
   - `funding_source_notes` (text, nullable)
   - `notes` (text, nullable)
   - `created_at`, `updated_at`
-- [ ] Index on `asset_family_id`, `status`, `planning_body_id`, `target_delivery_date`
-- [ ] Migration runs cleanly
-- [ ] Typecheck passes
+- [x] Index on `asset_family_id`, `status`, `planning_body_id`, `target_delivery_date`
+- [x] Migration runs cleanly
+- [x] Typecheck passes
 
 ---
 

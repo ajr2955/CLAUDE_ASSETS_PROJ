@@ -442,3 +442,14 @@
   - Patterns: Unmapped assets: fetch all assets matching filters + fetch geojson matching same filters, subtract to get unmapped set.
   - Patterns: Sidebar collapse: `w-10` vs `w-80` with `transition-all duration-200` for smooth animation.
   - Next task: US-046 — Planning Entity schema and migration.
+
+---
+
+## Iteration 44 — US-046: Planning Entity schema and migration
+- What was done: Added `PlanningEntityStatus` enum and `PlanningEntity` model to `prisma/schema.prisma`. Added reverse relations to `AssetFamily` (planningEntities), `AssetType` (planningEntities), and `ResponsibleBody` (planningEntitiesAsPlanning, planningEntitiesAsIntendedReceiving). `linkedAssetId` is a UUID stub with REFERENCES assets(id) in SQL. `developerObligationId` is a plain UUID stub (no REFERENCES) since developer_obligations table created in US-047. Created migration SQL at `prisma/migrations/0046_planning_entities/migration.sql` with: CREATE TYPE planning_entity_status enum, CREATE TABLE planning_entities with all columns and FK constraints, ALTER TABLE assets ADD CONSTRAINT to resolve the planning_entity_id FK stub from US-005, and 4 CREATE INDEX statements. Ran `prisma validate` + `prisma generate` + `tsc --noEmit` — all clean.
+- Files affected: `app/prisma/schema.prisma`, `app/prisma/migrations/0046_planning_entities/migration.sql`
+- Learnings for next cycles:
+  - Patterns: The `assets.planning_entity_id` FK stub from US-005 is resolved here via ALTER TABLE ADD CONSTRAINT since planning_entities is now created.
+  - Patterns: `linked_asset_id` FK can reference assets directly (no circular issue) since it's a nullable FK from planning_entities to assets.
+  - Patterns: `developer_obligation_id` stays as plain UUID stub — FK constraint will be added in US-047 migration when developer_obligations table is created.
+  - Next task: US-047 — Developer Obligation schema and migration.
