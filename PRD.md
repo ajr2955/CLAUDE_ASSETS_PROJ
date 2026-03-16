@@ -782,14 +782,14 @@ All four phases are in scope for this PRD. Phases must be implemented in order, 
 **Description:** As an operations manager, I want a dedicated work orders page and a per-asset work orders tab.
 
 **Acceptance Criteria:**
-- [ ] Route `/work-orders` renders a full work order list with filters: status, priority, category, assigned body, overdue toggle
-- [ ] Asset detail page includes a "Work Orders" tab showing asset-specific work orders
-- [ ] Each work order shows: number, title, category, priority badge (color-coded), status badge, assigned body, target date, overdue indicator
-- [ ] "Create Work Order" button on both views opens a form (asset pre-filled on asset detail tab)
-- [ ] Work order detail modal shows full info, action log, and attached documents
-- [ ] Status pipeline displayed as horizontal status chips: Open → Assigned → In Progress → Pending Approval → Closed
-- [ ] Contractors see only their assigned work orders
-- [ ] Typecheck passes
+- [x] Route `/work-orders` renders a full work order list with filters: status, priority, category, assigned body, overdue toggle
+- [x] Asset detail page includes a "Work Orders" tab showing asset-specific work orders
+- [x] Each work order shows: number, title, category, priority badge (color-coded), status badge, assigned body, target date, overdue indicator
+- [x] "Create Work Order" button on both views opens a form (asset pre-filled on asset detail tab)
+- [x] Work order detail modal shows full info, action log, and attached documents
+- [x] Status pipeline displayed as horizontal status chips: Open → Assigned → In Progress → Pending Approval → Closed
+- [x] Contractors see only their assigned work orders
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ---
