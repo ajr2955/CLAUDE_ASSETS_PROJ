@@ -383,3 +383,18 @@
 - Files affected: `PRD.md` (checkbox marked)
 - Learnings for next cycles:
   - Next task: US-042 — Work Order management UI (route `/work-orders`, Work Orders tab on asset detail page, status pipeline chips, create form).
+
+---
+
+## Iteration 39 — US-042: Work Order management UI
+- What was done: Implemented the full Work Order management UI.
+  1. Created `/api/work-order-categories` GET endpoint (`app/src/app/api/work-order-categories/route.ts`) returning all active categories.
+  2. Created `/work-orders` page (`app/src/app/work-orders/page.tsx`) with full work order list, filters (status, priority, category, overdue toggle), pagination, "Create Work Order" modal, and work order detail modal with status pipeline chips.
+  3. Added "Work Orders" tab to asset detail page (`app/src/app/assets/[id]/page.tsx`): new interfaces (AssetWorkOrder, CreateWOForm, WorkOrderCategoryRef), state variables, fetchAssetWorkOrders/fetchWoCategories/handleCreateWOSubmit callbacks, lazy loading on tab switch, list with priority/status badges and overdue indicator, status pipeline (Open → Assigned → In Progress → Pending Approval → Closed), Create WO modal (asset pre-filled), and detail modal.
+  4. Contractor restriction is handled by the existing API RBAC (only returns work orders assigned to the contractor's user ID).
+  5. TypeScript check (`tsc --noEmit`) passed cleanly.
+- Files affected: `app/src/app/api/work-order-categories/route.ts` (new), `app/src/app/work-orders/page.tsx` (new), `app/src/app/assets/[id]/page.tsx` (modified), `PRD.md`
+- Learnings for next cycles:
+  - Pattern: `as const` array in tab navigation — add new tab value to the tuple for TypeScript to accept it.
+  - Pattern: Inner IIFE `{activeTab === "tab" && (() => { ... })()}` works well for defining local helper functions per tab without polluting component scope.
+  - Next task: US-043 — Condition Record UI on asset detail page.
