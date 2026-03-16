@@ -765,15 +765,15 @@ All four phases are in scope for this PRD. Phases must be implemented in order, 
 **Description:** As an asset manager, I want to view and manage contracts for an asset from the asset detail page.
 
 **Acceptance Criteria:**
-- [ ] Asset detail page includes a "Contracts" tab
-- [ ] Tab renders a list of contracts with: contract reference, type, counterparty name, status badge, start date, end date, contract value
-- [ ] Contracts expiring within 90 days highlighted with amber warning badge
-- [ ] Expired contracts highlighted with red badge
-- [ ] "Add Contract" button opens a form modal with all required fields
-- [ ] Each contract row has Edit, Renew, and View Documents actions
-- [ ] Renew action opens pre-filled form for new contract dates
-- [ ] Contract history (renewed contracts) shown in a collapsible sub-row
-- [ ] Typecheck passes
+- [x] Asset detail page includes a "Contracts" tab
+- [x] Tab renders a list of contracts with: contract reference, type, counterparty name, status badge, start date, end date, contract value
+- [x] Contracts expiring within 90 days highlighted with amber warning badge
+- [x] Expired contracts highlighted with red badge
+- [x] "Add Contract" button opens a form modal with all required fields
+- [x] Each contract row has Edit, Renew, and View Documents actions
+- [x] Renew action opens pre-filled form for new contract dates
+- [x] Contract history (renewed contracts) shown in a collapsible sub-row
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ---
