@@ -725,12 +725,12 @@ All four phases are in scope for this PRD. Phases must be implemented in order, 
 **Description:** As an operations manager or inspector, I want API endpoints for recording and retrieving condition assessments.
 
 **Acceptance Criteria:**
-- [ ] `GET /api/condition-records` returns records; supports filters: `asset_id`, `condition_score` (range), `safety_condition`, `maintenance_priority`, `replacement_urgency`, `inspection_date_from`, `inspection_date_to`
-- [ ] `GET /api/assets/:id/condition-records` returns condition history for an asset ordered by `inspection_date` descending; first record is the current condition
-- [ ] `GET /api/assets/:id/current-condition` returns the most recent condition record only
-- [ ] `POST /api/condition-records` creates a new condition record; an `inspection_completed` event is auto-created on the asset; if `condition_score <= 2`, an `asset_at_risk_flagged` governance event is also auto-created
-- [ ] Condition records are immutable once created (no PUT, no DELETE)
-- [ ] Typecheck passes
+- [x] `GET /api/condition-records` returns records; supports filters: `asset_id`, `condition_score` (range), `safety_condition`, `maintenance_priority`, `replacement_urgency`, `inspection_date_from`, `inspection_date_to`
+- [x] `GET /api/assets/:id/condition-records` returns condition history for an asset ordered by `inspection_date` descending; first record is the current condition
+- [x] `GET /api/assets/:id/current-condition` returns the most recent condition record only
+- [x] `POST /api/condition-records` creates a new condition record; an `inspection_completed` event is auto-created on the asset; if `condition_score <= 2`, an `asset_at_risk_flagged` governance event is also auto-created
+- [x] Condition records are immutable once created (no PUT, no DELETE)
+- [x] Typecheck passes
 
 ---
 

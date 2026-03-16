@@ -327,3 +327,15 @@
   - Patterns: `work_order_assigned` event looked up by name; fall back to any matching event type via `findFirst` with `name: { in: [...] }` when the specific type may not exist.
   - Patterns: Auto-generated work order number: `WO-YEAR-COUNT.padStart(5, "0")` — same pattern as contract reference (CTR-).
 ---
+
+---
+
+## Iteration 34 — US-038: Condition Record API
+- What was done: Created 3 new Next.js App Router route handlers for the Condition Record API. `src/app/api/condition-records/route.ts`: GET paginated list with all required filters (asset_id, condition_score_min/max range via gte/lte, safety_condition, maintenance_priority, replacement_urgency, inspection_date_from/to); enum validation for SafetyCondition, MaintenancePriority, ReplacementUrgency; POST create requiring asset_id/inspection_date/condition_score, validates score integer 1-5, auto-creates `inspection_completed` event via transaction spread pattern, conditionally auto-creates `asset_at_risk_flagged` governance event when score <= 2 via second conditional spread array. `src/app/api/assets/[id]/condition-records/route.ts`: GET paginated condition history for an asset, ordered by inspection_date desc (most recent first = current condition), includes inspectedByBody. `src/app/api/assets/[id]/current-condition/route.ts`: GET single most recent condition record via findFirst with same orderBy; returns 404 if no records exist. Condition records are read-only (no PUT/DELETE endpoints created). Ran `tsc --noEmit` — clean.
+- Files affected: `app/src/app/api/condition-records/route.ts` (new), `app/src/app/api/assets/[id]/condition-records/route.ts` (new), `app/src/app/api/assets/[id]/current-condition/route.ts` (new)
+- Learnings for next cycles:
+  - Patterns: Two conditional event arrays spread into `$transaction([...])`: first for `inspection_completed` (always when event type found), second for `asset_at_risk_flagged` (only when score <= 2 AND event type found) — both use the same conditional spread pattern from prior cycles.
+  - Patterns: Range filter for integer field: `conditionScore: { gte: min, lte: max }` — build the filter object conditionally based on which bound params are present.
+  - Patterns: Range filter for date field: `inspectionDate: { gte: new Date(from), lte: new Date(to) }` — same pattern as integer range.
+  - Patterns: `findFirst` with `orderBy: [{ inspectionDate: "desc" }, { createdAt: "desc" }]` reliably returns the most recent condition record as "current condition".
+  - Patterns: Immutability enforced by simply not creating PUT/DELETE handlers — no special schema constraint needed at the API layer.
