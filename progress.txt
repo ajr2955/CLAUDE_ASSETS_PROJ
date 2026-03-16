@@ -258,3 +258,12 @@
   - Patterns: PaymentFrequency enum value `one_off` is valid in Prisma even though it contains an underscore — no quoting needed.
   - Patterns: ContractType is a lookup table (like DocumentType) — simple id/name/description/isActive structure with seed data in the migration.
 ---
+
+## Iteration 27 — US-031: Work Order schema and migration
+- What was done: Added `WorkOrderCategory` model and `WorkOrder` model to `prisma/schema.prisma`. Added two new enums: `WorkOrderPriority` (critical, high, medium, low) and `WorkOrderStatus` (open, assigned, in_progress, pending_approval, closed, cancelled). Added named reverse relation `workOrders WorkOrder[] @relation("WorkOrderAssignedBody")` to `ResponsibleBody`, `workOrders WorkOrder[]` to `Asset` and `LifecycleStage`. Created migration SQL at `prisma/migrations/0031_work_orders/migration.sql` with: CREATE TABLE work_order_categories + 10 INSERT seed rows, two CREATE TYPE enums, CREATE TABLE work_orders with all columns and FK constraints (assets, work_order_categories, responsible_bodies, lifecycle_stages; user FKs are plain UUID stubs), and 5 CREATE INDEX statements. Ran `prisma validate` → valid, `prisma generate` → success, `tsc --noEmit` → clean.
+- Files affected: `app/prisma/schema.prisma`, `app/prisma/migrations/0031_work_orders/migration.sql`
+- Learnings for next cycles:
+  - Patterns: assignedToUserId and reportedByUserId are UUID stubs (no REFERENCES) since the users table already exists by US-018 but the constraint will be added in a later ALTER TABLE or is left as a loose FK to avoid circular migration issues.
+  - Patterns: WorkOrderCategory follows the same lookup table pattern as ContractType and DocumentType — id/name/description/isActive with seed data in the migration SQL.
+  - Patterns: Named relation `@relation("WorkOrderAssignedBody")` is required since ResponsibleBody already has multiple unambiguous WorkOrder relations — only one FK here so the name is for clarity and disambiguation.
+---

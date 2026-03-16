@@ -573,8 +573,8 @@ All four phases are in scope for this PRD. Phases must be implemented in order, 
 **Description:** As a developer, I want a `work_orders` table to represent maintenance and field execution instructions issued to contractors or internal teams.
 
 **Acceptance Criteria:**
-- [ ] Table `work_order_categories` created with seed data: pruning, repair, inspection, cleaning, irrigation_repair, safety_remediation, surface_renewal, structural_repair, general_maintenance, equipment_replacement
-- [ ] Table `work_orders` created with columns:
+- [x] Table `work_order_categories` created with seed data: pruning, repair, inspection, cleaning, irrigation_repair, safety_remediation, surface_renewal, structural_repair, general_maintenance, equipment_replacement
+- [x] Table `work_orders` created with columns:
   - `id` (UUID PK)
   - `asset_id` (FK → assets, not null)
   - `work_order_number` (string, unique, auto-generated)
@@ -594,9 +594,9 @@ All four phases are in scope for this PRD. Phases must be implemented in order, 
   - `sla_breach_at` (timestamp, nullable — auto-computed from priority + SLA config)
   - `notes` (text)
   - `created_at`, `updated_at`
-- [ ] Index on `asset_id`, `status`, `priority`, `assigned_to_body_id`, `target_completion_date`
-- [ ] Migration runs cleanly
-- [ ] Typecheck passes
+- [x] Index on `asset_id`, `status`, `priority`, `assigned_to_body_id`, `target_completion_date`
+- [x] Migration runs cleanly
+- [x] Typecheck passes
 
 ---
 
