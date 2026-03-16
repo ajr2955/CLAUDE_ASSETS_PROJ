@@ -316,3 +316,14 @@
   - Patterns: Termination reason appended to notes field as a workaround since there's no dedicated termination_reason column — this keeps the schema minimal.
   - Patterns: ContractStatus and CounterpartyType enums imported from `@/generated/prisma/client` for runtime validation.
 ---
+
+## Iteration 33 — US-037: Work Order CRUD API
+- What was done: Created 5 Next.js App Router route handlers for the Work Order CRUD API. `src/app/api/work-orders/route.ts`: GET paginated list with all required filters (asset_id, status, priority, assigned_to_body_id, assigned_to_user_id, category_id, overdue); overdue filter uses `targetCompletionDate: { lt: new Date() }` with `status: { notIn: [closed, cancelled] }`. POST create requiring asset_id/category_id/title, auto-generates workOrderNumber (WO-YEAR-SEQUENCE), auto-creates `work_order_created` event via transaction spread pattern. Contractor restriction applied: contractors limited to work orders assigned to their sub (user id). `src/app/api/work-orders/[id]/route.ts`: GET full detail with contractor restriction (can only see own assigned); PUT update with role-split: contractors may only update status/notes/description, other roles update all mutable fields. `src/app/api/work-orders/[id]/assign/route.ts`: PUT assign requiring operations_manager+; validates assigned body exists; transitions status to `assigned`; auto-creates notification event via transaction spread. `src/app/api/work-orders/[id]/close/route.ts`: PUT close requiring operations_manager+; requires actual_completion_date; accepts actual_cost; validates not already closed/cancelled; auto-creates `work_order_closed` event. `src/app/api/assets/[id]/work-orders/route.ts`: GET all work orders for a specific asset with contractor restriction. Ran `tsc --noEmit` — clean.
+- Files affected: `app/src/app/api/work-orders/route.ts` (new), `app/src/app/api/work-orders/[id]/route.ts` (new), `app/src/app/api/work-orders/[id]/assign/route.ts` (new), `app/src/app/api/work-orders/[id]/close/route.ts` (new), `app/src/app/api/assets/[id]/work-orders/route.ts` (new)
+- Learnings for next cycles:
+  - Patterns: Contractor restriction — use `requireAnyRole` with all valid roles, then check `caller.role === "contractor"` inline to enforce assignment-scoped filtering.
+  - Patterns: Overdue filter: `targetCompletionDate: { lt: new Date() }` combined with `status: { notIn: [closed, cancelled] }` in Prisma where clause.
+  - Patterns: Role-split PUT: contractors get a restricted field set; non-contractors get full update capability — avoids creating separate endpoints for the same resource.
+  - Patterns: `work_order_assigned` event looked up by name; fall back to any matching event type via `findFirst` with `name: { in: [...] }` when the specific type may not exist.
+  - Patterns: Auto-generated work order number: `WO-YEAR-COUNT.padStart(5, "0")` — same pattern as contract reference (CTR-).
+---

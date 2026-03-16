@@ -709,15 +709,15 @@ All four phases are in scope for this PRD. Phases must be implemented in order, 
 **Description:** As an operations manager or contractor, I want API endpoints for managing work orders.
 
 **Acceptance Criteria:**
-- [ ] `GET /api/work-orders` returns work orders; supports filters: `asset_id`, `status`, `priority`, `assigned_to_body_id`, `assigned_to_user_id`, `category_id`, `overdue` (boolean — `target_completion_date < now AND status NOT IN (closed, cancelled)`)
-- [ ] `GET /api/work-orders/:id` returns full work order detail
-- [ ] `GET /api/assets/:id/work-orders` returns all work orders for an asset
-- [ ] `POST /api/work-orders` creates a work order; `work_order_number` auto-generated; a `work_order_created` event is auto-created on the asset
-- [ ] `PUT /api/work-orders/:id` updates mutable fields
-- [ ] `PUT /api/work-orders/:id/assign` assigns to a body or user; status transitions to `assigned`; notification event created
-- [ ] `PUT /api/work-orders/:id/close` closes work order; requires `actual_completion_date`; accepts `actual_cost`; auto-creates `work_order_closed` event
-- [ ] Contractors with `contractor` role can only GET and update status/notes/photos on work orders assigned to them
-- [ ] Typecheck passes
+- [x] `GET /api/work-orders` returns work orders; supports filters: `asset_id`, `status`, `priority`, `assigned_to_body_id`, `assigned_to_user_id`, `category_id`, `overdue` (boolean — `target_completion_date < now AND status NOT IN (closed, cancelled)`)
+- [x] `GET /api/work-orders/:id` returns full work order detail
+- [x] `GET /api/assets/:id/work-orders` returns all work orders for an asset
+- [x] `POST /api/work-orders` creates a work order; `work_order_number` auto-generated; a `work_order_created` event is auto-created on the asset
+- [x] `PUT /api/work-orders/:id` updates mutable fields
+- [x] `PUT /api/work-orders/:id/assign` assigns to a body or user; status transitions to `assigned`; notification event created
+- [x] `PUT /api/work-orders/:id/close` closes work order; requires `actual_completion_date`; accepts `actual_cost`; auto-creates `work_order_closed` event
+- [x] Contractors with `contractor` role can only GET and update status/notes/photos on work orders assigned to them
+- [x] Typecheck passes
 
 ---
 
