@@ -1177,12 +1177,12 @@ All four phases are in scope for this PRD. Phases must be implemented in order, 
 **Description:** As a developer, I want a maintenance backlog computed per responsible body and per asset family so that operations managers can see their workload and priorities.
 
 **Acceptance Criteria:**
-- [ ] `GET /api/reports/maintenance-backlog` returns aggregated data: total open work orders grouped by `priority`, `status`, `category`, `assigned_to_body_id`, and `asset_family_id`
-- [ ] `GET /api/reports/maintenance-backlog/by-body/:body_id` returns backlog for a specific body
-- [ ] `GET /api/reports/maintenance-backlog/by-asset/:asset_id` returns backlog for a specific asset
-- [ ] Backlog items marked overdue (target_completion_date < today and not closed) are counted separately
-- [ ] Backlog includes `estimated_cost` and `actual_cost` totals per group
-- [ ] `GET /api/reports/overdue-work-orders` returns all overdue open work orders sorted by priority then overdue days descending; supports filter by body and family
+- [x] `GET /api/reports/maintenance-backlog` returns aggregated data: total open work orders grouped by `priority`, `status`, `category`, `assigned_to_body_id`, and `asset_family_id`
+- [x] `GET /api/reports/maintenance-backlog/by-body/:body_id` returns backlog for a specific body
+- [x] `GET /api/reports/maintenance-backlog/by-asset/:asset_id` returns backlog for a specific asset
+- [x] Backlog items marked overdue (target_completion_date < today and not closed) are counted separately
+- [x] Backlog includes `estimated_cost` and `actual_cost` totals per group
+- [x] `GET /api/reports/overdue-work-orders` returns all overdue open work orders sorted by priority then overdue days descending; supports filter by body and family
 - [x] Typecheck passes
 
 ---
@@ -1191,8 +1191,8 @@ All four phases are in scope for this PRD. Phases must be implemented in order, 
 **Description:** As a developer, I want an exception detection service that proactively identifies assets requiring attention and surfaces them to the relevant bodies.
 
 **Acceptance Criteria:**
-- [ ] `GET /api/exceptions` returns a prioritized list of asset exceptions; each exception includes: `asset_id`, `asset_name`, `exception_type` (enum below), `severity` (critical / high / medium), `description`, `detected_at`
-- [ ] Exception types detected automatically:
+- [x] `GET /api/exceptions` returns a prioritized list of asset exceptions; each exception includes: `asset_id`, `asset_name`, `exception_type` (enum below), `severity` (critical / high / medium), `description`, `detected_at`
+- [x] Exception types detected automatically:
   - `contract_expiring_soon`: contract end_date within 60 days
   - `contract_expired`: contract end_date in the past and status = active
   - `missing_mandatory_document`: at least one mandatory document for current stage is missing
@@ -1204,8 +1204,8 @@ All four phases are in scope for this PRD. Phases must be implemented in order, 
   - `placeholder_body_assigned`: asset assigned to a placeholder body
   - `no_condition_record_in_1_year`: no condition record created in the last 12 months
   - `handover_pending_over_30_days`: handover record in pending status for more than 30 days
-- [ ] Exceptions filtered by caller's responsible_body_id when role is `department_user` or `operations_manager`; admin and headquarters roles see all exceptions
-- [ ] Supports filters: `exception_type`, `severity`, `asset_family_id`, `responsible_body_id`
+- [x] Exceptions filtered by caller's responsible_body_id when role is `department_user` or `operations_manager`; admin and headquarters roles see all exceptions
+- [x] Supports filters: `exception_type`, `severity`, `asset_family_id`, `responsible_body_id`
 - [x] Typecheck passes
 
 ---

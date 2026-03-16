@@ -620,3 +620,23 @@
   - Patterns: Budget variance: check `approvedAmount > 0` before dividing; skip envelopes with zero approved to avoid division by zero.
   - Patterns: Governance event filter uses `eventType: { name: { in: [...] } }` Prisma nested relation filter — queries events whose type name matches the governance list.
   - Next task: US-064 — Maintenance backlog logic.
+
+## Iteration 61 — US-064: Maintenance backlog logic
+- What was done: Created 4 new Next.js App Router report endpoint route handlers. `GET /api/reports/maintenance-backlog`: returns total open (non-closed/cancelled) work orders grouped by priority, status, category, assigned_to_body_id, and asset_family_id; each group includes count, overdue_count, estimated_cost_total, and actual_cost_total; supports optional family_id/body_id filters. `GET /api/reports/maintenance-backlog/by-body/:body_id`: returns detailed backlog for a specific responsible body including full work_orders array with is_overdue flag per item. `GET /api/reports/maintenance-backlog/by-asset/:asset_id`: returns detailed backlog for a specific asset with same structure. `GET /api/reports/overdue-work-orders`: returns all overdue open work orders sorted by priority (critical first) then overdue_days descending; supports body_id and family_id filters; includes overdue_days computed field. All endpoints require operations_manager+ role. Ran `tsc --noEmit` — clean.
+- Files affected: `app/src/app/api/reports/maintenance-backlog/route.ts` (new), `app/src/app/api/reports/maintenance-backlog/by-body/[body_id]/route.ts` (new), `app/src/app/api/reports/maintenance-backlog/by-asset/[asset_id]/route.ts` (new), `app/src/app/api/reports/overdue-work-orders/route.ts` (new)
+- Learnings for next cycles:
+  - Patterns: In-memory grouping helper `groupAndAggregate` with a key function and optional label function works cleanly for multi-dimension aggregation without N+1 queries.
+  - Patterns: Overdue detection: `targetCompletionDate !== null && targetCompletionDate < now` — always null-check before comparing Date objects.
+  - Patterns: `overdue_days` field: `Math.floor((now - targetCompletionDate) / (1000 * 60 * 60 * 24))` computed from millisecond difference.
+  - Patterns: Sort by priority weight map then overdue days descending in-memory (after full fetch) for overdue-work-orders — pagination applied after sort.
+  - Next task: US-065 — Exception management service and API.
+
+## Iteration 62 — US-065: Exception management service and API
+- What was done: Created `src/app/api/exceptions/route.ts` with `GET /api/exceptions`. Detects 11 exception types by querying DB in parallel (only for requested type when filter is set): contract_expired, contract_expiring_soon, safety_hazard, critical_condition, overdue_work_order, budget_overrun, placeholder_body_assigned, no_condition_record_in_1_year, handover_pending_over_30_days, overdue_developer_obligation (via planning entity linkedAssetId), and missing_mandatory_document (cross-checks completeness rules). Scoping: for department_user/operations_manager roles, looks up caller's responsibleBodyId from DB and adds OR filter across responsible/operational/maintenance body IDs. Supports query filters: exception_type, severity, asset_family_id, responsible_body_id. Results sorted critical→high→medium. Typecheck passes.
+- Files affected: `app/src/app/api/exceptions/route.ts` (new)
+- Learnings for next cycles:
+  - Patterns: JwtPayload only contains sub/email/role/type — responsibleBodyId must be looked up from DB using caller.sub for scoped roles.
+  - Patterns: PlanningEntity.linkedAssetId is a plain UUID stub (no Prisma relation) — fetch planning entities separately then look up assets by IDs.
+  - Patterns: ApiMeta type only allows page/per_page/total — use `total` for exception count; don't add custom fields to meta.
+  - Patterns: shouldCheck() helper avoids repetitive filterExceptionType check across 11 branches.
+  - Next task: US-066 — Executive KPI dashboard backend.
