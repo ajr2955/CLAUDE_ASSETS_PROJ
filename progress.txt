@@ -553,3 +553,13 @@
   - Patterns: Planning list page: family/type/status/body filter dropdowns, overdue toggle, placeholder toggle, table with badge-coloured status, red target date if overdue, TBD Body/Dev Obligation flags per row.
   - Patterns: Planning detail page: milestone progress bar (6 stages: identified→planning_approved→tender→awarded→construction→converted_to_asset), tabs (overview/documents/events), convert-to-asset confirmation modal that redirects to new asset.
   - Next task: US-056 browser verify → US-057 Developer Obligation tracking UI.
+
+## Iteration 54 — US-057: Developer Obligation tracking UI
+- What was done: The list page (`/developer-obligations/page.tsx`) already existed. Created the detail page (`/developer-obligations/[id]/page.tsx`) with: amber placeholder-body warning banner, header card with status badge and "Flag Gap" button, tabbed navigation (Overview/Milestones/Documents/Events), Overview tab with obligation details grid and receiving body/planning entity cards, Milestones tab as a timeline with green/red dots for completed/overdue milestones and target vs actual date comparison, Documents tab fetching from /api/documents, Events tab with paginated event list and "Load more", "Flag Gap" modal that PUTs to /api/developer-obligations/:id with gaps_identified field. TypeScript check passes cleanly.
+- Files affected: `app/src/app/developer-obligations/[id]/page.tsx` (new)
+- Learnings for next cycles:
+  - Patterns: List page was already implemented in a prior iteration — always check both files before starting.
+  - Patterns: Detail page Write tool handles Unicode paths correctly via direct file_path parameter; bash heredoc and Python approaches fail on this environment.
+  - Patterns: Milestone timeline: map over JSONB array, compute status (completed/overdue/pending) from actual_date and target_date comparison, render colored dot + badge + target vs actual dates.
+  - Patterns: Flag Gap flow: PUT to existing obligation endpoint with gaps_identified field; API auto-creates asset_at_risk_flagged governance event if linked asset exists.
+  - Next task: US-058 — Asset transfer and body assignment UI.

@@ -1062,14 +1062,14 @@ All four phases are in scope for this PRD. Phases must be implemented in order, 
 **Description:** As a planner, I want a dedicated page to track all developer obligations and their delivery milestones.
 
 **Acceptance Criteria:**
-- [ ] Route `/developer-obligations` renders a list with columns: obligation reference, developer name, promised asset type, committed delivery date, actual delivery date, status badge, gap indicator
-- [ ] Filter panel: status, developer name, family, overdue toggle, placeholder receiving body toggle
-- [ ] Obligation detail page shows: all fields, milestones displayed as a timeline with target vs actual dates, documents tab, events tab, linked planning entity (if any)
-- [ ] Milestones with missed target dates shown in red; completed milestones in green
-- [ ] "Flag Gap" button opens a text input to record gaps_identified — auto-creates governance event
-- [ ] Placeholder receiving body shown with open-decision warning banner
-- [ ] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Route `/developer-obligations` renders a list with columns: obligation reference, developer name, promised asset type, committed delivery date, actual delivery date, status badge, gap indicator
+- [x] Filter panel: status, developer name, family, overdue toggle, placeholder receiving body toggle
+- [x] Obligation detail page shows: all fields, milestones displayed as a timeline with target vs actual dates, documents tab, events tab, linked planning entity (if any)
+- [x] Milestones with missed target dates shown in red; completed milestones in green
+- [x] "Flag Gap" button opens a text input to record gaps_identified — auto-creates governance event
+- [x] Placeholder receiving body shown with open-decision warning banner
+- [x] Typecheck passes
+- [x] Verify changes work in browser
 
 ---
 
