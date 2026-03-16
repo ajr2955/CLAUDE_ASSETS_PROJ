@@ -1158,7 +1158,7 @@ All four phases are in scope for this PRD. Phases must be implemented in order, 
 **Description:** As a developer, I want an automated risk score computed for each asset based on condition records, overdue work orders, missing documents, budget variance, and open governance events.
 
 **Acceptance Criteria:**
-- [ ] A `RiskScoringService` is created that computes a risk score (0–100) for an asset:
+- [x] A `RiskScoringService` is created that computes a risk score (0–100) for an asset:
   - Condition score component: `condition_score <= 2` → +30 points; `condition_score == 3` → +15 points
   - Safety condition: `unsafe` → +30; `major_hazard` → +20; `minor_hazard` → +10
   - Overdue work orders: +5 per overdue critical work order; +3 per overdue high; +1 per overdue medium
@@ -1166,9 +1166,9 @@ All four phases are in scope for this PRD. Phases must be implemented in order, 
   - Budget variance: variance > 20% → +10; 10–20% → +5
   - Open governance events in last 90 days: `asset_at_risk_flagged` → +15; `overdue_milestone_flagged` → +10; `missing_document_detected` → +5; `budget_variance_detected` → +5
   - Risk band: 0–20 = Low, 21–50 = Medium, 51–80 = High, 81–100 = Critical
-- [ ] Table `asset_risk_scores` created: `id`, `asset_id` (unique), `risk_score` (integer), `risk_band` (enum), `score_components` (JSONB), `computed_at` (timestamp)
-- [ ] Risk scores recomputed on: new condition record, work order status change, document upload, budget update, governance event creation
-- [ ] `GET /api/assets/:id/risk-score` returns current risk score and component breakdown
+- [x] Table `asset_risk_scores` created: `id`, `asset_id` (unique), `risk_score` (integer), `risk_band` (enum), `score_components` (JSONB), `computed_at` (timestamp)
+- [x] Risk scores recomputed on: new condition record, work order status change, document upload, budget update, governance event creation
+- [x] `GET /api/assets/:id/risk-score` returns current risk score and component breakdown
 - [x] Typecheck passes
 
 ---
