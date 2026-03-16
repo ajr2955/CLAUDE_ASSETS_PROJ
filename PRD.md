@@ -542,8 +542,8 @@ All four phases are in scope for this PRD. Phases must be implemented in order, 
 **Description:** As a developer, I want a `contracts` table to represent lease contracts, supplier agreements, operator agreements, and allocation agreements attached to assets.
 
 **Acceptance Criteria:**
-- [ ] Table `contract_types` created with seed data: lease_contract, supplier_agreement, allocation_agreement, service_contract, operator_agreement, developer_commitment
-- [ ] Table `contracts` created with columns:
+- [x] Table `contract_types` created with seed data: lease_contract, supplier_agreement, allocation_agreement, service_contract, operator_agreement, developer_commitment
+- [x] Table `contracts` created with columns:
   - `id` (UUID PK)
   - `asset_id` (FK → assets, not null)
   - `contract_type_id` (FK → contract_types, not null)
@@ -563,9 +563,9 @@ All four phases are in scope for this PRD. Phases must be implemented in order, 
   - `status` (enum: `draft`, `active`, `expired`, `terminated`, `renewed`, default `draft`)
   - `notes` (text, nullable)
   - `created_at`, `updated_at`
-- [ ] Index on `asset_id`, `status`, `end_date`, `counterparty_type`
-- [ ] Migration runs cleanly
-- [ ] Typecheck passes
+- [x] Index on `asset_id`, `status`, `end_date`, `counterparty_type`
+- [x] Migration runs cleanly
+- [x] Typecheck passes
 
 ---
 
