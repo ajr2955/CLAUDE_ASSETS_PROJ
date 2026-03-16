@@ -457,16 +457,16 @@ All four phases are in scope for this PRD. Phases must be implemented in order, 
 **Description:** As an asset manager, I want to transition an asset's lifecycle stage from the asset detail page, with clear warnings when conditions are unmet.
 
 **Acceptance Criteria:**
-- [ ] "Transition Stage" button visible on asset detail page for users with `asset_manager` role or higher
-- [ ] Clicking opens a modal listing all valid next stages for the current asset (based on family and transition rules)
-- [ ] Each available next stage shows a summary of required documents and events
-- [ ] Unmet requirements shown in red with count of missing items; met requirements shown in green
-- [ ] A "Justification" text field appears when there are unmet requirements
-- [ ] Confirm button transitions the asset; if warnings exist and no justification entered, inline validation prevents submission
-- [ ] On success, lifecycle stepper on detail page updates immediately; a toast notification confirms the transition
-- [ ] On transition with warnings overridden, a yellow alert badge appears on the event log entry
-- [ ] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] "Transition Stage" button visible on asset detail page for users with `asset_manager` role or higher
+- [x] Clicking opens a modal listing all valid next stages for the current asset (based on family and transition rules)
+- [x] Each available next stage shows a summary of required documents and events
+- [x] Unmet requirements shown in red with count of missing items; met requirements shown in green
+- [x] A "Justification" text field appears when there are unmet requirements
+- [x] Confirm button transitions the asset; if warnings exist and no justification entered, inline validation prevents submission
+- [x] On success, lifecycle stepper on detail page updates immediately; a toast notification confirms the transition
+- [x] On transition with warnings overridden, a yellow alert badge appears on the event log entry
+- [x] Typecheck passes
+- [x] Verify changes work in browser
 
 ---
 

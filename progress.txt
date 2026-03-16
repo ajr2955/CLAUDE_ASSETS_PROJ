@@ -197,3 +197,13 @@
   - Patterns: `useParams<{ id: string }>()` from next/navigation for the dynamic route param in client components.
   - Patterns: Body roles rendered as cards via local BodyCard component; `isPlaceholder` flag drives amber TBD badge and top-level warning banner.
 ---
+
+## Iteration 21 — US-025: Asset detail page — lifecycle transition panel
+- What was done: Added lifecycle transition modal to the asset detail page (`src/app/assets/[id]/page.tsx`). Added "Transition Stage" button in the lifecycle stepper header. When clicked, opens a modal that fetches available transitions from `GET /api/lifecycle-transitions?from_stage_id=X&family_id=Y`. Each available next stage shows required document types (with red ✗ / green ✓ indicators checked against asset.document_counts) and required events. User selects a stage and clicks "Confirm Transition" which calls `POST /api/assets/:id/transition` without override_warnings first. If warnings return (unmet conditions), they are displayed in an amber panel with a required Justification textarea and a "Proceed Anyway" button which re-submits with `override_warnings: true`. On success the modal closes, a toast notification shows the new stage name, and the asset data is re-fetched so the lifecycle stepper updates immediately. Used a `useRef` to hold a stable reference to `fetchData` to avoid circular dependency between callbacks defined before `fetchData`. Added `Toast` component as a fixed bottom-right notification that auto-dismisses after 4 seconds.
+- Files affected: `app/src/app/assets/[id]/page.tsx`
+- Learnings for next cycles:
+  - Patterns: `useRef<() => Promise<void>>` pattern avoids circular dep when a callback needs to call another callback defined later in the same component. Assign `ref.current = fetchData` after fetchData is defined (not inside useEffect), and call `ref.current()` in the other callback.
+  - Patterns: Two-step transition flow: first POST without override → if warnings, show them with justification → re-POST with override_warnings: true + justification. The transition endpoint returns `transition_blocked: false` in both cases; actual transition happens only when no warnings OR when override_warnings is true.
+  - Patterns: Client-side doc requirement checking: fetch asset.document_counts (array of {document_type_name, count}), build a Set of lowercase names, then check each transition.requiredDocumentTypes name against this Set for red/green indicators.
+  - Traps: Modal stage-select card needs a unique key from transition.id (not toStage.id) in case multiple transitions share a toStage. Also child assets and modal closing both use similar JSX structure — be careful with `replace_all: false` and provide enough surrounding context.
+---
