@@ -1110,18 +1110,18 @@ All four phases are in scope for this PRD. Phases must be implemented in order, 
 **Description:** As a developer, I want a configurable rules engine that defines which document types are required per asset family, asset type, and lifecycle stage, so that missing documents can be detected automatically.
 
 **Acceptance Criteria:**
-- [ ] Table `document_completeness_rules` created with columns: `id`, `asset_family_id` (FK, nullable — null means all families), `asset_type_id` (FK, nullable), `lifecycle_stage_id` (FK, not null), `document_type_id` (FK, not null), `is_mandatory` (boolean, default true), `is_active` (boolean, default true)
-- [ ] Seed data inserted for all critical rules derived from the domain specification, including:
+- [x] Table `document_completeness_rules` created with columns: `id`, `asset_family_id` (FK, nullable — null means all families), `asset_type_id` (FK, nullable), `lifecycle_stage_id` (FK, not null), `document_type_id` (FK, not null), `is_mandatory` (boolean, default true), `is_active` (boolean, default true)
+- [x] Seed data inserted for all critical rules derived from the domain specification, including:
   - Planning and Approval stage → plan, permit, allocation document (all families)
   - Establishment stage → specification, execution report, delivery documents, as-made documents
   - Activation and Operation stage → occupancy protocol, activation approval
   - Maintenance stage → inspection form
   - Disposal stage → closure approval, decommissioning protocol
   - Handover stage → delivery document (for Planning Administration assets)
-- [ ] `GET /api/document-completeness-rules` returns rules; supports filters by family, type, stage
-- [ ] `POST/PUT /api/document-completeness-rules` CRUD for admin management
-- [ ] `GET /api/assets/:id/document-completeness` returns: for each applicable rule for this asset's current stage, whether the required document type is present — returns a list of `{ rule, required_document_type, is_satisfied, missing }` objects plus an overall `completeness_score` (percentage of satisfied rules)
-- [ ] Typecheck passes
+- [x] `GET /api/document-completeness-rules` returns rules; supports filters by family, type, stage
+- [x] `POST/PUT /api/document-completeness-rules` CRUD for admin management
+- [x] `GET /api/assets/:id/document-completeness` returns: for each applicable rule for this asset's current stage, whether the required document type is present — returns a list of `{ rule, required_document_type, is_satisfied, missing }` objects plus an overall `completeness_score` (percentage of satisfied rules)
+- [x] Typecheck passes
 
 ---
 
