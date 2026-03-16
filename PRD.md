@@ -604,7 +604,7 @@ All four phases are in scope for this PRD. Phases must be implemented in order, 
 **Description:** As a developer, I want a `condition_records` table to represent the assessed physical condition of an asset or asset component at a point in time.
 
 **Acceptance Criteria:**
-- [ ] Table `condition_records` created with columns:
+- [x] Table `condition_records` created with columns:
   - `id` (UUID PK)
   - `asset_id` (FK → assets, not null)
   - `inspected_by_user_id` (FK → users, nullable)
@@ -618,9 +618,9 @@ All four phases are in scope for this PRD. Phases must be implemented in order, 
   - `notes` (text)
   - `next_inspection_due` (date, nullable)
   - `created_at`, `updated_at`
-- [ ] Index on `asset_id`, `inspection_date`, `condition_score`, `safety_condition`
-- [ ] Migration runs cleanly
-- [ ] Typecheck passes
+- [x] Index on `asset_id`, `inspection_date`, `condition_score`, `safety_condition`
+- [x] Migration runs cleanly
+- [x] Typecheck passes
 
 ---
 

@@ -267,3 +267,12 @@
   - Patterns: WorkOrderCategory follows the same lookup table pattern as ContractType and DocumentType — id/name/description/isActive with seed data in the migration SQL.
   - Patterns: Named relation `@relation("WorkOrderAssignedBody")` is required since ResponsibleBody already has multiple unambiguous WorkOrder relations — only one FK here so the name is for clarity and disambiguation.
 ---
+
+## Iteration 28 — US-032: Condition Record schema and migration
+- What was done: Added 4 new enums to `prisma/schema.prisma`: `StructuralCondition` (good, fair, poor, critical), `SafetyCondition` (safe, minor_hazard, major_hazard, unsafe), `MaintenancePriority` (none, low, medium, high, urgent), `ReplacementUrgency` (none, within_5_years, within_2_years, within_1_year, immediate). Added `ConditionRecord` model with all required columns, named relation `@relation("ConditionInspectedByBody")` to ResponsibleBody, and 4 indexes. Added reverse relation `conditionRecords ConditionRecord[]` to `Asset` and `conditionRecords ConditionRecord[] @relation("ConditionInspectedByBody")` to `ResponsibleBody`. Created migration SQL at `prisma/migrations/0032_condition_records/migration.sql` with 4 CREATE TYPE enums, CREATE TABLE with CHECK constraint (condition_score BETWEEN 1 AND 5), and 4 CREATE INDEX statements. Ran `prisma validate` → valid, `prisma generate` → success, `tsc --noEmit` → clean.
+- Files affected: `app/prisma/schema.prisma`, `app/prisma/migrations/0032_condition_records/migration.sql`
+- Learnings for next cycles:
+  - Patterns: inspected_by_user_id is a plain UUID stub (no REFERENCES) since users table constraint can be added later via ALTER TABLE.
+  - Patterns: CHECK constraint on integer range (`condition_score BETWEEN 1 AND 5`) enforced in SQL migration only — Prisma schema has no native range validator.
+  - Patterns: Named relation `@relation("ConditionInspectedByBody")` required since ResponsibleBody now has multiple ConditionRecord-related entries would otherwise be ambiguous.
+---
