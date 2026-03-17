@@ -707,3 +707,12 @@
   - Patterns: Expandable table rows: store Set<string> of expanded IDs; clicking row toggles; expanded row uses colSpan=8.
   - Patterns: Score color coding via scoreColor() helper: 100=green, >=75=yellow, >=50=orange, <50=red.
   - Next task: US-073 — Public-facing asset view.
+
+## Iteration 70 — US-073: Public-facing asset view
+- What was done: Created `GET /api/public/assets` (no JWT required) returning active assets filtered to non-sensitive ownership models (excludes leased_in/leased_out/allocated/developer_obligation); exposes only asset_name, asset_type, asset_family, neighborhood, status, service_start_date. Created `GET /api/public/gis-locations/geojson` (no JWT required) returning GeoJSON FeatureCollection of active public assets for map display. Created `/public/assets` page with public header, tabbed nav (Asset List / Map View), paginated asset table with no sensitive data. Created `/public/map` page reusing the existing LeafletMap component (dynamic import, ssr:false) with a side panel showing mapped asset count and family color legend. TypeScript check passed cleanly.
+- Files affected: `app/src/app/api/public/assets/route.ts` (new), `app/src/app/api/public/gis-locations/geojson/route.ts` (new), `app/src/app/public/assets/page.tsx` (new), `app/src/app/public/map/page.tsx` (new)
+- Learnings for next cycles:
+  - Patterns: Public API routes simply omit `requireAuth` entirely — no JWT middleware means no authentication required.
+  - Patterns: Sensitive ownership model exclusion: `ownershipModel: { notIn: [...] }` in Prisma where clause.
+  - Patterns: Reuse LeafletMap component via `dynamic(() => import("../../map/LeafletMap"), { ssr: false })` from within a sibling directory path — works cleanly with App Router.
+  - Patterns: Public GeoJSON endpoint adapts the properties to match GeoFeatureProperties interface expected by LeafletMap; missing fields (asset_code, lifecycle_stage_name) filled with empty/default values.

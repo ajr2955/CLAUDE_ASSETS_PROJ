@@ -1327,14 +1327,14 @@ All four phases are in scope for this PRD. Phases must be implemented in order, 
 **Description:** As a public user, I want to view basic information about municipal assets so I can understand what public facilities exist in my area.
 
 **Acceptance Criteria:**
-- [ ] Route `/public/assets` renders a public-facing list of assets filtered to `current_status = active` and `ownership_model` not in sensitive categories
-- [ ] Visible fields only: asset_name, asset_type, neighborhood (from GIS location), status, service_start_date
-- [ ] No budget, document, contract, or body data exposed
-- [ ] Public map view at `/public/map` using the same Leaflet component, with only active assets shown
-- [ ] No authentication required for these routes
-- [ ] API endpoints `/api/public/assets` and `/api/public/gis-locations/geojson` do not require JWT
+- [x] Route `/public/assets` renders a public-facing list of assets filtered to `current_status = active` and `ownership_model` not in sensitive categories
+- [x] Visible fields only: asset_name, asset_type, neighborhood (from GIS location), status, service_start_date
+- [x] No budget, document, contract, or body data exposed
+- [x] Public map view at `/public/map` using the same Leaflet component, with only active assets shown
+- [x] No authentication required for these routes
+- [x] API endpoints `/api/public/assets` and `/api/public/gis-locations/geojson` do not require JWT
 - [x] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Verify changes work in browser
 
 ---
 
