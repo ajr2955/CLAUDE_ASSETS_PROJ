@@ -1,0 +1,914 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─── US-001: Asset Family ────────────────────────────────────────────────────
+
+model AssetFamily {
+  id          String   @id @default(uuid()) @db.Uuid
+  name        String   @unique @db.VarChar(120)
+  description String?
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  assetTypes                 AssetType[]
+  assets                     Asset[]
+  lifecycleTransitions       LifecycleTransition[]
+  planningEntities           PlanningEntity[]
+  developerObligations       DeveloperObligation[]
+  documentCompletenessRules  DocumentCompletenessRule[]
+
+  @@map("asset_families")
+}
+
+// ─── Placeholder models (referenced by AssetFamily relations) ────────────────
+// These will be fully defined in their respective US stories.
+
+model AssetType {
+  id            String      @id @default(uuid()) @db.Uuid
+  assetFamilyId String      @map("asset_family_id") @db.Uuid
+  assetFamily   AssetFamily @relation(fields: [assetFamilyId], references: [id])
+  name          String      @db.VarChar(120)
+  description   String?
+  isActive      Boolean     @default(true) @map("is_active")
+  createdAt     DateTime    @default(now()) @map("created_at")
+  updatedAt     DateTime    @updatedAt @map("updated_at")
+
+  assets                     Asset[]
+  planningEntities           PlanningEntity[]
+  developerObligations       DeveloperObligation[]
+  documentCompletenessRules  DocumentCompletenessRule[]
+
+  @@unique([assetFamilyId, name])
+  @@map("asset_types")
+}
+
+// ─── US-004: Lifecycle Stage ─────────────────────────────────────────────────
+
+model LifecycleStage {
+  id                String   @id @default(uuid()) @db.Uuid
+  name              String   @unique @db.VarChar(120)
+  displayOrder      Int      @map("display_order")
+  description       String?
+  appliesToFamilies Json?    @map("applies_to_families") @db.JsonB
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @updatedAt @map("updated_at")
+
+  transitionsFrom            LifecycleTransition[] @relation("TransitionFrom")
+  transitionsTo              LifecycleTransition[] @relation("TransitionTo")
+  assets                     Asset[]
+  budgetEnvelopes            BudgetEnvelope[]
+  documents                  Document[]
+  events                     Event[]
+  workOrders                 WorkOrder[]
+  documentCompletenessRules  DocumentCompletenessRule[]
+
+  @@map("lifecycle_stages")
+}
+
+model LifecycleTransition {
+  id                   String          @id @default(uuid()) @db.Uuid
+  fromStageId          String          @map("from_stage_id") @db.Uuid
+  fromStage            LifecycleStage  @relation("TransitionFrom", fields: [fromStageId], references: [id])
+  toStageId            String          @map("to_stage_id") @db.Uuid
+  toStage              LifecycleStage  @relation("TransitionTo", fields: [toStageId], references: [id])
+  appliesToFamilyId    String?         @map("applies_to_family_id") @db.Uuid
+  appliesToFamily      AssetFamily?    @relation(fields: [appliesToFamilyId], references: [id])
+  requiredDocumentTypes Json?          @map("required_document_types") @db.JsonB
+  requiredEvents       Json?           @map("required_events") @db.JsonB
+  warningMessage       String?         @map("warning_message")
+  isActive             Boolean         @default(true) @map("is_active")
+
+  @@map("lifecycle_transitions")
+}
+
+// ─── US-003: Responsible Body ────────────────────────────────────────────────
+
+enum BodyType {
+  headquarters
+  planning
+  assets
+  operations
+  administration
+  department
+  contractor
+  data_governance
+  placeholder
+}
+
+model ResponsibleBody {
+  id             String   @id @default(uuid()) @db.Uuid
+  name           String   @unique @db.VarChar(200)
+  bodyType       BodyType @map("body_type")
+  description    String?
+  isActive       Boolean  @default(true) @map("is_active")
+  isPlaceholder  Boolean  @default(false) @map("is_placeholder")
+  resolutionNote String?  @map("resolution_note")
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  assetsAsStrategicOwner  Asset[] @relation("StrategicOwnerBody")
+  assetsAsResponsible     Asset[] @relation("ResponsibleBody")
+  assetsAsOperational     Asset[] @relation("OperationalBody")
+  assetsAsMaintenance     Asset[] @relation("MaintenanceBody")
+  assetsAsDataSteward     Asset[] @relation("DataStewardBody")
+  budgetEnvelopes         BudgetEnvelope[] @relation("BudgetEnvelopeBody")
+  events                  Event[] @relation("EventResponsibleBody")
+  contracts               Contract[] @relation("ContractBody")
+  workOrders              WorkOrder[] @relation("WorkOrderAssignedBody")
+  conditionRecords        ConditionRecord[] @relation("ConditionInspectedByBody")
+  handoverRecordsDelivered HandoverRecord[] @relation("HandoverDeliveredByBody")
+  handoverRecordsReceived  HandoverRecord[] @relation("HandoverReceivedByBody")
+  users                    User[]
+  planningEntitiesAsPlanning          PlanningEntity[] @relation("PlanningBody")
+  planningEntitiesAsIntendedReceiving PlanningEntity[] @relation("IntendedReceivingBody")
+  developerObligationsAsReceiving     DeveloperObligation[] @relation("DevObligationReceivingBody")
+  allocations                         Allocation[] @relation("AllocationBody")
+  bodyTransfersFrom                   BodyTransfer[] @relation("BodyTransferFrom")
+  bodyTransfersTo                     BodyTransfer[] @relation("BodyTransferTo")
+
+  @@map("responsible_bodies")
+}
+
+// ─── US-005: Asset core ───────────────────────────────────────────────────────
+
+enum AssetStatus {
+  active
+  inactive
+  in_formation
+  in_construction
+  decommissioned
+  disposed
+}
+
+enum OwnershipModel {
+  owned
+  leased_in
+  leased_out
+  allocated
+  developer_obligation
+  partnership
+}
+
+model Asset {
+  id                      String          @id @default(uuid()) @db.Uuid
+  assetName               String          @map("asset_name")
+  assetCode               String          @unique @map("asset_code")
+  assetFamilyId           String          @map("asset_family_id") @db.Uuid
+  assetFamily             AssetFamily     @relation(fields: [assetFamilyId], references: [id])
+  assetTypeId             String          @map("asset_type_id") @db.Uuid
+  assetType               AssetType       @relation(fields: [assetTypeId], references: [id])
+  currentLifecycleStageId String          @map("current_lifecycle_stage_id") @db.Uuid
+  currentLifecycleStage   LifecycleStage  @relation(fields: [currentLifecycleStageId], references: [id])
+  currentStatus           AssetStatus     @default(in_formation) @map("current_status")
+  ownershipModel          OwnershipModel? @map("ownership_model")
+  strategicOwnerBodyId    String?         @map("strategic_owner_body_id") @db.Uuid
+  strategicOwnerBody      ResponsibleBody? @relation("StrategicOwnerBody", fields: [strategicOwnerBodyId], references: [id])
+  responsibleBodyId       String?         @map("responsible_body_id") @db.Uuid
+  responsibleBody         ResponsibleBody? @relation("ResponsibleBody", fields: [responsibleBodyId], references: [id])
+  operationalBodyId       String?         @map("operational_body_id") @db.Uuid
+  operationalBody         ResponsibleBody? @relation("OperationalBody", fields: [operationalBodyId], references: [id])
+  maintenanceBodyId       String?         @map("maintenance_body_id") @db.Uuid
+  maintenanceBody         ResponsibleBody? @relation("MaintenanceBody", fields: [maintenanceBodyId], references: [id])
+  dataStewardBodyId       String?         @map("data_steward_body_id") @db.Uuid
+  dataStewardBody         ResponsibleBody? @relation("DataStewardBody", fields: [dataStewardBodyId], references: [id])
+  parentAssetId           String?         @map("parent_asset_id") @db.Uuid
+  parentAsset             Asset?           @relation("AssetHierarchy", fields: [parentAssetId], references: [id])
+  childAssets             Asset[]          @relation("AssetHierarchy")
+  budgetEnvelopes         BudgetEnvelope[]
+  events                  Event[]
+  contracts               Contract[]
+  workOrders              WorkOrder[]
+  conditionRecords        ConditionRecord[]
+  handoverRecords         HandoverRecord[]
+  gisLocation             GisLocation?
+  allocations             Allocation[]
+  bodyTransfers           BodyTransfer[]
+  revenueRecords          RevenueRecord[]
+  riskScore               AssetRiskScore?
+  // Phase 3 FKs — nullable stubs; will be expanded in Phase 3 stories
+  planningEntityId        String?         @map("planning_entity_id") @db.Uuid
+  developerObligationId   String?         @map("developer_obligation_id") @db.Uuid
+  // Phase 1 budget (populated after US-006)
+  activeBudgetEnvelopeId  String?         @map("active_budget_envelope_id") @db.Uuid
+  // Phase 2 GIS
+  locationId              String?         @map("location_id") @db.Uuid
+  gisReference            String?         @map("gis_reference")
+  address                 String?
+  areaSqm                 Decimal?        @map("area_sqm") @db.Decimal(12, 2)
+  serviceStartDate        DateTime?       @map("service_start_date") @db.Date
+  handoverDate            DateTime?       @map("handover_date") @db.Date
+  decommissionDate        DateTime?       @map("decommission_date") @db.Date
+  notes                   String?
+  isPlaceholderBody       Boolean         @default(false) @map("is_placeholder_body")
+  createdAt               DateTime        @default(now()) @map("created_at")
+  updatedAt               DateTime        @updatedAt @map("updated_at")
+
+  @@index([assetFamilyId])
+  @@index([assetTypeId])
+  @@index([currentLifecycleStageId])
+  @@index([responsibleBodyId])
+  @@index([currentStatus])
+  @@map("assets")
+}
+
+// ─── US-006: Budget Envelope ──────────────────────────────────────────────────
+
+enum BudgetType {
+  capex
+  opex
+  renewal_reserve
+  external_funding
+  developer_funded
+  lease_income
+  service_charges
+  maintenance_reserve
+  adjustment
+  equipment
+}
+
+model BudgetEnvelope {
+  id                        String          @id @default(uuid()) @db.Uuid
+  assetId                   String          @map("asset_id") @db.Uuid
+  asset                     Asset           @relation(fields: [assetId], references: [id])
+  lifecycleStageId          String?         @map("lifecycle_stage_id") @db.Uuid
+  lifecycleStage            LifecycleStage? @relation(fields: [lifecycleStageId], references: [id])
+  budgetType                BudgetType      @map("budget_type")
+  fiscalYear                Int?            @map("fiscal_year")
+  isMultiYear               Boolean         @default(false) @map("is_multi_year")
+  multiYearStart            Int?            @map("multi_year_start")
+  multiYearEnd              Int?            @map("multi_year_end")
+  approvedAmount            Decimal         @default(0) @map("approved_amount") @db.Decimal(18, 2)
+  committedAmount           Decimal         @default(0) @map("committed_amount") @db.Decimal(18, 2)
+  actualAmount              Decimal         @default(0) @map("actual_amount") @db.Decimal(18, 2)
+  varianceAmount            Decimal         @default(0) @map("variance_amount") @db.Decimal(18, 2)
+  externalSourceDescription String?         @map("external_source_description")
+  developerFundedAmount     Decimal         @default(0) @map("developer_funded_amount") @db.Decimal(18, 2)
+  responsibleBodyId         String?         @map("responsible_body_id") @db.Uuid
+  responsibleBody           ResponsibleBody? @relation("BudgetEnvelopeBody", fields: [responsibleBodyId], references: [id])
+  notes                     String?
+  isClosed                  Boolean         @default(false) @map("is_closed")
+  varianceEventCreated      Boolean         @default(false) @map("variance_event_created")
+  createdAt                 DateTime        @default(now()) @map("created_at")
+  updatedAt                 DateTime        @updatedAt @map("updated_at")
+
+  @@index([assetId])
+  @@index([fiscalYear])
+  @@index([budgetType])
+  @@index([lifecycleStageId])
+  @@map("budget_envelopes")
+}
+
+// ─── US-008: Event ────────────────────────────────────────────────────────────
+
+enum EventCategory {
+  business
+  operational
+  governance
+}
+
+model EventType {
+  id          String        @id @default(uuid()) @db.Uuid
+  name        String        @unique @db.VarChar(120)
+  category    EventCategory
+  description String?
+  isActive    Boolean       @default(true) @map("is_active")
+
+  events Event[]
+
+  @@map("event_types")
+}
+
+model Event {
+  id                 String          @id @default(uuid()) @db.Uuid
+  eventTypeId        String          @map("event_type_id") @db.Uuid
+  eventType          EventType       @relation(fields: [eventTypeId], references: [id])
+  assetId            String          @map("asset_id") @db.Uuid
+  asset              Asset           @relation(fields: [assetId], references: [id])
+  lifecycleStageId   String?         @map("lifecycle_stage_id") @db.Uuid
+  lifecycleStage     LifecycleStage? @relation(fields: [lifecycleStageId], references: [id])
+  occurredAt         DateTime        @default(now()) @map("occurred_at")
+  // FK stub: resolved in US-018
+  recordedByUserId   String?         @map("recorded_by_user_id") @db.Uuid
+  responsibleBodyId  String?         @map("responsible_body_id") @db.Uuid
+  responsibleBody    ResponsibleBody? @relation("EventResponsibleBody", fields: [responsibleBodyId], references: [id])
+  description        String?
+  metadata           Json?            @db.JsonB
+  isSystemGenerated  Boolean         @default(false) @map("is_system_generated")
+  createdAt          DateTime        @default(now()) @map("created_at")
+
+  @@index([assetId])
+  @@index([eventTypeId])
+  @@index([occurredAt])
+  @@index([lifecycleStageId])
+  @@map("events")
+}
+
+// ─── US-018: User ─────────────────────────────────────────────────────────────
+
+enum UserRole {
+  admin
+  planner
+  asset_manager
+  operations_manager
+  department_user
+  contractor
+  public
+}
+
+model User {
+  id                String    @id @default(uuid()) @db.Uuid
+  email             String    @unique @db.VarChar(255)
+  name              String?   @db.VarChar(200)
+  passwordHash      String    @map("password_hash")
+  role              UserRole  @default(public)
+  responsibleBodyId String?   @map("responsible_body_id") @db.Uuid
+  responsibleBody   ResponsibleBody? @relation(fields: [responsibleBodyId], references: [id])
+  isActive          Boolean   @default(true) @map("is_active")
+  lastLoginAt       DateTime? @map("last_login_at")
+  createdAt         DateTime  @default(now()) @map("created_at")
+  updatedAt         DateTime  @updatedAt @map("updated_at")
+
+  @@map("users")
+}
+
+// ─── US-030: Contract ─────────────────────────────────────────────────────────
+
+model ContractType {
+  id          String     @id @default(uuid()) @db.Uuid
+  name        String     @unique @db.VarChar(120)
+  description String?
+  isActive    Boolean    @default(true) @map("is_active")
+
+  contracts   Contract[]
+
+  @@map("contract_types")
+}
+
+enum CounterpartyType {
+  tenant
+  supplier
+  operator
+  developer
+  authority
+  other
+}
+
+enum PaymentFrequency {
+  monthly
+  quarterly
+  annual
+  one_off
+}
+
+enum ContractStatus {
+  draft
+  active
+  expired
+  terminated
+  renewed
+}
+
+model Contract {
+  id                 String           @id @default(uuid()) @db.Uuid
+  assetId            String           @map("asset_id") @db.Uuid
+  asset              Asset            @relation(fields: [assetId], references: [id])
+  contractTypeId     String           @map("contract_type_id") @db.Uuid
+  contractType       ContractType     @relation(fields: [contractTypeId], references: [id])
+  contractReference  String?          @unique @map("contract_reference")
+  counterpartyName   String           @map("counterparty_name")
+  counterpartyType   CounterpartyType @map("counterparty_type")
+  responsibleBodyId  String?          @map("responsible_body_id") @db.Uuid
+  responsibleBody    ResponsibleBody? @relation("ContractBody", fields: [responsibleBodyId], references: [id])
+  startDate          DateTime         @map("start_date") @db.Date
+  endDate            DateTime?        @map("end_date") @db.Date
+  noticePeriodDays   Int?             @map("notice_period_days")
+  renewalOption      Boolean          @default(false) @map("renewal_option")
+  autoRenewal        Boolean          @default(false) @map("auto_renewal")
+  contractValue      Decimal?         @map("contract_value") @db.Decimal(18, 2)
+  periodicAmount     Decimal?         @map("periodic_amount") @db.Decimal(18, 2)
+  paymentFrequency   PaymentFrequency? @map("payment_frequency")
+  slaDescription     String?          @map("sla_description")
+  status             ContractStatus   @default(draft)
+  notes              String?
+  createdAt          DateTime         @default(now()) @map("created_at")
+  updatedAt          DateTime         @updatedAt @map("updated_at")
+  revenueRecords     RevenueRecord[]
+
+  @@index([assetId])
+  @@index([status])
+  @@index([endDate])
+  @@index([counterpartyType])
+  @@map("contracts")
+}
+
+// ─── US-031: Work Order ───────────────────────────────────────────────────────
+
+model WorkOrderCategory {
+  id          String      @id @default(uuid()) @db.Uuid
+  name        String      @unique @db.VarChar(120)
+  description String?
+  isActive    Boolean     @default(true) @map("is_active")
+
+  workOrders  WorkOrder[]
+
+  @@map("work_order_categories")
+}
+
+enum WorkOrderPriority {
+  critical
+  high
+  medium
+  low
+}
+
+enum WorkOrderStatus {
+  open
+  assigned
+  in_progress
+  pending_approval
+  closed
+  cancelled
+}
+
+model WorkOrder {
+  id                    String              @id @default(uuid()) @db.Uuid
+  assetId               String              @map("asset_id") @db.Uuid
+  asset                 Asset               @relation(fields: [assetId], references: [id])
+  workOrderNumber       String              @unique @map("work_order_number")
+  categoryId            String              @map("category_id") @db.Uuid
+  category              WorkOrderCategory   @relation(fields: [categoryId], references: [id])
+  title                 String
+  description           String?
+  priority              WorkOrderPriority   @default(medium)
+  status                WorkOrderStatus     @default(open)
+  assignedToBodyId      String?             @map("assigned_to_body_id") @db.Uuid
+  assignedToBody        ResponsibleBody?    @relation("WorkOrderAssignedBody", fields: [assignedToBodyId], references: [id])
+  assignedToUserId      String?             @map("assigned_to_user_id") @db.Uuid
+  reportedByUserId      String?             @map("reported_by_user_id") @db.Uuid
+  lifecycleStageId      String?             @map("lifecycle_stage_id") @db.Uuid
+  lifecycleStage        LifecycleStage?     @relation(fields: [lifecycleStageId], references: [id])
+  targetCompletionDate  DateTime?           @map("target_completion_date") @db.Date
+  actualCompletionDate  DateTime?           @map("actual_completion_date") @db.Date
+  estimatedCost         Decimal?            @map("estimated_cost") @db.Decimal(18, 2)
+  actualCost            Decimal?            @map("actual_cost") @db.Decimal(18, 2)
+  slaBreachAt           DateTime?           @map("sla_breach_at")
+  notes                 String?
+  createdAt             DateTime            @default(now()) @map("created_at")
+  updatedAt             DateTime            @updatedAt @map("updated_at")
+
+  @@index([assetId])
+  @@index([status])
+  @@index([priority])
+  @@index([assignedToBodyId])
+  @@index([targetCompletionDate])
+  @@map("work_orders")
+}
+
+// ─── US-032: Condition Record ─────────────────────────────────────────────────
+
+enum StructuralCondition {
+  good
+  fair
+  poor
+  critical
+}
+
+enum SafetyCondition {
+  safe
+  minor_hazard
+  major_hazard
+  unsafe
+}
+
+enum MaintenancePriority {
+  none
+  low
+  medium
+  high
+  urgent
+}
+
+enum ReplacementUrgency {
+  none
+  within_5_years
+  within_2_years
+  within_1_year
+  immediate
+}
+
+model ConditionRecord {
+  id                  String               @id @default(uuid()) @db.Uuid
+  assetId             String               @map("asset_id") @db.Uuid
+  asset               Asset                @relation(fields: [assetId], references: [id])
+  inspectedByUserId   String?              @map("inspected_by_user_id") @db.Uuid
+  inspectedByBodyId   String?              @map("inspected_by_body_id") @db.Uuid
+  inspectedByBody     ResponsibleBody?     @relation("ConditionInspectedByBody", fields: [inspectedByBodyId], references: [id])
+  inspectionDate      DateTime             @map("inspection_date") @db.Date
+  conditionScore      Int                  @map("condition_score")
+  structuralCondition StructuralCondition? @map("structural_condition")
+  safetyCondition     SafetyCondition?     @map("safety_condition")
+  maintenancePriority MaintenancePriority  @default(none) @map("maintenance_priority")
+  replacementUrgency  ReplacementUrgency   @default(none) @map("replacement_urgency")
+  notes               String?
+  nextInspectionDue   DateTime?            @map("next_inspection_due") @db.Date
+  createdAt           DateTime             @default(now()) @map("created_at")
+  updatedAt           DateTime             @updatedAt @map("updated_at")
+
+  @@index([assetId])
+  @@index([inspectionDate])
+  @@index([conditionScore])
+  @@index([safetyCondition])
+  @@map("condition_records")
+}
+
+// ─── US-007: Document ─────────────────────────────────────────────────────────
+
+model DocumentType {
+  id          String     @id @default(uuid()) @db.Uuid
+  name        String     @unique @db.VarChar(120)
+  description String?
+  isActive    Boolean    @default(true) @map("is_active")
+
+  documents                  Document[]
+  documentCompletenessRules  DocumentCompletenessRule[]
+
+  @@map("document_types")
+}
+
+// ─── US-060: Document Completeness Rule ──────────────────────────────────────
+
+model DocumentCompletenessRule {
+  id               String         @id @default(uuid()) @db.Uuid
+  assetFamilyId    String?        @map("asset_family_id") @db.Uuid
+  assetFamily      AssetFamily?   @relation(fields: [assetFamilyId], references: [id])
+  assetTypeId      String?        @map("asset_type_id") @db.Uuid
+  assetType        AssetType?     @relation(fields: [assetTypeId], references: [id])
+  lifecycleStageId String         @map("lifecycle_stage_id") @db.Uuid
+  lifecycleStage   LifecycleStage @relation(fields: [lifecycleStageId], references: [id])
+  documentTypeId   String         @map("document_type_id") @db.Uuid
+  documentType     DocumentType   @relation(fields: [documentTypeId], references: [id])
+  isMandatory      Boolean        @default(true) @map("is_mandatory")
+  isActive         Boolean        @default(true) @map("is_active")
+  createdAt        DateTime       @default(now()) @map("created_at")
+  updatedAt        DateTime       @updatedAt @map("updated_at")
+
+  @@index([lifecycleStageId])
+  @@index([assetFamilyId])
+  @@index([documentTypeId])
+  @@map("document_completeness_rules")
+}
+
+enum AttachedEntityType {
+  asset
+  event
+  budget_envelope
+  contract
+  planning_entity
+  developer_obligation
+  handover_record
+  work_order
+}
+
+model Document {
+  id                   String             @id @default(uuid()) @db.Uuid
+  documentTypeId       String             @map("document_type_id") @db.Uuid
+  documentType         DocumentType       @relation(fields: [documentTypeId], references: [id])
+  title                String
+  description          String?
+  fileUrl              String             @map("file_url")
+  fileName             String?            @map("file_name")
+  fileSizeBytes        Int?               @map("file_size_bytes")
+  mimeType             String?            @map("mime_type")
+  attachedToEntityType AttachedEntityType @map("attached_to_entity_type")
+  attachedToEntityId   String             @map("attached_to_entity_id") @db.Uuid
+  // FK to users — nullable stub; users table added in US-018
+  uploadedByUserId     String?            @map("uploaded_by_user_id") @db.Uuid
+  lifecycleStageId     String?            @map("lifecycle_stage_id") @db.Uuid
+  lifecycleStage       LifecycleStage?    @relation(fields: [lifecycleStageId], references: [id])
+  isRequired           Boolean            @default(false) @map("is_required")
+  isVerified           Boolean            @default(false) @map("is_verified")
+  verifiedByUserId     String?            @map("verified_by_user_id") @db.Uuid
+  verifiedAt           DateTime?          @map("verified_at")
+  expiryDate           DateTime?          @map("expiry_date") @db.Date
+  isDeleted            Boolean            @default(false) @map("is_deleted")
+  createdAt            DateTime           @default(now()) @map("created_at")
+  updatedAt            DateTime           @updatedAt @map("updated_at")
+
+  @@index([attachedToEntityType, attachedToEntityId])
+  @@index([documentTypeId])
+  @@index([lifecycleStageId])
+  @@map("documents")
+}
+
+// ─── US-033: Handover Record ──────────────────────────────────────────────────
+
+enum HandoverStatus {
+  pending
+  accepted
+  accepted_with_conditions
+  rejected
+}
+
+model HandoverRecord {
+  id                         String          @id @default(uuid()) @db.Uuid
+  assetId                    String          @map("asset_id") @db.Uuid
+  asset                      Asset           @relation(fields: [assetId], references: [id])
+  deliveredByBodyId          String          @map("delivered_by_body_id") @db.Uuid
+  deliveredByBody            ResponsibleBody @relation("HandoverDeliveredByBody", fields: [deliveredByBodyId], references: [id])
+  receivedByBodyId           String          @map("received_by_body_id") @db.Uuid
+  receivedByBody             ResponsibleBody @relation("HandoverReceivedByBody", fields: [receivedByBodyId], references: [id])
+  // User FKs — nullable stubs; FK constraints resolved via ALTER TABLE
+  deliveredByUserId          String?         @map("delivered_by_user_id") @db.Uuid
+  receivedByUserId           String?         @map("received_by_user_id") @db.Uuid
+  handoverDate               DateTime        @map("handover_date") @db.Date
+  handoverStatus             HandoverStatus  @default(pending) @map("handover_status")
+  defectsList                Json?           @map("defects_list") @db.JsonB
+  missingDocuments           Json?           @map("missing_documents") @db.JsonB
+  acceptedWithConditionsFlag Boolean         @default(false) @map("accepted_with_conditions_flag")
+  conditionsDescription      String?         @map("conditions_description")
+  warrantyExpiryDate         DateTime?       @map("warranty_expiry_date") @db.Date
+  notes                      String?
+  createdAt                  DateTime        @default(now()) @map("created_at")
+  updatedAt                  DateTime        @updatedAt @map("updated_at")
+
+  @@index([assetId])
+  @@index([handoverDate])
+  @@index([handoverStatus])
+  @@map("handover_records")
+}
+
+// ─── US-034: GIS Location ─────────────────────────────────────────────────────
+
+enum GeometryType {
+  point
+  polygon
+  line
+}
+
+model GisLocation {
+  id                 String        @id @default(uuid()) @db.Uuid
+  assetId            String        @unique @map("asset_id") @db.Uuid
+  asset              Asset         @relation(fields: [assetId], references: [id])
+  latitude           Decimal?      @db.Decimal(10, 8)
+  longitude          Decimal?      @db.Decimal(11, 8)
+  geometryType       GeometryType  @default(point) @map("geometry_type")
+  geojson            Json?         @db.JsonB
+  addressFormatted   String?       @map("address_formatted")
+  neighborhood       String?
+  district           String?
+  parcelNumber       String?       @map("parcel_number")
+  mapLayerReference  String?       @map("map_layer_reference")
+  createdAt          DateTime      @default(now()) @map("created_at")
+  updatedAt          DateTime      @updatedAt @map("updated_at")
+
+  @@index([latitude, longitude])
+  @@index([district])
+  @@index([neighborhood])
+  @@map("gis_locations")
+}
+
+// ─── US-046: Planning Entity ──────────────────────────────────────────────────
+
+enum PlanningEntityStatus {
+  identified
+  in_planning
+  approved
+  in_implementation
+  delivered
+  converted_to_asset
+}
+
+model PlanningEntity {
+  id                                 String                @id @default(uuid()) @db.Uuid
+  name                               String
+  planningCode                       String                @unique @map("planning_code")
+  assetFamilyId                      String                @map("asset_family_id") @db.Uuid
+  assetFamily                        AssetFamily           @relation(fields: [assetFamilyId], references: [id])
+  assetTypeId                        String                @map("asset_type_id") @db.Uuid
+  assetType                          AssetType             @relation(fields: [assetTypeId], references: [id])
+  planningBodyId                     String?               @map("planning_body_id") @db.Uuid
+  planningBody                       ResponsibleBody?      @relation("PlanningBody", fields: [planningBodyId], references: [id])
+  intendedReceivingBodyId            String?               @map("intended_receiving_body_id") @db.Uuid
+  intendedReceivingBody              ResponsibleBody?      @relation("IntendedReceivingBody", fields: [intendedReceivingBodyId], references: [id])
+  intendedReceivingBodyIsPlaceholder Boolean               @default(false) @map("intended_receiving_body_is_placeholder")
+  populationForecastNotes            String?               @map("population_forecast_notes")
+  serviceAreaDescription             String?               @map("service_area_description")
+  plannedAreaSqm                     Decimal?              @map("planned_area_sqm") @db.Decimal(12, 2)
+  targetDeliveryDate                 DateTime?             @map("target_delivery_date") @db.Date
+  currentPlanningMilestone           String?               @map("current_planning_milestone")
+  status                             PlanningEntityStatus  @default(identified)
+  // linked_asset_id — stub UUID; FK constraint added after assets table exists (US-046 migration)
+  linkedAssetId                      String?               @map("linked_asset_id") @db.Uuid
+  // developer_obligation_id — stub UUID; FK constraint added in US-047 migration
+  developerObligationId              String?               @map("developer_obligation_id") @db.Uuid
+  developerObligations               DeveloperObligation[] @relation("DevObligationPlanningEntity")
+  fundingSourceNotes                 String?               @map("funding_source_notes")
+  notes                              String?
+  createdAt                          DateTime              @default(now()) @map("created_at")
+  updatedAt                          DateTime              @updatedAt @map("updated_at")
+
+  @@index([assetFamilyId])
+  @@index([status])
+  @@index([planningBodyId])
+  @@index([targetDeliveryDate])
+  @@map("planning_entities")
+}
+
+// ─── US-047: Developer Obligation ─────────────────────────────────────────────
+
+enum DeveloperObligationFundingModel {
+  developer_builds
+  developer_funds_municipality_builds
+  combined
+  land_only
+}
+
+enum DeveloperObligationStatus {
+  open
+  in_progress
+  delivered
+  partially_delivered
+  in_dispute
+  closed_gap_identified
+}
+
+model DeveloperObligation {
+  id                          String                          @id @default(uuid()) @db.Uuid
+  obligationReference         String                          @unique @map("obligation_reference")
+  relatedProjectName          String                          @map("related_project_name")
+  developerName               String                          @map("developer_name")
+  promisedAssetTypeId         String                          @map("promised_asset_type_id") @db.Uuid
+  promisedAssetType           AssetType                       @relation(fields: [promisedAssetTypeId], references: [id])
+  promisedAssetFamilyId       String                          @map("promised_asset_family_id") @db.Uuid
+  promisedAssetFamily         AssetFamily                     @relation(fields: [promisedAssetFamilyId], references: [id])
+  committedAreaSqm            Decimal?                        @map("committed_area_sqm") @db.Decimal(12, 2)
+  committedDeliveryDate       DateTime?                       @map("committed_delivery_date") @db.Date
+  actualDeliveryDate          DateTime?                       @map("actual_delivery_date") @db.Date
+  fundingModel                DeveloperObligationFundingModel? @map("funding_model")
+  committedFundingAmount      Decimal?                        @map("committed_funding_amount") @db.Decimal(18, 2)
+  status                      DeveloperObligationStatus       @default(open)
+  gapsIdentified              String?                         @map("gaps_identified")
+  receivingBodyId             String?                         @map("receiving_body_id") @db.Uuid
+  receivingBody               ResponsibleBody?                @relation("DevObligationReceivingBody", fields: [receivingBodyId], references: [id])
+  receivingBodyIsPlaceholder  Boolean                         @default(false) @map("receiving_body_is_placeholder")
+  planningEntityId            String?                         @map("planning_entity_id") @db.Uuid
+  planningEntity              PlanningEntity?                 @relation("DevObligationPlanningEntity", fields: [planningEntityId], references: [id])
+  deliveryMilestones          Json?                           @map("delivery_milestones") @db.JsonB
+  notes                       String?
+  createdAt                   DateTime                        @default(now()) @map("created_at")
+  updatedAt                   DateTime                        @updatedAt @map("updated_at")
+
+  @@index([status])
+  @@index([developerName])
+  @@index([committedDeliveryDate])
+  @@index([promisedAssetFamilyId])
+  @@map("developer_obligations")
+}
+
+// ─── US-048: Allocation ───────────────────────────────────────────────────────
+
+enum AllocationType {
+  internal_use
+  operator
+  tenant
+  partner
+  temporary_use
+}
+
+enum AllocationStatus {
+  active
+  pending
+  expired
+  terminated
+}
+
+model Allocation {
+  id                  String           @id @default(uuid()) @db.Uuid
+  assetId             String           @map("asset_id") @db.Uuid
+  asset               Asset            @relation(fields: [assetId], references: [id])
+  allocatedToBodyId   String?          @map("allocated_to_body_id") @db.Uuid
+  allocatedToBody     ResponsibleBody? @relation("AllocationBody", fields: [allocatedToBodyId], references: [id])
+  allocatedToName     String?          @map("allocated_to_name")
+  allocationType      AllocationType   @map("allocation_type")
+  startDate           DateTime         @map("start_date") @db.Date
+  endDate             DateTime?        @map("end_date") @db.Date
+  areaSqm             Decimal?         @map("area_sqm") @db.Decimal(12, 2)
+  usageDescription    String?          @map("usage_description")
+  isRevenueGenerating Boolean          @default(false) @map("is_revenue_generating")
+  periodicFee         Decimal?         @map("periodic_fee") @db.Decimal(18, 2)
+  feeFrequency        PaymentFrequency? @map("fee_frequency")
+  status              AllocationStatus @default(pending)
+  notes               String?
+  createdAt           DateTime         @default(now()) @map("created_at")
+  updatedAt           DateTime         @updatedAt @map("updated_at")
+  revenueRecords      RevenueRecord[]
+
+  @@index([assetId])
+  @@index([status])
+  @@index([endDate])
+  @@index([isRevenueGenerating])
+  @@map("allocations")
+}
+
+// ─── US-049: Body Transfer ────────────────────────────────────────────────────
+
+enum BodyTransferType {
+  strategic_owner
+  responsible_body
+  operational_body
+  maintenance_body
+  data_steward
+}
+
+model BodyTransfer {
+  id                 String           @id @default(uuid()) @db.Uuid
+  assetId            String           @map("asset_id") @db.Uuid
+  asset              Asset            @relation(fields: [assetId], references: [id])
+  transferType       BodyTransferType @map("transfer_type")
+  fromBodyId         String           @map("from_body_id") @db.Uuid
+  fromBody           ResponsibleBody  @relation("BodyTransferFrom", fields: [fromBodyId], references: [id])
+  toBodyId           String           @map("to_body_id") @db.Uuid
+  toBody             ResponsibleBody  @relation("BodyTransferTo", fields: [toBodyId], references: [id])
+  transferDate       DateTime         @map("transfer_date") @db.Date
+  reason             String
+  authorizedByUserId String?          @map("authorized_by_user_id") @db.Uuid
+  notes              String?
+  createdAt          DateTime         @default(now()) @map("created_at")
+
+  @@map("body_transfers")
+}
+
+// ─── US-055: Revenue Record ───────────────────────────────────────────────────
+
+enum RevenueType {
+  lease_income
+  booking_fee
+  service_charge
+  operator_fee
+  other
+}
+
+enum RevenueStatus {
+  expected
+  received
+  partial
+  overdue
+  waived
+}
+
+model RevenueRecord {
+  id             String        @id @default(uuid()) @db.Uuid
+  assetId        String        @map("asset_id") @db.Uuid
+  asset          Asset         @relation(fields: [assetId], references: [id])
+  allocationId   String?       @map("allocation_id") @db.Uuid
+  allocation     Allocation?   @relation(fields: [allocationId], references: [id])
+  contractId     String?       @map("contract_id") @db.Uuid
+  contract       Contract?     @relation(fields: [contractId], references: [id])
+  revenueType    RevenueType   @map("revenue_type")
+  periodStart    DateTime      @map("period_start") @db.Date
+  periodEnd      DateTime      @map("period_end") @db.Date
+  expectedAmount Decimal       @default(0) @map("expected_amount") @db.Decimal(18, 2)
+  actualAmount   Decimal       @default(0) @map("actual_amount") @db.Decimal(18, 2)
+  paymentDate    DateTime?     @map("payment_date") @db.Date
+  status         RevenueStatus @default(expected)
+  notes          String?
+  createdAt      DateTime      @default(now()) @map("created_at")
+  updatedAt      DateTime      @updatedAt @map("updated_at")
+
+  @@index([assetId])
+  @@index([status])
+  @@index([periodStart])
+  @@index([periodEnd])
+  @@map("revenue_records")
+}
+
+// ─── US-063: Asset Risk Score ─────────────────────────────────────────────────
+
+enum RiskBand {
+  Low
+  Medium
+  High
+  Critical
+}
+
+model AssetRiskScore {
+  id              String   @id @default(uuid()) @db.Uuid
+  assetId         String   @unique @map("asset_id") @db.Uuid
+  asset           Asset    @relation(fields: [assetId], references: [id])
+  riskScore       Int      @map("risk_score")
+  riskBand        RiskBand @map("risk_band")
+  scoreComponents Json     @map("score_components")
+  computedAt      DateTime @default(now()) @map("computed_at")
+
+  @@map("asset_risk_scores")
+}

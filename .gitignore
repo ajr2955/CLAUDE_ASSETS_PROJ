@@ -1,0 +1,14 @@
+# Node
+app/node_modules/
+app/.next/
+
+# Env
+app/.env*.local
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Claude local settings
+.claude/settings.local.json
+.claude/ralph-loop-active.flag
