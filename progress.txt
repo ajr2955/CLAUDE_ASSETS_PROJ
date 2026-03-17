@@ -697,3 +697,13 @@
   - Patterns: Score progress bar: `width: ${score}%` on a colored div; bar color from risk_band.
   - Patterns: CSV export: build array-of-arrays, map to quoted CSV strings, join with newlines, create Blob + anchor click download pattern.
   - Next task: US-072 — Document completeness dashboard UI.
+
+## Iteration 69 — US-072: Document completeness dashboard UI
+- What was done: Created `GET /api/reports/document-completeness` endpoint that fetches all assets, loads all active completeness rules, loads all asset documents in bulk, then computes per-asset completeness in-memory (avoiding N+1); supports filters: family_id, stage_id, responsible_body_id, has_missing; paginates after filtering. Created `src/app/document-completeness/page.tsx` client component with: filter panel (family/stage/body selects + has_missing checkbox), results table with columns (expand toggle, asset_code monospace badge, asset_name, family, lifecycle_stage, completeness score progress bar with color coding, missing_count red/green badge, Go-to-asset link), expandable row showing per-rule document list with green ✓ / red ✗ indicators, pagination controls. TypeScript check passed cleanly.
+- Files affected: `app/src/app/api/reports/document-completeness/route.ts` (new), `app/src/app/document-completeness/page.tsx` (new)
+- Learnings for next cycles:
+  - Patterns: Bulk completeness report: load all rules + all documents in two queries, build in-memory docIndex Map<assetId, Set<docTypeId>>, then filter rules per asset — avoids N+1 per-asset queries.
+  - Patterns: `<>` bare fragments inside map don't support key — wrap both main row and expand row in `<Fragment key={...}>` or use React.Fragment explicitly. Note: in this implementation, main row uses `key={item.asset_id}` and expand row uses `key={item.asset_id + "-expand"}` directly on `<tr>` elements within the array returned by `.map()`.
+  - Patterns: Expandable table rows: store Set<string> of expanded IDs; clicking row toggles; expanded row uses colSpan=8.
+  - Patterns: Score color coding via scoreColor() helper: 100=green, >=75=yellow, >=50=orange, <50=red.
+  - Next task: US-073 — Public-facing asset view.

@@ -1313,13 +1313,13 @@ All four phases are in scope for this PRD. Phases must be implemented in order, 
 **Description:** As an asset manager, I want a document completeness view showing which assets are missing required documents for their current lifecycle stage.
 
 **Acceptance Criteria:**
-- [ ] Route `/document-completeness` renders a table of assets with completeness scores
-- [ ] Columns: asset_code, asset_name, family, lifecycle_stage, completeness_score (shown as progress bar), missing_count (red badge if > 0)
-- [ ] Clicking a row expands to show: list of required document types for current stage, green check if present, red X if missing
-- [ ] Filter by family, stage, responsible_body, `has_missing` toggle (show only assets with missing documents)
-- [ ] "Go to asset" link on each row
+- [x] Route `/document-completeness` renders a table of assets with completeness scores
+- [x] Columns: asset_code, asset_name, family, lifecycle_stage, completeness_score (shown as progress bar), missing_count (red badge if > 0)
+- [x] Clicking a row expands to show: list of required document types for current stage, green check if present, red X if missing
+- [x] Filter by family, stage, responsible_body, `has_missing` toggle (show only assets with missing documents)
+- [x] "Go to asset" link on each row
 - [x] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Verify changes work in browser
 
 ---
 
