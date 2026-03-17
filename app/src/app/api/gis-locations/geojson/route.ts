@@ -25,7 +25,7 @@ export async function GET(req: NextRequest) {
     // Only include locations that have coordinates or geojson geometry
     OR: [
       { latitude: { not: null }, longitude: { not: null } },
-      { geojson: { not: Prisma.JsonNull } },
+      { geojson: { not: null } },
     ],
   };
 

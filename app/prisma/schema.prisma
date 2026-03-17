@@ -7,14 +7,14 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mongodb"
 }
 
 // ─── US-001: Asset Family ────────────────────────────────────────────────────
 
 model AssetFamily {
-  id          String   @id @default(uuid()) @db.Uuid
-  name        String   @unique @db.VarChar(120)
+  id          String   @id @default(uuid()) @map("_id")
+  name        String   @unique
   description String?
   isActive    Boolean  @default(true) @map("is_active")
   createdAt   DateTime @default(now()) @map("created_at")
@@ -30,14 +30,11 @@ model AssetFamily {
   @@map("asset_families")
 }
 
-// ─── Placeholder models (referenced by AssetFamily relations) ────────────────
-// These will be fully defined in their respective US stories.
-
 model AssetType {
-  id            String      @id @default(uuid()) @db.Uuid
-  assetFamilyId String      @map("asset_family_id") @db.Uuid
+  id            String      @id @default(uuid()) @map("_id")
+  assetFamilyId String      @map("asset_family_id")
   assetFamily   AssetFamily @relation(fields: [assetFamilyId], references: [id])
-  name          String      @db.VarChar(120)
+  name          String
   description   String?
   isActive      Boolean     @default(true) @map("is_active")
   createdAt     DateTime    @default(now()) @map("created_at")
@@ -55,11 +52,11 @@ model AssetType {
 // ─── US-004: Lifecycle Stage ─────────────────────────────────────────────────
 
 model LifecycleStage {
-  id                String   @id @default(uuid()) @db.Uuid
-  name              String   @unique @db.VarChar(120)
+  id                String   @id @default(uuid()) @map("_id")
+  name              String   @unique
   displayOrder      Int      @map("display_order")
   description       String?
-  appliesToFamilies Json?    @map("applies_to_families") @db.JsonB
+  appliesToFamilies Json?    @map("applies_to_families")
   createdAt         DateTime @default(now()) @map("created_at")
   updatedAt         DateTime @updatedAt @map("updated_at")
 
@@ -76,17 +73,17 @@ model LifecycleStage {
 }
 
 model LifecycleTransition {
-  id                   String          @id @default(uuid()) @db.Uuid
-  fromStageId          String          @map("from_stage_id") @db.Uuid
-  fromStage            LifecycleStage  @relation("TransitionFrom", fields: [fromStageId], references: [id])
-  toStageId            String          @map("to_stage_id") @db.Uuid
-  toStage              LifecycleStage  @relation("TransitionTo", fields: [toStageId], references: [id])
-  appliesToFamilyId    String?         @map("applies_to_family_id") @db.Uuid
-  appliesToFamily      AssetFamily?    @relation(fields: [appliesToFamilyId], references: [id])
-  requiredDocumentTypes Json?          @map("required_document_types") @db.JsonB
-  requiredEvents       Json?           @map("required_events") @db.JsonB
-  warningMessage       String?         @map("warning_message")
-  isActive             Boolean         @default(true) @map("is_active")
+  id                    String          @id @default(uuid()) @map("_id")
+  fromStageId           String          @map("from_stage_id")
+  fromStage             LifecycleStage  @relation("TransitionFrom", fields: [fromStageId], references: [id])
+  toStageId             String          @map("to_stage_id")
+  toStage               LifecycleStage  @relation("TransitionTo", fields: [toStageId], references: [id])
+  appliesToFamilyId     String?         @map("applies_to_family_id")
+  appliesToFamily       AssetFamily?    @relation(fields: [appliesToFamilyId], references: [id])
+  requiredDocumentTypes Json?           @map("required_document_types")
+  requiredEvents        Json?           @map("required_events")
+  warningMessage        String?         @map("warning_message")
+  isActive              Boolean         @default(true) @map("is_active")
 
   @@map("lifecycle_transitions")
 }
@@ -106,8 +103,8 @@ enum BodyType {
 }
 
 model ResponsibleBody {
-  id             String   @id @default(uuid()) @db.Uuid
-  name           String   @unique @db.VarChar(200)
+  id             String   @id @default(uuid()) @map("_id")
+  name           String   @unique
   bodyType       BodyType @map("body_type")
   description    String?
   isActive       Boolean  @default(true) @map("is_active")
@@ -160,29 +157,29 @@ enum OwnershipModel {
 }
 
 model Asset {
-  id                      String          @id @default(uuid()) @db.Uuid
+  id                      String          @id @default(uuid()) @map("_id")
   assetName               String          @map("asset_name")
   assetCode               String          @unique @map("asset_code")
-  assetFamilyId           String          @map("asset_family_id") @db.Uuid
+  assetFamilyId           String          @map("asset_family_id")
   assetFamily             AssetFamily     @relation(fields: [assetFamilyId], references: [id])
-  assetTypeId             String          @map("asset_type_id") @db.Uuid
+  assetTypeId             String          @map("asset_type_id")
   assetType               AssetType       @relation(fields: [assetTypeId], references: [id])
-  currentLifecycleStageId String          @map("current_lifecycle_stage_id") @db.Uuid
+  currentLifecycleStageId String          @map("current_lifecycle_stage_id")
   currentLifecycleStage   LifecycleStage  @relation(fields: [currentLifecycleStageId], references: [id])
   currentStatus           AssetStatus     @default(in_formation) @map("current_status")
   ownershipModel          OwnershipModel? @map("ownership_model")
-  strategicOwnerBodyId    String?         @map("strategic_owner_body_id") @db.Uuid
+  strategicOwnerBodyId    String?         @map("strategic_owner_body_id")
   strategicOwnerBody      ResponsibleBody? @relation("StrategicOwnerBody", fields: [strategicOwnerBodyId], references: [id])
-  responsibleBodyId       String?         @map("responsible_body_id") @db.Uuid
+  responsibleBodyId       String?         @map("responsible_body_id")
   responsibleBody         ResponsibleBody? @relation("ResponsibleBody", fields: [responsibleBodyId], references: [id])
-  operationalBodyId       String?         @map("operational_body_id") @db.Uuid
+  operationalBodyId       String?         @map("operational_body_id")
   operationalBody         ResponsibleBody? @relation("OperationalBody", fields: [operationalBodyId], references: [id])
-  maintenanceBodyId       String?         @map("maintenance_body_id") @db.Uuid
+  maintenanceBodyId       String?         @map("maintenance_body_id")
   maintenanceBody         ResponsibleBody? @relation("MaintenanceBody", fields: [maintenanceBodyId], references: [id])
-  dataStewardBodyId       String?         @map("data_steward_body_id") @db.Uuid
+  dataStewardBodyId       String?         @map("data_steward_body_id")
   dataStewardBody         ResponsibleBody? @relation("DataStewardBody", fields: [dataStewardBodyId], references: [id])
-  parentAssetId           String?         @map("parent_asset_id") @db.Uuid
-  parentAsset             Asset?           @relation("AssetHierarchy", fields: [parentAssetId], references: [id])
+  parentAssetId           String?         @map("parent_asset_id")
+  parentAsset             Asset?           @relation("AssetHierarchy", fields: [parentAssetId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   childAssets             Asset[]          @relation("AssetHierarchy")
   budgetEnvelopes         BudgetEnvelope[]
   events                  Event[]
@@ -195,19 +192,16 @@ model Asset {
   bodyTransfers           BodyTransfer[]
   revenueRecords          RevenueRecord[]
   riskScore               AssetRiskScore?
-  // Phase 3 FKs — nullable stubs; will be expanded in Phase 3 stories
-  planningEntityId        String?         @map("planning_entity_id") @db.Uuid
-  developerObligationId   String?         @map("developer_obligation_id") @db.Uuid
-  // Phase 1 budget (populated after US-006)
-  activeBudgetEnvelopeId  String?         @map("active_budget_envelope_id") @db.Uuid
-  // Phase 2 GIS
-  locationId              String?         @map("location_id") @db.Uuid
+  planningEntityId        String?         @map("planning_entity_id")
+  developerObligationId   String?         @map("developer_obligation_id")
+  activeBudgetEnvelopeId  String?         @map("active_budget_envelope_id")
+  locationId              String?         @map("location_id")
   gisReference            String?         @map("gis_reference")
   address                 String?
-  areaSqm                 Decimal?        @map("area_sqm") @db.Decimal(12, 2)
-  serviceStartDate        DateTime?       @map("service_start_date") @db.Date
-  handoverDate            DateTime?       @map("handover_date") @db.Date
-  decommissionDate        DateTime?       @map("decommission_date") @db.Date
+  areaSqm                 Float?          @map("area_sqm")
+  serviceStartDate        DateTime?       @map("service_start_date")
+  handoverDate            DateTime?       @map("handover_date")
+  decommissionDate        DateTime?       @map("decommission_date")
   notes                   String?
   isPlaceholderBody       Boolean         @default(false) @map("is_placeholder_body")
   createdAt               DateTime        @default(now()) @map("created_at")
@@ -237,23 +231,23 @@ enum BudgetType {
 }
 
 model BudgetEnvelope {
-  id                        String          @id @default(uuid()) @db.Uuid
-  assetId                   String          @map("asset_id") @db.Uuid
+  id                        String          @id @default(uuid()) @map("_id")
+  assetId                   String          @map("asset_id")
   asset                     Asset           @relation(fields: [assetId], references: [id])
-  lifecycleStageId          String?         @map("lifecycle_stage_id") @db.Uuid
+  lifecycleStageId          String?         @map("lifecycle_stage_id")
   lifecycleStage            LifecycleStage? @relation(fields: [lifecycleStageId], references: [id])
   budgetType                BudgetType      @map("budget_type")
   fiscalYear                Int?            @map("fiscal_year")
   isMultiYear               Boolean         @default(false) @map("is_multi_year")
   multiYearStart            Int?            @map("multi_year_start")
   multiYearEnd              Int?            @map("multi_year_end")
-  approvedAmount            Decimal         @default(0) @map("approved_amount") @db.Decimal(18, 2)
-  committedAmount           Decimal         @default(0) @map("committed_amount") @db.Decimal(18, 2)
-  actualAmount              Decimal         @default(0) @map("actual_amount") @db.Decimal(18, 2)
-  varianceAmount            Decimal         @default(0) @map("variance_amount") @db.Decimal(18, 2)
+  approvedAmount            Float           @default(0) @map("approved_amount")
+  committedAmount           Float           @default(0) @map("committed_amount")
+  actualAmount              Float           @default(0) @map("actual_amount")
+  varianceAmount            Float           @default(0) @map("variance_amount")
   externalSourceDescription String?         @map("external_source_description")
-  developerFundedAmount     Decimal         @default(0) @map("developer_funded_amount") @db.Decimal(18, 2)
-  responsibleBodyId         String?         @map("responsible_body_id") @db.Uuid
+  developerFundedAmount     Float           @default(0) @map("developer_funded_amount")
+  responsibleBodyId         String?         @map("responsible_body_id")
   responsibleBody           ResponsibleBody? @relation("BudgetEnvelopeBody", fields: [responsibleBodyId], references: [id])
   notes                     String?
   isClosed                  Boolean         @default(false) @map("is_closed")
@@ -277,8 +271,8 @@ enum EventCategory {
 }
 
 model EventType {
-  id          String        @id @default(uuid()) @db.Uuid
-  name        String        @unique @db.VarChar(120)
+  id          String        @id @default(uuid()) @map("_id")
+  name        String        @unique
   category    EventCategory
   description String?
   isActive    Boolean       @default(true) @map("is_active")
@@ -289,20 +283,19 @@ model EventType {
 }
 
 model Event {
-  id                 String          @id @default(uuid()) @db.Uuid
-  eventTypeId        String          @map("event_type_id") @db.Uuid
+  id                 String          @id @default(uuid()) @map("_id")
+  eventTypeId        String          @map("event_type_id")
   eventType          EventType       @relation(fields: [eventTypeId], references: [id])
-  assetId            String          @map("asset_id") @db.Uuid
+  assetId            String          @map("asset_id")
   asset              Asset           @relation(fields: [assetId], references: [id])
-  lifecycleStageId   String?         @map("lifecycle_stage_id") @db.Uuid
+  lifecycleStageId   String?         @map("lifecycle_stage_id")
   lifecycleStage     LifecycleStage? @relation(fields: [lifecycleStageId], references: [id])
   occurredAt         DateTime        @default(now()) @map("occurred_at")
-  // FK stub: resolved in US-018
-  recordedByUserId   String?         @map("recorded_by_user_id") @db.Uuid
-  responsibleBodyId  String?         @map("responsible_body_id") @db.Uuid
+  recordedByUserId   String?         @map("recorded_by_user_id")
+  responsibleBodyId  String?         @map("responsible_body_id")
   responsibleBody    ResponsibleBody? @relation("EventResponsibleBody", fields: [responsibleBodyId], references: [id])
   description        String?
-  metadata           Json?            @db.JsonB
+  metadata           Json?
   isSystemGenerated  Boolean         @default(false) @map("is_system_generated")
   createdAt          DateTime        @default(now()) @map("created_at")
 
@@ -326,12 +319,12 @@ enum UserRole {
 }
 
 model User {
-  id                String    @id @default(uuid()) @db.Uuid
-  email             String    @unique @db.VarChar(255)
-  name              String?   @db.VarChar(200)
+  id                String    @id @default(uuid()) @map("_id")
+  email             String    @unique
+  name              String?
   passwordHash      String    @map("password_hash")
   role              UserRole  @default(public)
-  responsibleBodyId String?   @map("responsible_body_id") @db.Uuid
+  responsibleBodyId String?   @map("responsible_body_id")
   responsibleBody   ResponsibleBody? @relation(fields: [responsibleBodyId], references: [id])
   isActive          Boolean   @default(true) @map("is_active")
   lastLoginAt       DateTime? @map("last_login_at")
@@ -344,8 +337,8 @@ model User {
 // ─── US-030: Contract ─────────────────────────────────────────────────────────
 
 model ContractType {
-  id          String     @id @default(uuid()) @db.Uuid
-  name        String     @unique @db.VarChar(120)
+  id          String     @id @default(uuid()) @map("_id")
+  name        String     @unique
   description String?
   isActive    Boolean    @default(true) @map("is_active")
 
@@ -379,23 +372,23 @@ enum ContractStatus {
 }
 
 model Contract {
-  id                 String           @id @default(uuid()) @db.Uuid
-  assetId            String           @map("asset_id") @db.Uuid
+  id                 String           @id @default(uuid()) @map("_id")
+  assetId            String           @map("asset_id")
   asset              Asset            @relation(fields: [assetId], references: [id])
-  contractTypeId     String           @map("contract_type_id") @db.Uuid
+  contractTypeId     String           @map("contract_type_id")
   contractType       ContractType     @relation(fields: [contractTypeId], references: [id])
   contractReference  String?          @unique @map("contract_reference")
   counterpartyName   String           @map("counterparty_name")
   counterpartyType   CounterpartyType @map("counterparty_type")
-  responsibleBodyId  String?          @map("responsible_body_id") @db.Uuid
+  responsibleBodyId  String?          @map("responsible_body_id")
   responsibleBody    ResponsibleBody? @relation("ContractBody", fields: [responsibleBodyId], references: [id])
-  startDate          DateTime         @map("start_date") @db.Date
-  endDate            DateTime?        @map("end_date") @db.Date
+  startDate          DateTime         @map("start_date")
+  endDate            DateTime?        @map("end_date")
   noticePeriodDays   Int?             @map("notice_period_days")
   renewalOption      Boolean          @default(false) @map("renewal_option")
   autoRenewal        Boolean          @default(false) @map("auto_renewal")
-  contractValue      Decimal?         @map("contract_value") @db.Decimal(18, 2)
-  periodicAmount     Decimal?         @map("periodic_amount") @db.Decimal(18, 2)
+  contractValue      Float?           @map("contract_value")
+  periodicAmount     Float?           @map("periodic_amount")
   paymentFrequency   PaymentFrequency? @map("payment_frequency")
   slaDescription     String?          @map("sla_description")
   status             ContractStatus   @default(draft)
@@ -414,8 +407,8 @@ model Contract {
 // ─── US-031: Work Order ───────────────────────────────────────────────────────
 
 model WorkOrderCategory {
-  id          String      @id @default(uuid()) @db.Uuid
-  name        String      @unique @db.VarChar(120)
+  id          String      @id @default(uuid()) @map("_id")
+  name        String      @unique
   description String?
   isActive    Boolean     @default(true) @map("is_active")
 
@@ -441,26 +434,26 @@ enum WorkOrderStatus {
 }
 
 model WorkOrder {
-  id                    String              @id @default(uuid()) @db.Uuid
-  assetId               String              @map("asset_id") @db.Uuid
+  id                    String              @id @default(uuid()) @map("_id")
+  assetId               String              @map("asset_id")
   asset                 Asset               @relation(fields: [assetId], references: [id])
   workOrderNumber       String              @unique @map("work_order_number")
-  categoryId            String              @map("category_id") @db.Uuid
+  categoryId            String              @map("category_id")
   category              WorkOrderCategory   @relation(fields: [categoryId], references: [id])
   title                 String
   description           String?
   priority              WorkOrderPriority   @default(medium)
   status                WorkOrderStatus     @default(open)
-  assignedToBodyId      String?             @map("assigned_to_body_id") @db.Uuid
+  assignedToBodyId      String?             @map("assigned_to_body_id")
   assignedToBody        ResponsibleBody?    @relation("WorkOrderAssignedBody", fields: [assignedToBodyId], references: [id])
-  assignedToUserId      String?             @map("assigned_to_user_id") @db.Uuid
-  reportedByUserId      String?             @map("reported_by_user_id") @db.Uuid
-  lifecycleStageId      String?             @map("lifecycle_stage_id") @db.Uuid
+  assignedToUserId      String?             @map("assigned_to_user_id")
+  reportedByUserId      String?             @map("reported_by_user_id")
+  lifecycleStageId      String?             @map("lifecycle_stage_id")
   lifecycleStage        LifecycleStage?     @relation(fields: [lifecycleStageId], references: [id])
-  targetCompletionDate  DateTime?           @map("target_completion_date") @db.Date
-  actualCompletionDate  DateTime?           @map("actual_completion_date") @db.Date
-  estimatedCost         Decimal?            @map("estimated_cost") @db.Decimal(18, 2)
-  actualCost            Decimal?            @map("actual_cost") @db.Decimal(18, 2)
+  targetCompletionDate  DateTime?           @map("target_completion_date")
+  actualCompletionDate  DateTime?           @map("actual_completion_date")
+  estimatedCost         Float?              @map("estimated_cost")
+  actualCost            Float?              @map("actual_cost")
   slaBreachAt           DateTime?           @map("sla_breach_at")
   notes                 String?
   createdAt             DateTime            @default(now()) @map("created_at")
@@ -507,20 +500,20 @@ enum ReplacementUrgency {
 }
 
 model ConditionRecord {
-  id                  String               @id @default(uuid()) @db.Uuid
-  assetId             String               @map("asset_id") @db.Uuid
+  id                  String               @id @default(uuid()) @map("_id")
+  assetId             String               @map("asset_id")
   asset               Asset                @relation(fields: [assetId], references: [id])
-  inspectedByUserId   String?              @map("inspected_by_user_id") @db.Uuid
-  inspectedByBodyId   String?              @map("inspected_by_body_id") @db.Uuid
+  inspectedByUserId   String?              @map("inspected_by_user_id")
+  inspectedByBodyId   String?              @map("inspected_by_body_id")
   inspectedByBody     ResponsibleBody?     @relation("ConditionInspectedByBody", fields: [inspectedByBodyId], references: [id])
-  inspectionDate      DateTime             @map("inspection_date") @db.Date
+  inspectionDate      DateTime             @map("inspection_date")
   conditionScore      Int                  @map("condition_score")
   structuralCondition StructuralCondition? @map("structural_condition")
   safetyCondition     SafetyCondition?     @map("safety_condition")
   maintenancePriority MaintenancePriority  @default(none) @map("maintenance_priority")
   replacementUrgency  ReplacementUrgency   @default(none) @map("replacement_urgency")
   notes               String?
-  nextInspectionDue   DateTime?            @map("next_inspection_due") @db.Date
+  nextInspectionDue   DateTime?            @map("next_inspection_due")
   createdAt           DateTime             @default(now()) @map("created_at")
   updatedAt           DateTime             @updatedAt @map("updated_at")
 
@@ -534,8 +527,8 @@ model ConditionRecord {
 // ─── US-007: Document ─────────────────────────────────────────────────────────
 
 model DocumentType {
-  id          String     @id @default(uuid()) @db.Uuid
-  name        String     @unique @db.VarChar(120)
+  id          String     @id @default(uuid()) @map("_id")
+  name        String     @unique
   description String?
   isActive    Boolean    @default(true) @map("is_active")
 
@@ -548,14 +541,14 @@ model DocumentType {
 // ─── US-060: Document Completeness Rule ──────────────────────────────────────
 
 model DocumentCompletenessRule {
-  id               String         @id @default(uuid()) @db.Uuid
-  assetFamilyId    String?        @map("asset_family_id") @db.Uuid
+  id               String         @id @default(uuid()) @map("_id")
+  assetFamilyId    String?        @map("asset_family_id")
   assetFamily      AssetFamily?   @relation(fields: [assetFamilyId], references: [id])
-  assetTypeId      String?        @map("asset_type_id") @db.Uuid
+  assetTypeId      String?        @map("asset_type_id")
   assetType        AssetType?     @relation(fields: [assetTypeId], references: [id])
-  lifecycleStageId String         @map("lifecycle_stage_id") @db.Uuid
+  lifecycleStageId String         @map("lifecycle_stage_id")
   lifecycleStage   LifecycleStage @relation(fields: [lifecycleStageId], references: [id])
-  documentTypeId   String         @map("document_type_id") @db.Uuid
+  documentTypeId   String         @map("document_type_id")
   documentType     DocumentType   @relation(fields: [documentTypeId], references: [id])
   isMandatory      Boolean        @default(true) @map("is_mandatory")
   isActive         Boolean        @default(true) @map("is_active")
@@ -580,8 +573,8 @@ enum AttachedEntityType {
 }
 
 model Document {
-  id                   String             @id @default(uuid()) @db.Uuid
-  documentTypeId       String             @map("document_type_id") @db.Uuid
+  id                   String             @id @default(uuid()) @map("_id")
+  documentTypeId       String             @map("document_type_id")
   documentType         DocumentType       @relation(fields: [documentTypeId], references: [id])
   title                String
   description          String?
@@ -590,16 +583,15 @@ model Document {
   fileSizeBytes        Int?               @map("file_size_bytes")
   mimeType             String?            @map("mime_type")
   attachedToEntityType AttachedEntityType @map("attached_to_entity_type")
-  attachedToEntityId   String             @map("attached_to_entity_id") @db.Uuid
-  // FK to users — nullable stub; users table added in US-018
-  uploadedByUserId     String?            @map("uploaded_by_user_id") @db.Uuid
-  lifecycleStageId     String?            @map("lifecycle_stage_id") @db.Uuid
+  attachedToEntityId   String             @map("attached_to_entity_id")
+  uploadedByUserId     String?            @map("uploaded_by_user_id")
+  lifecycleStageId     String?            @map("lifecycle_stage_id")
   lifecycleStage       LifecycleStage?    @relation(fields: [lifecycleStageId], references: [id])
   isRequired           Boolean            @default(false) @map("is_required")
   isVerified           Boolean            @default(false) @map("is_verified")
-  verifiedByUserId     String?            @map("verified_by_user_id") @db.Uuid
+  verifiedByUserId     String?            @map("verified_by_user_id")
   verifiedAt           DateTime?          @map("verified_at")
-  expiryDate           DateTime?          @map("expiry_date") @db.Date
+  expiryDate           DateTime?          @map("expiry_date")
   isDeleted            Boolean            @default(false) @map("is_deleted")
   createdAt            DateTime           @default(now()) @map("created_at")
   updatedAt            DateTime           @updatedAt @map("updated_at")
@@ -620,23 +612,22 @@ enum HandoverStatus {
 }
 
 model HandoverRecord {
-  id                         String          @id @default(uuid()) @db.Uuid
-  assetId                    String          @map("asset_id") @db.Uuid
+  id                         String          @id @default(uuid()) @map("_id")
+  assetId                    String          @map("asset_id")
   asset                      Asset           @relation(fields: [assetId], references: [id])
-  deliveredByBodyId          String          @map("delivered_by_body_id") @db.Uuid
+  deliveredByBodyId          String          @map("delivered_by_body_id")
   deliveredByBody            ResponsibleBody @relation("HandoverDeliveredByBody", fields: [deliveredByBodyId], references: [id])
-  receivedByBodyId           String          @map("received_by_body_id") @db.Uuid
+  receivedByBodyId           String          @map("received_by_body_id")
   receivedByBody             ResponsibleBody @relation("HandoverReceivedByBody", fields: [receivedByBodyId], references: [id])
-  // User FKs — nullable stubs; FK constraints resolved via ALTER TABLE
-  deliveredByUserId          String?         @map("delivered_by_user_id") @db.Uuid
-  receivedByUserId           String?         @map("received_by_user_id") @db.Uuid
-  handoverDate               DateTime        @map("handover_date") @db.Date
+  deliveredByUserId          String?         @map("delivered_by_user_id")
+  receivedByUserId           String?         @map("received_by_user_id")
+  handoverDate               DateTime        @map("handover_date")
   handoverStatus             HandoverStatus  @default(pending) @map("handover_status")
-  defectsList                Json?           @map("defects_list") @db.JsonB
-  missingDocuments           Json?           @map("missing_documents") @db.JsonB
+  defectsList                Json?           @map("defects_list")
+  missingDocuments           Json?           @map("missing_documents")
   acceptedWithConditionsFlag Boolean         @default(false) @map("accepted_with_conditions_flag")
   conditionsDescription      String?         @map("conditions_description")
-  warrantyExpiryDate         DateTime?       @map("warranty_expiry_date") @db.Date
+  warrantyExpiryDate         DateTime?       @map("warranty_expiry_date")
   notes                      String?
   createdAt                  DateTime        @default(now()) @map("created_at")
   updatedAt                  DateTime        @updatedAt @map("updated_at")
@@ -656,13 +647,13 @@ enum GeometryType {
 }
 
 model GisLocation {
-  id                 String        @id @default(uuid()) @db.Uuid
-  assetId            String        @unique @map("asset_id") @db.Uuid
+  id                 String        @id @default(uuid()) @map("_id")
+  assetId            String        @unique @map("asset_id")
   asset              Asset         @relation(fields: [assetId], references: [id])
-  latitude           Decimal?      @db.Decimal(10, 8)
-  longitude          Decimal?      @db.Decimal(11, 8)
+  latitude           Float?
+  longitude          Float?
   geometryType       GeometryType  @default(point) @map("geometry_type")
-  geojson            Json?         @db.JsonB
+  geojson            Json?
   addressFormatted   String?       @map("address_formatted")
   neighborhood       String?
   district           String?
@@ -671,7 +662,6 @@ model GisLocation {
   createdAt          DateTime      @default(now()) @map("created_at")
   updatedAt          DateTime      @updatedAt @map("updated_at")
 
-  @@index([latitude, longitude])
   @@index([district])
   @@index([neighborhood])
   @@map("gis_locations")
@@ -689,28 +679,26 @@ enum PlanningEntityStatus {
 }
 
 model PlanningEntity {
-  id                                 String                @id @default(uuid()) @db.Uuid
+  id                                 String                @id @default(uuid()) @map("_id")
   name                               String
   planningCode                       String                @unique @map("planning_code")
-  assetFamilyId                      String                @map("asset_family_id") @db.Uuid
+  assetFamilyId                      String                @map("asset_family_id")
   assetFamily                        AssetFamily           @relation(fields: [assetFamilyId], references: [id])
-  assetTypeId                        String                @map("asset_type_id") @db.Uuid
+  assetTypeId                        String                @map("asset_type_id")
   assetType                          AssetType             @relation(fields: [assetTypeId], references: [id])
-  planningBodyId                     String?               @map("planning_body_id") @db.Uuid
+  planningBodyId                     String?               @map("planning_body_id")
   planningBody                       ResponsibleBody?      @relation("PlanningBody", fields: [planningBodyId], references: [id])
-  intendedReceivingBodyId            String?               @map("intended_receiving_body_id") @db.Uuid
+  intendedReceivingBodyId            String?               @map("intended_receiving_body_id")
   intendedReceivingBody              ResponsibleBody?      @relation("IntendedReceivingBody", fields: [intendedReceivingBodyId], references: [id])
   intendedReceivingBodyIsPlaceholder Boolean               @default(false) @map("intended_receiving_body_is_placeholder")
   populationForecastNotes            String?               @map("population_forecast_notes")
   serviceAreaDescription             String?               @map("service_area_description")
-  plannedAreaSqm                     Decimal?              @map("planned_area_sqm") @db.Decimal(12, 2)
-  targetDeliveryDate                 DateTime?             @map("target_delivery_date") @db.Date
+  plannedAreaSqm                     Float?                @map("planned_area_sqm")
+  targetDeliveryDate                 DateTime?             @map("target_delivery_date")
   currentPlanningMilestone           String?               @map("current_planning_milestone")
   status                             PlanningEntityStatus  @default(identified)
-  // linked_asset_id — stub UUID; FK constraint added after assets table exists (US-046 migration)
-  linkedAssetId                      String?               @map("linked_asset_id") @db.Uuid
-  // developer_obligation_id — stub UUID; FK constraint added in US-047 migration
-  developerObligationId              String?               @map("developer_obligation_id") @db.Uuid
+  linkedAssetId                      String?               @map("linked_asset_id")
+  developerObligationId              String?               @map("developer_obligation_id")
   developerObligations               DeveloperObligation[] @relation("DevObligationPlanningEntity")
   fundingSourceNotes                 String?               @map("funding_source_notes")
   notes                              String?
@@ -743,27 +731,27 @@ enum DeveloperObligationStatus {
 }
 
 model DeveloperObligation {
-  id                          String                          @id @default(uuid()) @db.Uuid
+  id                          String                          @id @default(uuid()) @map("_id")
   obligationReference         String                          @unique @map("obligation_reference")
   relatedProjectName          String                          @map("related_project_name")
   developerName               String                          @map("developer_name")
-  promisedAssetTypeId         String                          @map("promised_asset_type_id") @db.Uuid
+  promisedAssetTypeId         String                          @map("promised_asset_type_id")
   promisedAssetType           AssetType                       @relation(fields: [promisedAssetTypeId], references: [id])
-  promisedAssetFamilyId       String                          @map("promised_asset_family_id") @db.Uuid
+  promisedAssetFamilyId       String                          @map("promised_asset_family_id")
   promisedAssetFamily         AssetFamily                     @relation(fields: [promisedAssetFamilyId], references: [id])
-  committedAreaSqm            Decimal?                        @map("committed_area_sqm") @db.Decimal(12, 2)
-  committedDeliveryDate       DateTime?                       @map("committed_delivery_date") @db.Date
-  actualDeliveryDate          DateTime?                       @map("actual_delivery_date") @db.Date
+  committedAreaSqm            Float?                          @map("committed_area_sqm")
+  committedDeliveryDate       DateTime?                       @map("committed_delivery_date")
+  actualDeliveryDate          DateTime?                       @map("actual_delivery_date")
   fundingModel                DeveloperObligationFundingModel? @map("funding_model")
-  committedFundingAmount      Decimal?                        @map("committed_funding_amount") @db.Decimal(18, 2)
+  committedFundingAmount      Float?                          @map("committed_funding_amount")
   status                      DeveloperObligationStatus       @default(open)
   gapsIdentified              String?                         @map("gaps_identified")
-  receivingBodyId             String?                         @map("receiving_body_id") @db.Uuid
+  receivingBodyId             String?                         @map("receiving_body_id")
   receivingBody               ResponsibleBody?                @relation("DevObligationReceivingBody", fields: [receivingBodyId], references: [id])
   receivingBodyIsPlaceholder  Boolean                         @default(false) @map("receiving_body_is_placeholder")
-  planningEntityId            String?                         @map("planning_entity_id") @db.Uuid
+  planningEntityId            String?                         @map("planning_entity_id")
   planningEntity              PlanningEntity?                 @relation("DevObligationPlanningEntity", fields: [planningEntityId], references: [id])
-  deliveryMilestones          Json?                           @map("delivery_milestones") @db.JsonB
+  deliveryMilestones          Json?                           @map("delivery_milestones")
   notes                       String?
   createdAt                   DateTime                        @default(now()) @map("created_at")
   updatedAt                   DateTime                        @updatedAt @map("updated_at")
@@ -793,19 +781,19 @@ enum AllocationStatus {
 }
 
 model Allocation {
-  id                  String           @id @default(uuid()) @db.Uuid
-  assetId             String           @map("asset_id") @db.Uuid
+  id                  String           @id @default(uuid()) @map("_id")
+  assetId             String           @map("asset_id")
   asset               Asset            @relation(fields: [assetId], references: [id])
-  allocatedToBodyId   String?          @map("allocated_to_body_id") @db.Uuid
+  allocatedToBodyId   String?          @map("allocated_to_body_id")
   allocatedToBody     ResponsibleBody? @relation("AllocationBody", fields: [allocatedToBodyId], references: [id])
   allocatedToName     String?          @map("allocated_to_name")
   allocationType      AllocationType   @map("allocation_type")
-  startDate           DateTime         @map("start_date") @db.Date
-  endDate             DateTime?        @map("end_date") @db.Date
-  areaSqm             Decimal?         @map("area_sqm") @db.Decimal(12, 2)
+  startDate           DateTime         @map("start_date")
+  endDate             DateTime?        @map("end_date")
+  areaSqm             Float?           @map("area_sqm")
   usageDescription    String?          @map("usage_description")
   isRevenueGenerating Boolean          @default(false) @map("is_revenue_generating")
-  periodicFee         Decimal?         @map("periodic_fee") @db.Decimal(18, 2)
+  periodicFee         Float?           @map("periodic_fee")
   feeFrequency        PaymentFrequency? @map("fee_frequency")
   status              AllocationStatus @default(pending)
   notes               String?
@@ -831,17 +819,17 @@ enum BodyTransferType {
 }
 
 model BodyTransfer {
-  id                 String           @id @default(uuid()) @db.Uuid
-  assetId            String           @map("asset_id") @db.Uuid
+  id                 String           @id @default(uuid()) @map("_id")
+  assetId            String           @map("asset_id")
   asset              Asset            @relation(fields: [assetId], references: [id])
   transferType       BodyTransferType @map("transfer_type")
-  fromBodyId         String           @map("from_body_id") @db.Uuid
+  fromBodyId         String           @map("from_body_id")
   fromBody           ResponsibleBody  @relation("BodyTransferFrom", fields: [fromBodyId], references: [id])
-  toBodyId           String           @map("to_body_id") @db.Uuid
+  toBodyId           String           @map("to_body_id")
   toBody             ResponsibleBody  @relation("BodyTransferTo", fields: [toBodyId], references: [id])
-  transferDate       DateTime         @map("transfer_date") @db.Date
+  transferDate       DateTime         @map("transfer_date")
   reason             String
-  authorizedByUserId String?          @map("authorized_by_user_id") @db.Uuid
+  authorizedByUserId String?          @map("authorized_by_user_id")
   notes              String?
   createdAt          DateTime         @default(now()) @map("created_at")
 
@@ -867,19 +855,19 @@ enum RevenueStatus {
 }
 
 model RevenueRecord {
-  id             String        @id @default(uuid()) @db.Uuid
-  assetId        String        @map("asset_id") @db.Uuid
+  id             String        @id @default(uuid()) @map("_id")
+  assetId        String        @map("asset_id")
   asset          Asset         @relation(fields: [assetId], references: [id])
-  allocationId   String?       @map("allocation_id") @db.Uuid
+  allocationId   String?       @map("allocation_id")
   allocation     Allocation?   @relation(fields: [allocationId], references: [id])
-  contractId     String?       @map("contract_id") @db.Uuid
+  contractId     String?       @map("contract_id")
   contract       Contract?     @relation(fields: [contractId], references: [id])
   revenueType    RevenueType   @map("revenue_type")
-  periodStart    DateTime      @map("period_start") @db.Date
-  periodEnd      DateTime      @map("period_end") @db.Date
-  expectedAmount Decimal       @default(0) @map("expected_amount") @db.Decimal(18, 2)
-  actualAmount   Decimal       @default(0) @map("actual_amount") @db.Decimal(18, 2)
-  paymentDate    DateTime?     @map("payment_date") @db.Date
+  periodStart    DateTime      @map("period_start")
+  periodEnd      DateTime      @map("period_end")
+  expectedAmount Float         @default(0) @map("expected_amount")
+  actualAmount   Float         @default(0) @map("actual_amount")
+  paymentDate    DateTime?     @map("payment_date")
   status         RevenueStatus @default(expected)
   notes          String?
   createdAt      DateTime      @default(now()) @map("created_at")
@@ -902,8 +890,8 @@ enum RiskBand {
 }
 
 model AssetRiskScore {
-  id              String   @id @default(uuid()) @db.Uuid
-  assetId         String   @unique @map("asset_id") @db.Uuid
+  id              String   @id @default(uuid()) @map("_id")
+  assetId         String   @unique @map("asset_id")
   asset           Asset    @relation(fields: [assetId], references: [id])
   riskScore       Int      @map("risk_score")
   riskBand        RiskBand @map("risk_band")
