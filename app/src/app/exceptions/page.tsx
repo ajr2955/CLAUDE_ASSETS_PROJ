@@ -124,7 +124,7 @@ export default function ExceptionsPage() {
   const fetchUserRole = useCallback(async () => {
     try {
       const res = await fetch("/api/auth/me", {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token") ?? ""}` },
+        headers: {},
       });
       if (res.ok) {
         const json = await res.json();
@@ -161,7 +161,7 @@ export default function ExceptionsPage() {
       if (filterBody) params.set("responsible_body_id", filterBody);
 
       const res = await fetch(`/api/exceptions?${params.toString()}`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token") ?? ""}` },
+        headers: {},
       });
       if (!res.ok) {
         const json = await res.json();
@@ -196,7 +196,6 @@ export default function ExceptionsPage() {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token") ?? ""}`,
           },
           body: JSON.stringify({
             asset_id: ex.asset_id,

@@ -7,7 +7,6 @@
  */
 
 import { useEffect, useState, useCallback } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -193,7 +192,6 @@ function HBarChart({ data }: { data: { label: string; value: number; color?: str
 // ─── Main page ────────────────────────────────────────────────────────────────
 
 export default function ExecutiveDashboardPage() {
-  const router = useRouter();
   const [dashboard, setDashboard] = useState<DashboardData | null>(null);
   const [exceptions, setExceptions] = useState<AssetException[]>([]);
   const [overdueObligations, setOverdueObligations] = useState<OverdueObligation[]>([]);
@@ -203,19 +201,13 @@ export default function ExecutiveDashboardPage() {
   const fetchAll = useCallback(async () => {
     setLoading(true);
     setError(null);
-    const token = localStorage.getItem("token") ?? "";
-    const authHeader = { Authorization: `Bearer ${token}` };
     try {
       const [dashRes, excRes, obligRes] = await Promise.all([
-        fetch("/api/dashboard/executive", { headers: authHeader }),
-        fetch("/api/exceptions?severity=critical&per_page=10", { headers: authHeader }),
-        fetch("/api/developer-obligations?overdue=true&per_page=10", { headers: authHeader }),
+        fetch("/api/dashboard/executive"),
+        fetch("/api/exceptions?severity=critical&per_page=10"),
+        fetch("/api/developer-obligations?overdue=true&per_page=10"),
       ]);
 
-      if (dashRes.status === 401) {
-        router.replace("/login");
-        return;
-      }
       if (!dashRes.ok) {
         const j = await dashRes.json().catch(() => ({}));
         throw new Error(j.error ?? "Failed to load dashboard data");
@@ -229,7 +221,7 @@ export default function ExecutiveDashboardPage() {
         const excData: AssetException[] = excJson.data ?? [];
         // Also fetch high severity to fill up to 10
         if (excData.length < 10) {
-          const excHighRes = await fetch("/api/exceptions?severity=high&per_page=10", { headers: authHeader });
+          const excHighRes = await fetch("/api/exceptions?severity=high&per_page=10");
           if (excHighRes.ok) {
             const excHighJson = await excHighRes.json();
             const combined = [...excData, ...(excHighJson.data ?? [])];

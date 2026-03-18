@@ -1,24 +1,20 @@
 import { NextRequest } from "next/server";
-import { verifyToken, JwtPayload } from "./jwt";
+import { JwtPayload } from "./jwt";
 
 export type { JwtPayload };
 
-export function getTokenFromRequest(req: NextRequest): string | null {
-  const authHeader = req.headers.get("authorization");
-  if (authHeader?.startsWith("Bearer ")) {
-    return authHeader.slice(7);
-  }
+// Auth is disabled — all requests run as admin.
+const ADMIN_PAYLOAD: JwtPayload = {
+  sub: "system-admin",
+  email: "admin@assets.local",
+  role: "admin",
+  type: "access",
+};
+
+export function getTokenFromRequest(_req: NextRequest): string | null {
   return null;
 }
 
-export function getUserFromRequest(req: NextRequest): JwtPayload | null {
-  const token = getTokenFromRequest(req);
-  if (!token) return null;
-  try {
-    const payload = verifyToken(token);
-    if (payload.type !== "access") return null;
-    return payload;
-  } catch {
-    return null;
-  }
+export function getUserFromRequest(_req: NextRequest): JwtPayload {
+  return ADMIN_PAYLOAD;
 }
